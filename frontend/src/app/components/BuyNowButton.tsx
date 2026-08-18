@@ -8,18 +8,26 @@ import Loading from "@/app/completion/loading";
 
 interface BuyNowButtonProps {
     product: Product;
+    /** Ile sztuk kupić (domyślnie 1). */
+    quantity?: number;
+    label?: React.ReactNode;
+    className?: string;
 }
 
-export default function BuyNowButton({ product }: BuyNowButtonProps) {
+const DEFAULT_CLASS =
+    "bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold py-2 px-3 rounded transition-colors disabled:opacity-50 min-w-[110px]";
+
+export default function BuyNowButton({ product, quantity = 1, label, className }: BuyNowButtonProps) {
     const router = useRouter();
     const { addToCart} = useCart();
     const[isProcessing, setIsProcessing] = useState<boolean>(false);
 
     const handleBuyNow = async (e: React.MouseEvent) => {
         e.preventDefault();
+        e.stopPropagation();
         try {
             setIsProcessing(true);
-            await addToCart(product, 1);
+            await addToCart(product, quantity);
             router.push('/checkout');
         }
         catch (error)  {
@@ -32,12 +40,12 @@ export default function BuyNowButton({ product }: BuyNowButtonProps) {
         <button
             onClick={handleBuyNow}
             disabled={product.stock === 0 || isProcessing}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold py-2 px-3 rounded transition-colors disabled:opacity-50 min-w-[110px]"
+            className={className ?? DEFAULT_CLASS}
         >
             {isProcessing ? (
                 <Loading message="Przekierowanie..." inline />
             ) : (
-                'Kup teraz ⚡'
+                label ?? 'Kup teraz ⚡'
             )}
         </button>
     );
