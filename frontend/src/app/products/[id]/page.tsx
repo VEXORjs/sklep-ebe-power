@@ -53,7 +53,8 @@ export default async function ProductPage({params} : PageProps) {
                 <p className="text-2xl font-semibold text-emerald-400 mb-6">{product.price.toFixed(2)} PLN</p>
 
                 {/* Galeria zdjęć */}
-               <ProductGallery product={product} />
+               <ProductGallery product={product}
+               />
 
                 {/* Opis produktu */}
                 <div className="mb-8">

@@ -95,6 +95,8 @@ return (
                     onClick={() => handleOpenLightbox(0)}
                 >
                     <Image
+                        width={800}
+                        height={600}
                         src={product.images[0]}
                         alt="Główne"
                         className="w-full h-full object-cover hover:scale-105 transition-transform"
@@ -109,6 +111,8 @@ return (
                             onClick={() => handleOpenLightbox(index + 1)}
                         >
                             <Image
+                                width={800}
+                                height={600}
                                 src={url}
                                 alt={`Miniatura ${index + 1}`}
                                 className="w-full h-full object-cover hover:opacity-80 transition-opacity"
@@ -137,6 +141,8 @@ return (
                     {/* 🖼️ Wyświetlanie mediów: Zdjęcie LUB Wideo */}
                     {activeTab === 'photos' ? (
                         <Image
+                            width={800}
+                            height={600}
                             src={product.images[currentImageIndex]}
                             alt="Podgląd zdjęcia"
                             className="max-w-full max-h-[65vh] object-contain rounded-lg"
