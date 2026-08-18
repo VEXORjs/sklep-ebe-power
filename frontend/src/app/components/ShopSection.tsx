@@ -7,7 +7,7 @@ import { ArrowRight, LayoutGrid, List, Search, SlidersHorizontal, X } from "luci
 import { Product } from "@/app/types/product";
 import ProductCard, { ProductCardVariant } from "@/app/components/ProductCard";
 import { CATEGORIES, allCategories } from "@/app/data/categories";
-import { normalizeText, ratingOf, slugify } from "@/app/lib/product";
+import { normalizeText, productsLabel, ratingOf, slugify } from "@/app/lib/product";
 
 interface ShopSectionProps {
     products: Product[];
@@ -195,7 +195,7 @@ export default function ShopSection({ products }: ShopSectionProps) {
             <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
                 <p className="text-xs text-neutral-500">
                     Znaleziono: <span className="font-bold text-white">{filtered.length}</span>{" "}
-                    {filtered.length === 1 ? "produkt" : "produktów"}
+                    {productsLabel(filtered.length)}
                 </p>
                 {activeCategorySlug && (
                     <Link

@@ -5,7 +5,8 @@ import { ArrowUpRight, ChevronRight, Package, ShieldCheck, Truck } from "lucide-
 
 import { getProducts } from "@/app/services/productService";
 import { allCategories, productsInCategory } from "@/app/data/categories";
-import { formatPLN, grossPrice } from "@/app/lib/product";
+import { pluralPL } from "@/app/lib/product";
+import { formatPLN, grossPrice, productsLabel } from "@/app/lib/product";
 
 export const dynamic = "force-dynamic";
 
@@ -38,7 +39,7 @@ export default async function CategoriesPage() {
                         Wszystkie kategorie
                     </h1>
                     <p className="mt-3 max-w-2xl text-sm leading-relaxed text-neutral-400">
-                        {products.length} produktów w {categories.length} kategoriach. Każda sekcja ma własną
+                        {products.length} {productsLabel(products.length)} w {categories.length} {pluralPL(categories.length, "kategorii", "kategoriach", "kategoriach")}. Każda sekcja ma własną
                         stronę z filtrami, poradnikiem doboru i odpowiedziami na najczęstsze pytania.
                     </p>
 
@@ -94,7 +95,7 @@ export default async function CategoriesPage() {
 
                                     <div className="mt-auto flex items-center justify-between border-t border-neutral-800 pt-4 text-xs">
                                         <span className="font-bold text-white">
-                                            {items.length} {items.length === 1 ? "produkt" : "produktów"}
+                                            {items.length} {productsLabel(items.length)}
                                         </span>
                                         <span className="text-neutral-500">
                                             {cheapest !== null ? (

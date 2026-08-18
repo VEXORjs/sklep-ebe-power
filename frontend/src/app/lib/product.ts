@@ -232,3 +232,24 @@ export function slugify(value: string): string {
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "");
 }
+
+/** Poprawna polska odmiana rzeczownika po liczbie, np. 1 produkt / 3 produkty / 7 produktów. */
+export function pluralPL(
+    count: number,
+    one: string,
+    few: string,
+    many: string
+): string {
+    const abs = Math.abs(count);
+    const lastDigit = abs % 10;
+    const lastTwo = abs % 100;
+
+    if (abs === 1) return one;
+    if (lastDigit >= 2 && lastDigit <= 4 && (lastTwo < 12 || lastTwo > 14)) return few;
+    return many;
+}
+
+/** Skrót dla najczęstszego przypadku: „produkt / produkty / produktów". */
+export function productsLabel(count: number): string {
+    return pluralPL(count, "produkt", "produkty", "produktów");
+}

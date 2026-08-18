@@ -3,7 +3,7 @@ import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { Product } from "@/app/types/product";
 import { allCategories, productsInCategory } from "@/app/data/categories";
-import { formatPLN, grossPrice } from "@/app/lib/product";
+import { formatPLN, grossPrice, productsLabel } from "@/app/lib/product";
 
 interface CategoryGridProps {
     products: Product[];
@@ -11,7 +11,7 @@ interface CategoryGridProps {
     limit?: number;
 }
 
-export default function CategoryGrid({ products, limit = 6 }: CategoryGridProps) {
+export default function CategoryGrid({ products, limit = 9 }: CategoryGridProps) {
     // Najpierw kategorie, w których faktycznie mamy towar.
     const categories = allCategories(products)
         .map((category) => ({ category, items: productsInCategory(products, category) }))
@@ -68,7 +68,7 @@ export default function CategoryGrid({ products, limit = 6 }: CategoryGridProps)
                                         {category.tagline}
                                     </p>
                                     <p className="mt-1.5 text-[11px] font-semibold text-neutral-300">
-                                        {items.length} {items.length === 1 ? "produkt" : "produktów"}
+                                        {items.length} {productsLabel(items.length)}
                                         {cheapest !== null && (
                                             <span className="text-emerald-400"> · od {formatPLN(cheapest)}</span>
                                         )}

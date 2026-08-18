@@ -5,7 +5,7 @@ import { LayoutGrid, List, Search, SlidersHorizontal, X } from "lucide-react";
 
 import { Product } from "@/app/types/product";
 import ProductCard, { ProductCardVariant } from "@/app/components/ProductCard";
-import { formatPLN, grossPrice, ratingOf } from "@/app/lib/product";
+import { formatPLN, grossPrice, productsLabel, ratingOf } from "@/app/lib/product";
 
 interface CategoryCatalogProps {
     products: Product[];
@@ -207,7 +207,7 @@ export default function CategoryCatalog({ products, categoryName }: CategoryCata
             <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
                 <p className="text-xs text-neutral-500">
                     Znaleziono: <span className="font-bold text-white">{filtered.length}</span>{" "}
-                    {filtered.length === 1 ? "produkt" : "produktów"}
+                    {productsLabel(filtered.length)}
                     {products.length !== filtered.length && ` z ${products.length}`}
                 </p>
                 {hasFilters && (
