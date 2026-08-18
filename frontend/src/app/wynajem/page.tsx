@@ -8,7 +8,7 @@ export default function RentalPage() {
 
                 {/* 🏷️ Nagłówek strony */}
                 <div className="border-b border-neutral-800 pb-6">
-                    <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
                         Zasilanie tymczasowe i awaryjne
                     </span>
                     <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight mt-2">

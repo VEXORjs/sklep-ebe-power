@@ -3,6 +3,7 @@
 import {useEffect, useState} from 'react';
 import { uploadProductImage } from '@/lib/uploadImage';
 import {Product} from "@/app/types/product";
+import Image from "next/image";
 
 interface ProductFormProps {
     onProductAdded: (product: Product) => void;
@@ -26,12 +27,16 @@ export default function ProductForm({ onProductAdded, onProductUpdated, editingP
     const method = isEdit ? 'PUT' : 'POST';
 
     useEffect(() => {
-        if (editingProduct) {
-            setName(editingProduct.name);
-            setPrice(editingProduct.price.toString());
-            setDescription(editingProduct.description);
-            setEditingProductLocal(editingProduct);
+        const setters = async () => {
+            if (editingProduct) {
+                setName(editingProduct.name);
+                setPrice(editingProduct.price.toString());
+                setDescription(editingProduct.description);
+                setEditingProductLocal(editingProduct);
+            }
         }
+
+      void setters();
     }, [editingProduct]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -177,7 +182,7 @@ export default function ProductForm({ onProductAdded, onProductUpdated, editingP
                 <div className="flex gap-2 mb-4 flex-wrap">
                     {editingProductLocal.images.map((url, index) => (
                         <div key={index} className="relative w-16 h-16">
-                            <img
+                            <Image
                                 src={url}
                                 alt="Podgląd"
                                 className="w-full h-full object-cover rounded-md border"

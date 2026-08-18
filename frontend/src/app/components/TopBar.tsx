@@ -7,22 +7,22 @@ export default function TopBar() {
                 <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
                     <a
                         href="tel:+48123456789"
-                        className="flex items-center gap-1.5 transition-colors hover:text-amber-400"
+                        className="flex items-center gap-1.5 transition-colors hover:text-emerald-400"
                     >
-                        <Phone className="h-3 w-3 text-amber-500" />
+                        <Phone className="h-3 w-3 text-emerald-500" />
                         +48 123 456 789
                     </a>
                     <a
                         href="mailto:kontakt@trafo-energia.pl"
-                        className="flex items-center gap-1.5 transition-colors hover:text-amber-400"
+                        className="flex items-center gap-1.5 transition-colors hover:text-emerald-400"
                     >
-                        <Mail className="h-3 w-3 text-amber-500" />
+                        <Mail className="h-3 w-3 text-emerald-500" />
                         kontakt@trafo-energia.pl
                     </a>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
-                    <span className="flex items-center gap-1.5 font-semibold text-amber-500">
+                    <span className="flex items-center gap-1.5 font-semibold text-emerald-500">
                         <Truck className="h-3.5 w-3.5" />
                         Darmowa dostawa od 500 zł
                     </span>

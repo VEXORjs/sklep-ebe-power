@@ -29,7 +29,7 @@ export default function BrandMarquee() {
                             {brands.map((brand) => (
                                 <span
                                     key={`${half}-${brand}`}
-                                    className="whitespace-nowrap text-xl font-extrabold uppercase tracking-[0.2em] text-neutral-600 transition-colors hover:text-amber-400"
+                                    className="whitespace-nowrap text-xl font-extrabold uppercase tracking-[0.2em] text-neutral-600 transition-colors hover:text-emerald-400"
                                 >
                                     {brand}
                                 </span>

@@ -17,7 +17,7 @@ type SortKey = "popularnosc" | "cena-asc" | "cena-desc" | "ocena-desc";
 
 const badgeStyle: Record<string, string> = {
     Promocja: "bg-red-600 text-white",
-    Nowosc: "bg-amber-500 text-slate-950",
+    Nowosc: "bg-emerald-500 text-slate-950",
     Bestseller: "bg-neutral-100 text-black",
 };
 
@@ -118,7 +118,7 @@ export default function ShopSection({ products }: ShopSectionProps) {
         <section id="produkty" className="mx-auto w-full max-w-7xl scroll-mt-24 px-4 py-16 sm:px-6 lg:px-8">
             {/* Nagłówek sekcji */}
             <div className="mb-8">
-                <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
                     Nasz sklep
                 </span>
                 <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-white">
@@ -138,7 +138,7 @@ export default function ShopSection({ products }: ShopSectionProps) {
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         placeholder="Szukaj: nazwa, SKU, kategoria..."
-                        className="w-full rounded-md border border-neutral-800 bg-[#141618] py-3 pl-11 pr-10 text-sm text-white placeholder:text-neutral-500 outline-none transition-colors focus:border-amber-500/60"
+                        className="w-full rounded-md border border-neutral-800 bg-[#141618] py-3 pl-11 pr-10 text-sm text-white placeholder:text-neutral-500 outline-none transition-colors focus:border-emerald-500/60"
                     />
                     {query && (
                         <button
@@ -157,7 +157,7 @@ export default function ShopSection({ products }: ShopSectionProps) {
                         value={sort}
                         onChange={(e) => setSort(e.target.value as SortKey)}
                         aria-label="Sortowanie produktów"
-                        className="w-full rounded-md border border-neutral-800 bg-[#141618] px-4 py-3 text-sm text-white outline-none transition-colors focus:border-amber-500/60 md:w-auto"
+                        className="w-full rounded-md border border-neutral-800 bg-[#141618] px-4 py-3 text-sm text-white outline-none transition-colors focus:border-emerald-500/60 md:w-auto"
                     >
                         <option value="popularnosc">Sortuj: popularność</option>
                         <option value="cena-asc">Cena: od najniższej</option>
@@ -175,8 +175,8 @@ export default function ShopSection({ products }: ShopSectionProps) {
                         onClick={() => setCategory(cat)}
                         className={`rounded-full border px-4 py-2 text-xs font-semibold transition-colors ${
                             category === cat
-                                ? "border-amber-500 bg-amber-500 text-slate-950"
-                                : "border-neutral-800 bg-[#141618] text-neutral-300 hover:border-amber-500/60 hover:text-amber-300"
+                                ? "border-emerald-500 bg-emerald-500 text-slate-950"
+                                : "border-neutral-800 bg-[#141618] text-neutral-300 hover:border-emerald-500/60 hover:text-emerald-300"
                         }`}
                     >
                         {cat}
@@ -201,7 +201,7 @@ export default function ShopSection({ products }: ShopSectionProps) {
                             setQuery("");
                             setCategory("Wszystkie");
                         }}
-                        className="mt-4 rounded-md bg-amber-500 px-5 py-2.5 text-sm font-bold text-slate-950 transition-colors hover:bg-amber-400"
+                        className="mt-4 rounded-md bg-emerald-500 px-5 py-2.5 text-sm font-bold text-slate-950 transition-colors hover:bg-emerald-400"
                     >
                         Wyczyść filtry
                     </button>
@@ -256,7 +256,7 @@ export default function ShopSection({ products }: ShopSectionProps) {
                                         <Heart
                                             className={`h-4 w-4 transition-colors ${
                                                 isWishlisted
-                                                    ? "fill-amber-500 text-amber-500"
+                                                    ? "fill-emerald-500 text-emerald-500"
                                                     : "text-white"
                                             }`}
                                         />
@@ -274,7 +274,7 @@ export default function ShopSection({ products }: ShopSectionProps) {
                                         href={`/products/${product.id}`}
                                         className="mb-3 block flex-grow"
                                     >
-                                        <h3 className="text-sm font-bold uppercase leading-tight tracking-wide text-white transition-colors hover:text-amber-300">
+                                        <h3 className="text-sm font-bold uppercase leading-tight tracking-wide text-white transition-colors hover:text-emerald-300">
                                             {product.name}
                                         </h3>
                                     </Link>
@@ -287,7 +287,7 @@ export default function ShopSection({ products }: ShopSectionProps) {
                                                     key={i}
                                                     className={`h-3.5 w-3.5 ${
                                                         i < Math.round(rating)
-                                                            ? "fill-amber-400 text-amber-400"
+                                                            ? "fill-emerald-400 text-emerald-400"
                                                             : "text-neutral-700"
                                                     }`}
                                                 />

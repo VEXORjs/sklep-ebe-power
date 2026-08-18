@@ -28,22 +28,22 @@ export default function Footer() {
                         </h4>
                         <ul className="space-y-2 text-xs">
                             <li>
-                                <Link href="/kategoria/agregaty" className="hover:text-amber-400 transition-colors">
+                                <Link href="/kategoria/agregaty" className="hover:text-emerald-400 transition-colors">
                                     Agregaty prądotwórcze
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/kategoria/stacje-ladowania" className="hover:text-amber-400 transition-colors">
+                                <Link href="/kategoria/stacje-ladowania" className="hover:text-emerald-400 transition-colors">
                                     Stacje ładowania EV
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/kategoria/transformatory" className="hover:text-amber-400 transition-colors">
+                                <Link href="/kategoria/transformatory" className="hover:text-emerald-400 transition-colors">
                                     Transformatory
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/kategoria/akcesoria" className="hover:text-amber-400 transition-colors">
+                                <Link href="/kategoria/akcesoria" className="hover:text-emerald-400 transition-colors">
                                     Akcesoria i osprzęt
                                 </Link>
                             </li>
@@ -57,22 +57,22 @@ export default function Footer() {
                         </h4>
                         <ul className="space-y-2 text-xs">
                             <li>
-                                <Link href="/regulamin" className="hover:text-amber-400 transition-colors">
+                                <Link href="/regulamin" className="hover:text-emerald-400 transition-colors">
                                     Regulamin sklepu
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/polityka-prywatnosci" className="hover:text-amber-400 transition-colors">
+                                <Link href="/polityka-prywatnosci" className="hover:text-emerald-400 transition-colors">
                                     Polityka prywatności
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/dostawa" className="hover:text-amber-400 transition-colors">
+                                <Link href="/dostawa" className="hover:text-emerald-400 transition-colors">
                                     Dostawa i płatności
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/zwroty" className="hover:text-amber-400 transition-colors">
+                                <Link href="/zwroty" className="hover:text-emerald-400 transition-colors">
                                     Zwroty i reklamacje
                                 </Link>
                             </li>
@@ -90,7 +90,7 @@ export default function Footer() {
                             </li>
                             <li>
                                 <span className="text-neutral-200">E-mail:</span>{' '}
-                                <a href="mailto:kontakt@trafo-energia.pl" className="text-amber-400 hover:underline">
+                                <a href="mailto:kontakt@trafo-energia.pl" className="text-emerald-400 hover:underline">
                                     kontakt@trafo-energia.pl
                                 </a>
                             </li>

@@ -34,7 +34,7 @@ export default function AddToCartButton({ product }: AddToCartButtonProps) {
         <button
             onClick={(e) => handleAdd(e)}
             disabled={product.stock === 0 || isAdding}
-            className="bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold py-2 px-3 rounded transition-colors disabled:opacity-50 min-w-[110px]"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold py-2 px-3 rounded transition-colors disabled:opacity-50 min-w-[110px]"
         >
             {isAdding ? (
                 <Loading message="Dodawanie..." inline />

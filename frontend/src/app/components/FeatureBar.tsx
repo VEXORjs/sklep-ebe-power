@@ -33,7 +33,7 @@ export default function TrustBar() {
                         key={item.title}
                         className="flex items-center gap-3 justify-start md:justify-center"
                     >
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-amber-500/10 text-amber-400">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-emerald-500/10 text-emerald-400">
                             <item.icon className="h-5 w-5 stroke-[1.5]" />
                         </div>
                         <div>

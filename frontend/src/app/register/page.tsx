@@ -51,7 +51,7 @@ export default function RegisterPage() {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         required
-                        className="w-full bg-black border border-neutral-800 rounded p-2 text-white focus:border-amber-500 outline-none"
+                        className="w-full bg-black border border-neutral-800 rounded p-2 text-white focus:border-emerald-500 outline-none"
                         placeholder="Twoje imię"
                     />
                 </div>
@@ -65,7 +65,7 @@ export default function RegisterPage() {
                         onChange={(e) => setEmail(e.target.value)}
                         autoComplete="username"
                         required
-                        className="w-full bg-black border border-neutral-800 rounded p-2 text-white focus:border-amber-500 outline-none"
+                        className="w-full bg-black border border-neutral-800 rounded p-2 text-white focus:border-emerald-500 outline-none"
                         placeholder="user@domain.com"
                     />
                 </div>
@@ -79,14 +79,14 @@ export default function RegisterPage() {
                         onChange={(e) => setPassword(e.target.value)}
                         autoComplete="new-password"
                         required
-                        className="w-full bg-black border border-neutral-800 rounded p-2 text-white focus:border-amber-500 outline-none"
+                        className="w-full bg-black border border-neutral-800 rounded p-2 text-white focus:border-emerald-500 outline-none"
                     />
                 </div>
 
                 {/* PRZYCISK */}
                 <button
                     type="submit"
-                    className="w-full bg-amber-600 hover:bg-amber-700 font-bold py-2 rounded transition-colors mt-2"
+                    className="w-full bg-emerald-600 hover:bg-emerald-700 font-bold py-2 rounded transition-colors mt-2"
                 >
                     Zarejestruj się
                 </button>

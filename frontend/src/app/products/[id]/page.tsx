@@ -50,7 +50,7 @@ export default async function ProductPage({params} : PageProps) {
                 </Link>
                 {/* Nazwa i Cena */}
                 <h1 className="text-3xl font-extrabold mb-2">{product.name}</h1>
-                <p className="text-2xl font-semibold text-amber-400 mb-6">{product.price.toFixed(2)} PLN</p>
+                <p className="text-2xl font-semibold text-emerald-400 mb-6">{product.price.toFixed(2)} PLN</p>
 
                 {/* Galeria zdjęć */}
                <ProductGallery product={product} />

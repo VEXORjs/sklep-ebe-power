@@ -14,46 +14,49 @@ export default function FormWrapper() {
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001' || 'http://localhost:3000';
 
     useEffect(() => {
-        if(!loading && (!cart || !cart.items || cart.items.length === 0)){
-            setIsCartEmpty(true);
-            return;
+        const setcartisempty = async () => {
+                if(!loading && (!cart || !cart.items || cart.items.length === 0)){
+                setIsCartEmpty(true);
+                return;
+            }
+            if (loading) return;
+            if (!cart || !cart.items) return;
+
+            if(hasFetched.current) return;
+            hasFetched.current = true;
+
+            // Pobieramy clientSecret z Spring Boota
+            fetch(`${API_URL}/api/payment/create-payment-intent`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId: 'user123',
+                    items: cart.items.map(item => ({
+                        productId: item.productId, // Ścieżka z Twojej struktury CartItem
+                        quantity: item.quantity
+                    }))
+                }),
+            })
+                .then((res) => {
+                    if (res.status === 400 || res.status === 422){
+                        setIsCartEmpty(true);
+                        return null;
+                    }
+                    if (!res.ok) throw new Error("Backend zwrócił błąd połączenia");
+                    return res.json();
+                })
+                .then((data) => {
+                    if (data && data.clientSecret){
+                        setClientSecret(data.clientSecret);
+                    }
+                })
+                .catch((err) => {
+                    console.error("Błąd backendu:", err);
+                    setError(err.message);
+                });
         }
 
-        if (loading) return;
-        if (!cart || !cart.items) return;
-
-        if(hasFetched.current) return;
-        hasFetched.current = true;
-
-        // Pobieramy clientSecret z Spring Boota
-        fetch(`${API_URL}/api/payment/create-payment-intent`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId: 'user123',
-                items: cart.items.map(item => ({
-                    productId: item.productId, // Ścieżka z Twojej struktury CartItem
-                    quantity: item.quantity
-                }))
-            }),
-        })
-            .then((res) => {
-                if (res.status === 400 || res.status === 422){
-                    setIsCartEmpty(true);
-                    return null;
-                }
-                if (!res.ok) throw new Error("Backend zwrócił błąd połączenia");
-                return res.json();
-            })
-            .then((data) => {
-                if (data && data.clientSecret){
-                    setClientSecret(data.clientSecret);
-                }
-            })
-            .catch((err) => {
-                console.error("Błąd backendu:", err);
-                setError(err.message);
-            });
-    }, [cart, loading]);
+        void setcartisempty();
+    }, [cart, loading, API_URL]);
 
     if (error) return <div style={{ color: '#ef4444', fontWeight: 'bold', padding: '1rem' }}>Błąd systemu: {error}</div>;
 
@@ -66,7 +69,7 @@ export default function FormWrapper() {
                     onClick={() => {
                         window.location.href = `${window.location.origin}`;
                     }}
-                    className="inline-block bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded text-sm font-semibold transition-colors">
+                    className="inline-block bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded text-sm font-semibold transition-colors">
                     Wróć do sklepu
                 </button>
             </div>

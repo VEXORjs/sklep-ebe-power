@@ -31,8 +31,8 @@ export default function Hero({ product }: HeroProps) {
         <section className="relative overflow-hidden bg-black">
             {/* Dekoracyjne tło */}
             <div className="pointer-events-none absolute inset-0">
-                <div className="absolute -right-40 -top-40 h-[480px] w-[480px] rounded-full bg-amber-500/10 blur-3xl" />
-                <div className="absolute -left-40 top-1/2 h-[380px] w-[380px] rounded-full bg-amber-600/5 blur-3xl" />
+                <div className="absolute -right-40 -top-40 h-[480px] w-[480px] rounded-full bg-emerald-500/10 blur-3xl" />
+                <div className="absolute -left-40 top-1/2 h-[380px] w-[380px] rounded-full bg-emerald-600/5 blur-3xl" />
                 <div
                     className="absolute inset-0 opacity-[0.35]"
                     style={{
@@ -48,7 +48,7 @@ export default function Hero({ product }: HeroProps) {
                     {/* Lewa kolumna — treść */}
                     <div className="space-y-7">
                         <div className="flex flex-wrap items-center gap-3">
-                            <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-500/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-amber-400">
+                            <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-emerald-400">
                                 ⚡ Oferta tygodnia
                             </span>
                             {discount !== null && (
@@ -68,7 +68,7 @@ export default function Hero({ product }: HeroProps) {
 
                         {/* Cena */}
                         <div className="flex flex-wrap items-end gap-x-4 gap-y-2">
-                            <span className="text-4xl font-extrabold text-amber-400 sm:text-5xl">
+                            <span className="text-4xl font-extrabold text-emerald-400 sm:text-5xl">
                                 {(product.price * 1.23).toFixed(2).replace(".", ",")} zł
                             </span>
                             {product.oldPrice ? (
@@ -86,14 +86,14 @@ export default function Hero({ product }: HeroProps) {
                             <button
                                 onClick={handleQuickAdd}
                                 disabled={product.stock === 0}
-                                className="inline-flex items-center gap-2 rounded-md bg-amber-500 px-7 py-3.5 text-sm font-extrabold text-slate-950 shadow-lg shadow-amber-950/40 transition-all hover:bg-amber-400 disabled:opacity-50"
+                                className="inline-flex items-center gap-2 rounded-md bg-emerald-500 px-7 py-3.5 text-sm font-extrabold text-slate-950 shadow-lg shadow-emerald-950/40 transition-all hover:bg-emerald-400 disabled:opacity-50"
                             >
                                 <ShoppingCart className="h-4 w-4" />
                                 Dodaj do koszyka
                             </button>
                             <Link
                                 href={`/products/${product.id}`}
-                                className="inline-flex items-center gap-2 rounded-md border border-neutral-700 bg-neutral-900/60 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:border-amber-500/60 hover:text-amber-300"
+                                className="inline-flex items-center gap-2 rounded-md border border-neutral-700 bg-neutral-900/60 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:border-emerald-500/60 hover:text-emerald-300"
                             >
                                 Zobacz szczegóły
                                 <ArrowRight className="h-4 w-4" />
@@ -111,7 +111,7 @@ export default function Hero({ product }: HeroProps) {
                                     key={perk.text}
                                     className="flex items-center gap-1.5 text-xs text-neutral-400"
                                 >
-                                    <perk.icon className="h-3.5 w-3.5 text-amber-500" />
+                                    <perk.icon className="h-3.5 w-3.5 text-emerald-500" />
                                     {perk.text}
                                 </span>
                             ))}
@@ -120,8 +120,8 @@ export default function Hero({ product }: HeroProps) {
 
                     {/* Prawa kolumna — zdjęcie produktu */}
                     <div className="relative mx-auto w-full max-w-lg">
-                        <div className="absolute -inset-3 rounded-2xl bg-amber-500/10 blur-2xl" />
-                        <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-amber-500/30 bg-white shadow-2xl shadow-black/60">
+                        <div className="absolute -inset-3 rounded-2xl bg-emerald-500/10 blur-2xl" />
+                        <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-emerald-500/30 bg-white shadow-2xl shadow-black/60">
                             {product.images && product.images.length > 0 && (
                                 <Image
                                     src={product.images[0]}
@@ -134,8 +134,8 @@ export default function Hero({ product }: HeroProps) {
                             )}
                         </div>
 
-                        <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg border border-amber-500/40 bg-neutral-950/95 px-5 py-3 shadow-xl shadow-black/60 backdrop-blur">
-                            <p className="text-center text-xs font-bold text-amber-400">
+                        <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg border border-emerald-500/40 bg-neutral-950/95 px-5 py-3 shadow-xl shadow-black/60 backdrop-blur">
+                            <p className="text-center text-xs font-bold text-emerald-400">
                                 Najczęściej wybierany produkt
                             </p>
                             <p className="text-center text-[10px] uppercase tracking-wide text-neutral-500">

@@ -31,7 +31,7 @@ export default function CategoryGrid({ products }: CategoryGridProps) {
         <section className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
             <div className="mb-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
                         Kategorie
                     </span>
                     <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-white">
@@ -40,7 +40,7 @@ export default function CategoryGrid({ products }: CategoryGridProps) {
                 </div>
                 <Link
                     href="/#produkty"
-                    className="text-sm font-semibold text-neutral-400 transition-colors hover:text-amber-300"
+                    className="text-sm font-semibold text-neutral-400 transition-colors hover:text-emerald-300"
                 >
                     Wszystkie produkty →
                 </Link>
@@ -51,7 +51,7 @@ export default function CategoryGrid({ products }: CategoryGridProps) {
                     <Link
                         key={category}
                         href={`/#produkty?kategoria=${encodeURIComponent(category)}`}
-                        className="group relative h-44 overflow-hidden rounded-lg border border-neutral-800 transition-all duration-300 hover:border-amber-500/60 hover:shadow-lg hover:shadow-amber-950/30"
+                        className="group relative h-44 overflow-hidden rounded-lg border border-neutral-800 transition-all duration-300 hover:border-emerald-500/60 hover:shadow-lg hover:shadow-emerald-950/30"
                     >
                         <Image
                             src={categoryImages[category]}
@@ -71,7 +71,7 @@ export default function CategoryGrid({ products }: CategoryGridProps) {
                                     {countFor(category)} produktów
                                 </p>
                             </div>
-                            <span className="flex h-9 w-9 items-center justify-center rounded-full border border-amber-500/50 bg-black/40 text-amber-400 opacity-0 transition-all duration-300 group-hover:opacity-100">
+                            <span className="flex h-9 w-9 items-center justify-center rounded-full border border-emerald-500/50 bg-black/40 text-emerald-400 opacity-0 transition-all duration-300 group-hover:opacity-100">
                                 <ArrowUpRight className="h-4 w-4" />
                             </span>
                         </div>
