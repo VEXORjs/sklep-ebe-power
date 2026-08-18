@@ -38,12 +38,12 @@ export default function CategoryGrid({ products }: CategoryGridProps) {
                         Kupuj według kategorii
                     </h2>
                 </div>
-                <a
+                <Link
                     href="/#produkty"
                     className="text-sm font-semibold text-neutral-400 transition-colors hover:text-amber-300"
                 >
                     Wszystkie produkty →
-                </a>
+                </Link>
             </div>
 
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">

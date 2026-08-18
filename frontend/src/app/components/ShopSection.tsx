@@ -17,7 +17,7 @@ type SortKey = "popularnosc" | "cena-asc" | "cena-desc" | "ocena-desc";
 
 const badgeStyle: Record<string, string> = {
     Promocja: "bg-red-600 text-white",
-    Nowość: "bg-amber-500 text-slate-950",
+    Nowosc: "bg-amber-500 text-slate-950",
     Bestseller: "bg-neutral-100 text-black",
 };
 
@@ -45,20 +45,27 @@ export default function ShopSection({ products }: ShopSectionProps) {
     const [sort, setSort] = useState<SortKey>("popularnosc");
     const [wishlist, setWishlist] = useState<number[]>([]);
 
-    // Inicjalna kategoria z linku na karcie kategorii (?kategoria=...)
+    // Inicjalna kategoria z linku na karcie kategorii
     useEffect(() => {
-        const fromUrl = searchParams.get("kategoria");
-        if (fromUrl) setCategory(fromUrl);
+        const setcategory = async () => {
+            const fromUrl = searchParams.get("kategoria");
+            if (fromUrl) setCategory(fromUrl);
+        }
+    void setcategory();
     }, [searchParams]);
 
     // Lista życzeń z localStorage
     useEffect(() => {
-        try {
-            const stored = localStorage.getItem("trafo_wishlist");
-            if (stored) setWishlist(JSON.parse(stored));
-        } catch (error) {
-            console.warn("Nie udało się odczytać listy życzeń:", error);
+        const setwishlist = async () => {
+            try {
+                const stored = localStorage.getItem("trafo_wishlist");
+
+                if (stored) setWishlist(JSON.parse(stored));
+            } catch (error) {
+                console.warn("Nie udało się odczytać listy życzeń:", error);
+            }
         }
+     void setwishlist();
     }, []);
 
     const toggleWishlist = (id: number) => {
@@ -200,7 +207,7 @@ export default function ShopSection({ products }: ShopSectionProps) {
                     </button>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
                     {filtered.map((product, index) => {
                         const badge = badgeOf(product);
                         const rating = ratingOf(product);
