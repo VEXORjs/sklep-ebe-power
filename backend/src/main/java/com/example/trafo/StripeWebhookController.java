@@ -1,0 +1,61 @@
+package com.example.trafo;
+
+import com.stripe.exception.SignatureVerificationException;
+import com.stripe.model.Event;
+import com.stripe.model.EventDataObjectDeserializer;
+import com.stripe.model.PaymentIntent;
+import com.stripe.net.Webhook;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+
+@RestController
+@RequestMapping("/api/webhook")
+public class StripeWebhookController {
+
+    @Autowired
+    private OrderService orderService;
+
+    // Klucz weryfikacyjny (pobierzesz go z Stripe CLI w kroku 3)
+    @Value("${stripe.webhook.secret}")
+    private String endpointSecret;
+
+    @PostMapping("/stripe")
+    public ResponseEntity<String> handleStripeWebhook(
+            @RequestBody String payload,
+            @RequestHeader("Stripe-Signature") String sigHeader) {
+
+        Event event;
+
+        try {
+            // 1. Weryfikacja czy żądanie naprawdę pochodzi od Stripe
+            event = Webhook.constructEvent(payload, sigHeader, endpointSecret);
+        } catch (SignatureVerificationException e) {
+            System.out.println("🛑 Nieautoryzowane zapytanie! Zły podpis cyfrowy.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid signature");
+        }
+
+        // 2. Obsługa konkretnego zdarzenia sukcesu płatności
+        if ("payment_intent.succeeded".equals(event.getType())) {
+            EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
+
+            if (dataObjectDeserializer.getObject().isPresent()) {
+                PaymentIntent paymentIntent = (PaymentIntent) dataObjectDeserializer.getObject().get();
+
+                System.out.println("✅ Otrzymano potwierdzenie płatności dla ID: " + paymentIntent.getId());
+                System.out.println("💰 Kwota: " + paymentIntent.getAmount() + " " + paymentIntent.getCurrency());
+
+               try {
+                   orderService.processSuccessfulPayment(paymentIntent.getId());
+               } catch (Exception e){
+                   System.out.println("❌ Błąd przetwarzania zamówienia w bazie: " + e.getMessage());
+               }
+            }
+        }
+
+        // Zawsze zwracamy 200 OK do Stripe, żeby potwierdzić odebranie paczki danych
+        return ResponseEntity.ok("Success");
+    }
+}

@@ -1,0 +1,10 @@
+export interface Product {
+    id: number;
+    name: string;
+    price: number;
+    description: string;
+    stock: number;
+    images: string[];
+    videos: string[];
+    parameters: string;
+}

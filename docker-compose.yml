@@ -1,0 +1,87 @@
+
+services:
+  # 1. Baza danych PostgreSQL
+  postgres-db:
+    image: postgres:16-alpine
+    container_name: sklep-postgres
+    environment:
+      POSTGRES_DB: sklep_db
+      POSTGRES_USER: shop_user
+      POSTGRES_PASSWORD: shop_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - sklep-network
+
+  # 2. Backend (Spring Boot)
+  backend-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sklep-backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - maven-cache:/root/.m2
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/sklep_db
+      - SPRING_DATASOURCE_USERNAME=shop_user
+      - SPRING_DATASOURCE_PASSWORD=shop_password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+    depends_on:
+      - postgres-db
+    networks:
+      - sklep-network
+
+  # 3. Frontend (Next.js)
+  frontend-web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
+        - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+        - NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY}
+    container_name: sklep-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8080
+      - WATCHPACK_POLLING=true
+    depends_on:
+      - backend-api
+    networks:
+      - sklep-network
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend
+          target: /app
+          ignore:
+            - node_modules/
+            - .next/
+  stripe-cli:
+    image: stripe/stripe-cli:latest
+    container_name: stripe-cli
+    volumes:
+      - ./.stripe:/root/.config/stripe
+    # Ta komenda loguje się i automatycznie przekazuje webhooki do Twojego backendu
+    command: listen --forward-to backend-api:8080/api/payment/webhook --api-key ${STRIPE_SECRET_KEY}
+    depends_on:
+      - backend-api
+    networks:
+      - sklep-network
+
+volumes:
+  postgres_data:
+  maven-cache:
+
+networks:
+  sklep-network:
+    driver: bridge
