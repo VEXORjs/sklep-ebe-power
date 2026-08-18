@@ -1,25 +1,34 @@
 import {notFound} from "next/navigation";
 import ProductGallery from "@/app/components/ProductGallery";
 import Link from "next/link";
+import { DEMO_PRODUCTS } from "@/app/data/demoProducts";
 
 interface PageProps {
     params: Promise<{id: string}>;
 }
 
-const API_URL = process.env.API_URL || "http://localhost:3001" || 'http://localhost:3000';
+const API_URL = process.env.API_URL || "http://localhost:8080";
 
 async function getProduct(id: string) {
+    try {
+        const res = await fetch(`${API_URL}/api/products/${id}`, {
+            method: 'GET',
+            headers: {"Content-Type": "application/json"},
+            cache: "no-store",
+            signal: AbortSignal.timeout(3000),
+        });
 
-    const res = await fetch(`${API_URL}/api/products/${id}`, {
-        method: 'GET',
-        headers: {"Content-Type": "application/json"},
-        cache: "no-store",
-    });
-
-    if (!res.ok) {
-        return null;
+        if (!res.ok) {
+            throw new Error(`Backend zwrócił kod: ${res.status}`);
+        }
+        return res.json();
+    } catch (error) {
+        console.warn(
+            "⚠️ Backend niedostępny — podgląd produktu z danych demonstracyjnych.",
+            error
+        );
+        return DEMO_PRODUCTS.find((p) => p.id === Number(id)) ?? null;
     }
-    return res.json();
 }
 
 export default async function ProductPage({params} : PageProps) {
@@ -41,7 +50,7 @@ export default async function ProductPage({params} : PageProps) {
                 </Link>
                 {/* Nazwa i Cena */}
                 <h1 className="text-3xl font-extrabold mb-2">{product.name}</h1>
-                <p className="text-2xl font-semibold text-emerald-400 mb-6">{product.price.toFixed(2)} PLN</p>
+                <p className="text-2xl font-semibold text-amber-400 mb-6">{product.price.toFixed(2)} PLN</p>
 
                 {/* Galeria zdjęć */}
                <ProductGallery product={product} />

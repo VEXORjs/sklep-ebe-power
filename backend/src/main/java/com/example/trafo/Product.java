@@ -20,6 +20,15 @@ public class Product {
     @Column(nullable = false)
     private BigDecimal price;
 
+    /** Cena przed promocją (opcjonalna) */
+    private BigDecimal oldPrice;
+
+    /** Kategoria produktu (np. Transformatory, Zasilacze) */
+    private String category;
+
+    /** Kod magazynowy SKU */
+    private String sku;
+
     @Column(columnDefinition = "TEXT")
     private String description;
 
@@ -48,6 +57,12 @@ public class Product {
     public void setName(String name) { this.name = name; }
     public BigDecimal getPrice() { return price; }
     public void setPrice(BigDecimal price) { this.price = price; }
+    public BigDecimal getOldPrice() { return oldPrice; }
+    public void setOldPrice(BigDecimal oldPrice) { this.oldPrice = oldPrice; }
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
+    public String getSku() { return sku; }
+    public void setSku(String sku) { this.sku = sku; }
     public Long getStock() { return stock; }
     public void setStock(Long stock) { this.stock = stock; }
     public String getDescription() { return description; }

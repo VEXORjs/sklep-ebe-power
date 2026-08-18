@@ -25,7 +25,7 @@ export default function ContactForm() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Twój adres e-mail"
                 required
-                className="w-full sm:w-1/3 px-4 py-2 text-sm text-white placeholder-neutral-400 bg-white/10 border border-white/20 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"
+                className="w-full sm:w-1/3 px-4 py-2 text-sm text-white placeholder-neutral-400 bg-white/10 border border-white/20 rounded focus:outline-none focus:ring-2 focus:ring-amber-400"
             />
             <input
                 type="text"
@@ -33,11 +33,11 @@ export default function ContactForm() {
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="W czym możemy pomóc?"
                 required
-                className="w-full sm:flex-1 px-4 py-2 text-sm text-white placeholder-neutral-400 bg-white/10 border border-white/20 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"
+                className="w-full sm:flex-1 px-4 py-2 text-sm text-white placeholder-neutral-400 bg-white/10 border border-white/20 rounded focus:outline-none focus:ring-2 focus:ring-amber-400"
             />
             <button
                 type="submit"
-                className="px-6 py-2 text-sm font-medium text-white bg-teal-500 hover:bg-teal-600 rounded transition-colors shadow-sm whitespace-nowrap"
+                className="px-6 py-2 text-sm font-medium text-white bg-amber-500 hover:bg-amber-600 rounded transition-colors shadow-sm whitespace-nowrap"
             >
                 Wyślij
             </button>

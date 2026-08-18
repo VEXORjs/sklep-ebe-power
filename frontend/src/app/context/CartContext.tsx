@@ -17,6 +17,9 @@ interface CartContextType {
     removeFromCart: (productId: number) => Promise<void>;
     refreshCart: () => Promise<void>;
     clearCart: (id: string) => Promise<void>;
+    isCartOpen: boolean;
+    openCart: () => void;
+    closeCart: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -25,6 +28,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const {data: session, status} = useSession();
     const [cart, setCart] = useState<CartDto | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+    const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
 
     const userId = session?.user ? (session.user).id : null;
     const token = session?.accessToken;
@@ -222,7 +226,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     };
 
     return (
-        <CartContext.Provider value={{ cart, loading: loading || status === 'loading', addToCart, removeFromCart, refreshCart, clearCart }}>
+        <CartContext.Provider value={{ cart, loading: loading || status === 'loading', addToCart, removeFromCart, refreshCart, clearCart, isCartOpen, openCart: () => setIsCartOpen(true), closeCart: () => setIsCartOpen(false) }}>
             {children}
         </CartContext.Provider>
     );

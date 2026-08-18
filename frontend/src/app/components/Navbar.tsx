@@ -6,7 +6,7 @@ import { useCart } from '@/app/context/CartContext';
 
 export default function Navbar() {
     const { data: session } = useSession();
-    const { cart } = useCart();
+    const { cart, openCart } = useCart();
 
     const itemsCount = cart?.items.reduce((acc, item) => acc + item.quantity, 0) || 0;
 
@@ -21,16 +21,33 @@ export default function Navbar() {
 
             {/* LINKI I PROFIL */}
             <div className="flex items-center gap-6">
+                {/* NAWIGACJA (desktop) */}
+                <div className="hidden items-center gap-6 lg:flex">
+                    <a href="/#produkty" className="text-sm font-medium text-neutral-300 transition-colors hover:text-amber-400">
+                        Oferta
+                    </a>
+                    <Link href="/wynajem" className="text-sm font-medium text-neutral-300 transition-colors hover:text-amber-400">
+                        Wynajem
+                    </Link>
+                    <Link href="/serwis" className="text-sm font-medium text-neutral-300 transition-colors hover:text-amber-400">
+                        Serwis
+                    </Link>
+                </div>
+
                 {/* KOSZYK */}
-                <Link href="/cart" className="relative group p-2 hover:text-emerald-400 transition-colors flex items-center gap-2">
+                <button
+                    onClick={() => openCart()}
+                    className="relative group p-2 hover:text-amber-400 transition-colors flex items-center gap-2"
+                    aria-label="Otwórz koszyk"
+                >
                     <span className="text-xl">🛒</span>
                     <span className="text-sm font-medium hidden sm:inline">Koszyk</span>
                     {itemsCount > 0 && (
-                        <span className="absolute -top-1 -right-1 bg-emerald-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
+                        <span className="absolute -top-1 -right-1 bg-amber-500 text-slate-950 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
               {itemsCount}
             </span>
                     )}
-                </Link>
+                </button>
 
                 <div className="h-6 w-px bg-neutral-800 hidden sm:block"></div>
 
@@ -57,7 +74,7 @@ export default function Navbar() {
                         </Link>
                         <button
                             onClick={() => signIn()}
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-md text-sm font-semibold shadow-md shadow-emerald-950/40 transition-all"
+                            className="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2 rounded-md text-sm font-semibold shadow-md shadow-amber-950/40 transition-all"
                         >
                             Zaloguj się
                         </button>

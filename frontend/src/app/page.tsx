@@ -1,18 +1,16 @@
-import PromoBanner from "@/app/components/PromoBanner";
-import ServicesBanner from "@/app/components/ServicesBanner";
-import TrustBar from "@/app/components/FeatureBar";
+import { Suspense } from "react";
 import { getProducts } from "@/app/services/productService";
 import Hero from "@/app/components/Hero";
 import CategoryGrid from "@/app/components/CategoryGrid";
-import FeaturedProducts from "@/app/components/FeaturedProducts";
-import Testimonials from "@/app/components/Testimonials";
-import Newsletter from "@/app/components/Newsletter";
+import ShopSection from "@/app/components/ShopSection";
+import BrandMarquee from "@/app/components/BrandMarquee";
+import TrustBar from "@/app/components/FeatureBar";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Sklep EBE power | Transformatory i Osprzęt Elektryczny",
+    title: "TRAFO ENERGIA | Transformatory, rozdzielnice i osprzęt elektryczny",
     description:
-        "Kup profesjonalne transformatory, agregaty prądotwórcze, stacje ładowania EV i osprzęt z szybką dostawą. Sprawdź naszą ofertę!",
+        "Sklep z transformatorami, zasilaczami, rozdzielnicami, kablami i osprzętem elektrycznym. Darmowa dostawa od 500 zł, wysyłka w 24 h.",
 };
 
 export const dynamic = "force-dynamic";
@@ -20,16 +18,22 @@ export const dynamic = "force-dynamic";
 export default async function HomePage() {
     const products = await getProducts();
 
+    // Produkt promocyjny trafia do sekcji „Oferta tygodnia"
+    const featured =
+        products.find((p) => p.badge === "Promocja") ??
+        products.find((p) => p.oldPrice != null) ??
+        products[0] ??
+        null;
+
     return (
         <main className="min-h-screen bg-black text-white">
-            <Hero />
+            {featured && <Hero product={featured} />}
+            <CategoryGrid products={products} />
+            <Suspense fallback={null}>
+                <ShopSection products={products} />
+            </Suspense>
+            <BrandMarquee />
             <TrustBar />
-            <CategoryGrid />
-            <FeaturedProducts products={products} />
-            <PromoBanner />
-            <Testimonials />
-            <ServicesBanner />
-            <Newsletter />
         </main>
     );
 }

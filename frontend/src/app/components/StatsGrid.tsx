@@ -21,7 +21,7 @@ export default function StatsGrid({ badge, heading, items }: StatsGridProps) {
 
                 {/* 🏷️ Nagłówek sekcji */}
                 <div className="mb-10 text-center sm:text-left">
-          <span className="text-xs font-bold uppercase tracking-wider text-teal-400 block mb-2">
+          <span className="text-xs font-bold uppercase tracking-wider text-amber-400 block mb-2">
             {badge}
           </span>
                     <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
@@ -34,10 +34,10 @@ export default function StatsGrid({ badge, heading, items }: StatsGridProps) {
                     {items.map((item, index) => (
                         <div
                             key={index}
-                            className="bg-[#141618] border border-neutral-800 rounded-lg p-6 flex flex-col justify-between hover:border-teal-500/40 transition-all duration-300 shadow-md"
+                            className="bg-[#141618] border border-neutral-800 rounded-lg p-6 flex flex-col justify-between hover:border-amber-500/40 transition-all duration-300 shadow-md"
                         >
                             <div>
-                <span className="text-3xl sm:text-4xl font-extrabold text-teal-400 block mb-3">
+                <span className="text-3xl sm:text-4xl font-extrabold text-amber-400 block mb-3">
                   {item.value}
                 </span>
                                 <h3 className="text-base font-bold text-white mb-2">

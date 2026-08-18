@@ -66,7 +66,7 @@ export default function FormWrapper() {
                     onClick={() => {
                         window.location.href = `${window.location.origin}`;
                     }}
-                    className="inline-block bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded text-sm font-semibold transition-colors">
+                    className="inline-block bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded text-sm font-semibold transition-colors">
                     Wróć do sklepu
                 </button>
             </div>

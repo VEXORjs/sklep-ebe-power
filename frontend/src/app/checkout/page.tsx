@@ -41,7 +41,7 @@ export default function CheckoutPage() {
         <div className="min-h-screen bg-black text-white p-8">
             <div className="max-w-md mx-auto bg-neutral-900 border border-neutral-800 p-6 rounded-lg">
                 <h2 className="text-2xl font-bold mb-6">Podsumowanie płatności</h2>
-                <p className="text-neutral-400 mb-4">Kwota pobrana z koszyka: <span className="text-emerald-400 font-bold">{cart.cartTotal.toFixed(2)} PLN</span></p>
+                <p className="text-neutral-400 mb-4">Kwota pobrana z koszyka: <span className="text-amber-400 font-bold">{cart.cartTotal.toFixed(2)} PLN</span></p>
 
                 {clientSecret ? (
                     <Elements stripe={stripePromise} options={{ clientSecret }}>
@@ -85,7 +85,7 @@ function CheckoutForm() {
             <PaymentElement />
             <button
                 disabled={isProcessing || !stripe || !elements}
-                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded transition-colors disabled:opacity-50"
+                className="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded transition-colors disabled:opacity-50"
             >
                 {isProcessing ? 'Przetwarzanie...' : 'Zapłać bezpiecznie ze Stripe'}
             </button>

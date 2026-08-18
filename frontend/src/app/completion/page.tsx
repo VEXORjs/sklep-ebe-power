@@ -51,7 +51,7 @@ export default function CompletionPage() {
             <div className="max-w-md w-full bg-neutral-900 border border-neutral-800 rounded-lg p-8 text-center space-y-6">
                 {status === 'Sukces!' ? (
                     <>
-                        <div className="w-16 h-16 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center mx-auto text-3xl">
+                        <div className="w-16 h-16 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center mx-auto text-3xl">
                             ✓
                         </div>
                         <h1 className="text-2xl font-bold text-white">Dziękujemy za zamówienie!</h1>
