@@ -2,6 +2,7 @@
 
 import {useEffect, useState} from "react";
 import {Product} from "@/app/types/product";
+import Image from "next/image";
 
 interface ProductDetailProps {
     product: Product;
@@ -93,7 +94,7 @@ return (
                     className="col-span-3 cursor-pointer overflow-hidden rounded-base border"
                     onClick={() => handleOpenLightbox(0)}
                 >
-                    <img
+                    <Image
                         src={product.images[0]}
                         alt="Główne"
                         className="w-full h-full object-cover hover:scale-105 transition-transform"
@@ -107,7 +108,7 @@ return (
                             className="cursor-pointer overflow-hidden rounded-base border aspect-square"
                             onClick={() => handleOpenLightbox(index + 1)}
                         >
-                            <img
+                            <Image
                                 src={url}
                                 alt={`Miniatura ${index + 1}`}
                                 className="w-full h-full object-cover hover:opacity-80 transition-opacity"
@@ -135,7 +136,7 @@ return (
 
                     {/* 🖼️ Wyświetlanie mediów: Zdjęcie LUB Wideo */}
                     {activeTab === 'photos' ? (
-                        <img
+                        <Image
                             src={product.images[currentImageIndex]}
                             alt="Podgląd zdjęcia"
                             className="max-w-full max-h-[65vh] object-contain rounded-lg"

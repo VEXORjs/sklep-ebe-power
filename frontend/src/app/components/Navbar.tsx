@@ -17,6 +17,8 @@ export default function Navbar() {
             <Link href="/" className="flex items-center h-11 w-auto">
                 <Image src={"https://iyugrhskjjyegxppeqoj.supabase.co/storage/v1/object/public/product_images/Zrzut%20ekranu%202026-07-12%20165154.png"} alt={"logo"}
                      className="h-full w-auto object-contain"
+                       width={156}
+                       height={67}
                 />
             </Link>
 

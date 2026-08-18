@@ -10,7 +10,7 @@ export default function Footer() {
                     {/* 1. O firmie */}
                     <div className="space-y-4">
                         <h3 className="text-white text-lg font-bold tracking-wider">
-                            TRAFO ENERGIA ⚡
+                            EBE POWER
                         </h3>
                         <p className="text-xs text-neutral-400 leading-relaxed">
                             Dostarczamy profesjonalne transformatory, zasilacze, rozdzielnice, kable oraz nowoczesne rozwiązania z zakresu energii.
@@ -90,7 +90,7 @@ export default function Footer() {
                             </li>
                             <li>
                                 <span className="text-neutral-200">E-mail:</span>{' '}
-                                <a href="mailto:kontakt@trafo-energia.pl" className="text-emerald-400 hover:underline">
+                                <a href="mailto:kontakt@ebe-power.pl" className="text-emerald-400 hover:underline">
                                     kontakt@trafo-energia.pl
                                 </a>
                             </li>
@@ -109,7 +109,7 @@ export default function Footer() {
             {/* ⚖️ Dolny pasek (Prawa autorskie) */}
             <div className="border-t border-neutral-800 bg-[#0d0e10] py-4">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-neutral-400 gap-2">
-                    <p>© {new Date().getFullYear()} TRAFO ENERGIA (trafo-energia.pl). Wszelkie prawa zastrzeżone.</p>
+                    <p>© {new Date().getFullYear()} TRAFO ENERGIA (ebe-power.pl). Wszelkie prawa zastrzeżone.</p>
                     <p>Bezpieczne zasilanie dla Twojego biznesu ⚡</p>
                 </div>
             </div>

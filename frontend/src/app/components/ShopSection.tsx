@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import {usePathname, useSearchParams, useRouter} from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Heart, Search, SlidersHorizontal, Star, X } from "lucide-react";
@@ -38,12 +38,15 @@ function skuOf(p: Product): string {
 }
 
 export default function ShopSection({ products }: ShopSectionProps) {
-    const searchParams = useSearchParams();
 
     const [query, setQuery] = useState("");
     const [category, setCategory] = useState<string>("Wszystkie");
     const [sort, setSort] = useState<SortKey>("popularnosc");
     const [wishlist, setWishlist] = useState<number[]>([]);
+
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
 
     // Inicjalna kategoria z linku na karcie kategorii
     useEffect(() => {
@@ -114,6 +117,24 @@ export default function ShopSection({ products }: ShopSectionProps) {
         }
     }, [products, query, category, sort]);
 
+    const handleCategorySelect = (selected: string) => {
+
+        const params = new URLSearchParams(searchParams.toString());
+
+        if (category === selected || selected === "Wszystkie") {
+            params.delete("kategoria");
+            setCategory("Wszystkie");
+        }
+        else {
+            params.set("kategoria", selected);
+            setCategory(selected);
+        }
+
+        const queryString = params.toString();
+        const targetURL = queryString ? `${pathname}?${queryString}` : pathname;
+        router.replace(targetURL, { scroll: false });
+    };
+
     return (
         <section id="produkty" className="mx-auto w-full max-w-7xl scroll-mt-24 px-4 py-16 sm:px-6 lg:px-8">
             {/* Nagłówek sekcji */}
@@ -172,7 +193,7 @@ export default function ShopSection({ products }: ShopSectionProps) {
                 {categories.map((cat) => (
                     <button
                         key={cat}
-                        onClick={() => setCategory(cat)}
+                        onClick={() => handleCategorySelect(cat)}
                         className={`rounded-full border px-4 py-2 text-xs font-semibold transition-colors ${
                             category === cat
                                 ? "border-emerald-500 bg-emerald-500 text-slate-950"
