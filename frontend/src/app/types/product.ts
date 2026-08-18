@@ -7,4 +7,10 @@ export interface Product {
     images: string[];
     videos: string[];
     parameters: string;
+    category?: string;
+    sku?: string;
+    oldPrice?: number;
+    badge?: string;
+    rating?: number;
+    reviews?: number;
 }

@@ -6,17 +6,17 @@ TRUNCATE TABLE product_images RESTART IDENTITY CASCADE;
 TRUNCATE TABLE products RESTART IDENTITY CASCADE;
 
 -- 3. Wstawianie produktów (ID generowane sekwencyjnie 1..10)
-INSERT INTO products (name, price, stock, description) VALUES
-                                                           ('Transformator sieciowy TS40', 89.99, 15, 'Klasyczny transformator sieciowy do układów zasilania niskonapięciowego.'),
-                                                           ('Zasilacz impulsowy 12V 5A', 45.50, 30, 'Stabilizowany zasilacz impulsowy w obudowie modułowej na szynę DIN.'),
-                                                           ('Przewód instalacyjny miedziany 3x2.5mm² (1m)', 5.20, 250, 'Jednożyłowy przewód miedziany do instalacji elektroenergetycznych.'),
-                                                           ('Agregat prądotwórczy inwertorowy 3.5 kW', 2499.00, 8, 'Cichy agregat prądotwórczy z pełną sinusoidą, bezpieczny dla elektroniki.'),
-                                                           ('Stacja ładowania EV Wallbox 22 kW', 3199.00, 5, 'Trójfazowa naścienna stacja ładowania samochodów elektrycznych z gniazdem Typu 2.'),
-                                                           ('Transformator toroidalny 150VA 230V/24V', 139.00, 12, 'Wysokosprawny transformator toroidalny o niskim poziomie hałasu i strat własnych.'),
-                                                           ('Przetwornica napięcia 12V/230V 1000W/2000W', 389.90, 18, 'Przetwornica z czystym sinusem przeznaczona do zasilania urządzeń indukcyjnych.'),
-                                                           ('Miernik cyfrowy True RMS z cęgami', 215.00, 20, 'Profesjonalny multimetr cęgowy do pomiaru prądu przemiennego i stałego.'),
-                                                           ('Przekaźnik półprzewodnikowy SSR 40A', 64.50, 45, 'Bezstykowe sterowanie obciążeniami przemysłowymi o wysokiej częstotliwości łączeń.'),
-                                                           ('Autotransformator regulowany 0-250V 2kVA', 899.00, 4, 'Laboratoryjny autotransformator ze wskaźnikiem analogowym i płynną regulacją.');
+INSERT INTO products (name, price, old_price, stock, description, category, sku) VALUES
+                                                           ('Transformator sieciowy TS40', 89.99, 109.99, 15, 'Klasyczny transformator sieciowy do układów zasilania niskonapięciowego.', 'Transformatory', 'TRA-0001'),
+                                                           ('Zasilacz impulsowy 12V 5A', 45.50, NULL, 30, 'Stabilizowany zasilacz impulsowy w obudowie modułowej na szynę DIN.', 'Zasilacze', 'TRA-0002'),
+                                                           ('Przewód instalacyjny miedziany 3x2.5mm² (1m)', 5.20, NULL, 250, 'Jednożyłowy przewód miedziany do instalacji elektroenergetycznych.', 'Kable', 'TRA-0003'),
+                                                           ('Agregat prądotwórczy inwertorowy 3.5 kW', 2499.00, NULL, 8, 'Cichy agregat prądotwórczy z pełną sinusoidą, bezpieczny dla elektroniki.', 'Agregaty', 'TRA-0004'),
+                                                           ('Stacja ładowania EV Wallbox 22 kW', 3199.00, NULL, 5, 'Trójfazowa naścienna stacja ładowania samochodów elektrycznych z gniazdem Typu 2.', 'Stacje ładowania EV', 'TRA-0005'),
+                                                           ('Transformator toroidalny 150VA 230V/24V', 139.00, NULL, 12, 'Wysokosprawny transformator toroidalny o niskim poziomie hałasu i strat własnych.', 'Transformatory', 'TRA-0006'),
+                                                           ('Przetwornica napięcia 12V/230V 1000W/2000W', 389.90, NULL, 18, 'Przetwornica z czystym sinusem przeznaczona do zasilania urządzeń indukcyjnych.', 'Zasilacze', 'TRA-0007'),
+                                                           ('Miernik cyfrowy True RMS z cęgami', 215.00, NULL, 20, 'Profesjonalny multimetr cęgowy do pomiaru prądu przemiennego i stałego.', 'Liczniki i mierniki', 'TRA-0008'),
+                                                           ('Przekaźnik półprzewodnikowy SSR 40A', 64.50, NULL, 45, 'Bezstykowe sterowanie obciążeniami przemysłowymi o wysokiej częstotliwości łączeń.', 'Rozdzielnice i zabezpieczenia', 'TRA-0009'),
+                                                           ('Autotransformator regulowany 0-250V 2kVA', 899.00, NULL, 4, 'Laboratoryjny autotransformator ze wskaźnikiem analogowym i płynną regulacją.', 'Transformatory', 'TRA-0010');
 
 -- 4. Zdjęcia produktów powiązane przez product_id
 INSERT INTO product_images (product_id, image_url) VALUES

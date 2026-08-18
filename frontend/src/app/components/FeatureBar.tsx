@@ -1,45 +1,49 @@
-import React from 'react';
-import { Award, Globe, Headphones, ShieldCheck } from 'lucide-react';
+import React from "react";
+import { Headphones, RotateCcw, ShieldCheck, Truck } from "lucide-react";
 
 const features = [
     {
-        icon: Award,
-        title: 'Certyfikat jakości ISO',
+        icon: Truck,
+        title: "Dostawa w 24 h",
+        subtitle: "Wysyłka tego samego dnia",
     },
     {
-        icon: Globe,
-        title: 'Szybka wysyłka w Polsce',
+        icon: RotateCcw,
+        title: "Zwroty do 14 dni",
+        subtitle: "Bez podawania przyczyny",
     },
     {
         icon: Headphones,
-        title: 'Wsparcie i serwis techniczny',
+        title: "Wsparcie techniczne",
+        subtitle: "Inżynierowie na infolinii",
     },
     {
         icon: ShieldCheck,
-        title: 'Autoryzowany dystrybutor',
+        title: "Oryginalne produkty",
+        subtitle: "Gwarancja producenta",
     },
 ];
 
 export default function TrustBar() {
     return (
-        <section className="w-full bg-gradient-to-r from-teal-600 via-teal-800 to-slate-950 py-5 px-4 text-white border-y border-neutral-800">
-            <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 items-center justify-between">
-                {features.map((item, index) => {
-                    const Icon = item.icon;
-                    return (
-                        <div
-                            key={index}
-                            className="flex items-center gap-3 justify-start md:justify-center"
-                        >
-                            <div className="text-teal-200 shrink-0">
-                                <Icon className="w-7 h-7 stroke-[1.5]" />
-                            </div>
-                            <span className="text-xs sm:text-sm font-semibold tracking-wide leading-tight">
-                {item.title}
-              </span>
+        <section className="w-full border-b border-neutral-800 bg-[#0d0f10] py-6">
+            <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 sm:px-6 md:grid-cols-4 lg:px-8">
+                {features.map((item) => (
+                    <div
+                        key={item.title}
+                        className="flex items-center gap-3 justify-start md:justify-center"
+                    >
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-amber-500/10 text-amber-400">
+                            <item.icon className="h-5 w-5 stroke-[1.5]" />
                         </div>
-                    );
-                })}
+                        <div>
+                            <p className="text-xs font-bold tracking-wide text-white sm:text-sm">
+                                {item.title}
+                            </p>
+                            <p className="text-[10px] text-neutral-500 sm:text-xs">{item.subtitle}</p>
+                        </div>
+                    </div>
+                ))}
             </div>
         </section>
     );

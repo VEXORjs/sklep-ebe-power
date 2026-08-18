@@ -10,10 +10,10 @@ export default function Footer() {
                     {/* 1. O firmie */}
                     <div className="space-y-4">
                         <h3 className="text-white text-lg font-bold tracking-wider">
-                            TRAFO ⚡
+                            TRAFO ENERGIA ⚡
                         </h3>
                         <p className="text-xs text-neutral-400 leading-relaxed">
-                            Dostarczamy profesjonalne agregaty prądotwórcze, transformatory oraz nowoczesne rozwiązania z zakresu energii.
+                            Dostarczamy profesjonalne transformatory, zasilacze, rozdzielnice, kable oraz nowoczesne rozwiązania z zakresu energii.
                         </p>
                         <div className="text-xs text-neutral-400 space-y-1">
                             <p>NIP: 000-000-00-00</p>
@@ -28,22 +28,22 @@ export default function Footer() {
                         </h4>
                         <ul className="space-y-2 text-xs">
                             <li>
-                                <Link href="/kategoria/agregaty" className="hover:text-emerald-400 transition-colors">
+                                <Link href="/kategoria/agregaty" className="hover:text-amber-400 transition-colors">
                                     Agregaty prądotwórcze
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/kategoria/stacje-ladowania" className="hover:text-emerald-400 transition-colors">
+                                <Link href="/kategoria/stacje-ladowania" className="hover:text-amber-400 transition-colors">
                                     Stacje ładowania EV
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/kategoria/transformatory" className="hover:text-emerald-400 transition-colors">
+                                <Link href="/kategoria/transformatory" className="hover:text-amber-400 transition-colors">
                                     Transformatory
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/kategoria/akcesoria" className="hover:text-emerald-400 transition-colors">
+                                <Link href="/kategoria/akcesoria" className="hover:text-amber-400 transition-colors">
                                     Akcesoria i osprzęt
                                 </Link>
                             </li>
@@ -57,22 +57,22 @@ export default function Footer() {
                         </h4>
                         <ul className="space-y-2 text-xs">
                             <li>
-                                <Link href="/regulamin" className="hover:text-emerald-400 transition-colors">
+                                <Link href="/regulamin" className="hover:text-amber-400 transition-colors">
                                     Regulamin sklepu
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/polityka-prywatnosci" className="hover:text-emerald-400 transition-colors">
+                                <Link href="/polityka-prywatnosci" className="hover:text-amber-400 transition-colors">
                                     Polityka prywatności
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/dostawa" className="hover:text-emerald-400 transition-colors">
+                                <Link href="/dostawa" className="hover:text-amber-400 transition-colors">
                                     Dostawa i płatności
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/zwroty" className="hover:text-emerald-400 transition-colors">
+                                <Link href="/zwroty" className="hover:text-amber-400 transition-colors">
                                     Zwroty i reklamacje
                                 </Link>
                             </li>
@@ -90,8 +90,8 @@ export default function Footer() {
                             </li>
                             <li>
                                 <span className="text-neutral-200">E-mail:</span>{' '}
-                                <a href="mailto:trafo@gmail.com" className="text-emerald-400 hover:underline">
-                                    trafo@gmail.com
+                                <a href="mailto:kontakt@trafo-energia.pl" className="text-amber-400 hover:underline">
+                                    kontakt@trafo-energia.pl
                                 </a>
                             </li>
                             <li>
@@ -109,7 +109,7 @@ export default function Footer() {
             {/* ⚖️ Dolny pasek (Prawa autorskie) */}
             <div className="border-t border-neutral-800 bg-[#0d0e10] py-4">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-neutral-400 gap-2">
-                    <p>© {new Date().getFullYear()} TRAFO (ebe-power.pl). Wszelkie prawa zastrzeżone.</p>
+                    <p>© {new Date().getFullYear()} TRAFO ENERGIA (trafo-energia.pl). Wszelkie prawa zastrzeżone.</p>
                     <p>Bezpieczne zasilanie dla Twojego biznesu ⚡</p>
                 </div>
             </div>

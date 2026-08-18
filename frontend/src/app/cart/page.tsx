@@ -51,7 +51,7 @@ export default function CartPage() {
                                 </div>
 
                                 <div className="flex items-center gap-6">
-                  <span className="text-lg font-semibold text-emerald-400">
+                  <span className="text-lg font-semibold text-amber-400">
                     {item.totalPrice.toFixed(2)} PLN
                   </span>
                                     <button
@@ -77,12 +77,12 @@ export default function CartPage() {
 
                         <div className="flex justify-between text-xl font-bold border-t border-neutral-800 pt-4">
                             <span>Do zapłaty:</span>
-                            <span className="text-emerald-400">{cart.cartTotal.toFixed(2)} PLN</span>
+                            <span className="text-amber-400">{cart.cartTotal.toFixed(2)} PLN</span>
                         </div>
 
                         <Link
                             href="/checkout"
-                            className="w-full block text-center bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-md transition-colors shadow-md"
+                            className="w-full block text-center bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-4 rounded-md transition-colors shadow-md"
                         >
                             Przejdź do płatności
                         </Link>

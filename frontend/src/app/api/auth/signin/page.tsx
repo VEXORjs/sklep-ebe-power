@@ -59,7 +59,7 @@ export default function SignInPage() {
                         name="email"
                         autoComplete="username"
                         required
-                        className="w-full bg-black border border-neutral-800 rounded p-2 text-white focus:border-emerald-500 outline-none"
+                        className="w-full bg-black border border-neutral-800 rounded p-2 text-white focus:border-amber-500 outline-none"
                         placeholder="user@domain.com"
                     />
                 </div>
@@ -70,13 +70,13 @@ export default function SignInPage() {
                         name="password"
                         autoComplete="current-password"
                         required
-                        className="w-full bg-black border border-neutral-800 rounded p-2 text-white focus:border-emerald-500 outline-none"
+                        className="w-full bg-black border border-neutral-800 rounded p-2 text-white focus:border-amber-500 outline-none"
                     />
                 </div>
                 <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 font-bold py-2 rounded transition-colors"
+                    className="w-full bg-amber-600 hover:bg-amber-700 disabled:opacity-50 font-bold py-2 rounded transition-colors"
                 >
                     {loading ? 'Logowanie...' : 'Zaloguj się'}
                 </button>

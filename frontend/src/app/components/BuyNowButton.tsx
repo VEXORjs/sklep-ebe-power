@@ -32,7 +32,7 @@ export default function BuyNowButton({ product }: BuyNowButtonProps) {
         <button
             onClick={handleBuyNow}
             disabled={product.stock === 0 || isProcessing}
-            className="bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold py-2 px-3 rounded transition-colors disabled:opacity-50 min-w-[110px]"
+            className="bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold py-2 px-3 rounded transition-colors disabled:opacity-50 min-w-[110px]"
         >
             {isProcessing ? (
                 <Loading message="Przekierowanie..." inline />
