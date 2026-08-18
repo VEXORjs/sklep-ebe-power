@@ -2,6 +2,8 @@ import {notFound} from "next/navigation";
 import ProductGallery from "@/app/components/ProductGallery";
 import Link from "next/link";
 import { DEMO_PRODUCTS } from "@/app/data/demoProducts";
+import { parseParameters } from "@/app/lib/product";
+import { categorySlugOf } from "@/app/data/categories";
 
 interface PageProps {
     params: Promise<{id: string}>;
@@ -39,6 +41,9 @@ export default async function ProductPage({params} : PageProps) {
         notFound();
     }
 
+    const specs = parseParameters(product.parameters);
+    const categorySlug = categorySlugOf(product);
+
     return (
         <div className="min-h-screen bg-black text-white py-12 px-4 sm:px-6 lg:px-8">
             <div className="relative max-w-4xl mx-auto bg-neutral-900 border border-neutral-800 rounded-lg p-8">
@@ -48,6 +53,21 @@ export default async function ProductPage({params} : PageProps) {
                 >
                     <span className="text-xl font-light">🡐</span>
                 </Link>
+                {/* Okruszki */}
+                <nav aria-label="Okruszki" className="mb-4 ml-12 flex flex-wrap items-center gap-1.5 text-xs text-neutral-500">
+                    <Link href="/" className="transition-colors hover:text-emerald-400">Strona główna</Link>
+                    <span>/</span>
+                    <Link href="/kategoria" className="transition-colors hover:text-emerald-400">Kategorie</Link>
+                    {product.category && categorySlug && (
+                        <>
+                            <span>/</span>
+                            <Link href={`/kategoria/${categorySlug}`} className="transition-colors hover:text-emerald-400">
+                                {product.category}
+                            </Link>
+                        </>
+                    )}
+                </nav>
+
                 {/* Nazwa i Cena */}
                 <h1 className="text-3xl font-extrabold mb-2">{product.name}</h1>
                 <p className="text-2xl font-semibold text-emerald-400 mb-6">{product.price.toFixed(2)} PLN</p>
@@ -63,16 +83,16 @@ export default async function ProductPage({params} : PageProps) {
                 </div>
 
                 {/* Parametry techniczne */}
-                {product.parameters && Object.keys(product.parameters).length > 0 && (
+                {specs.length > 0 && (
                     <div className="mb-8">
                         <h2 className="text-xl font-bold mb-3">Parametry techniczne ⚙️</h2>
                         <div className="border border-neutral-800 rounded-lg overflow-hidden">
                             <table className="min-w-full divide-y divide-neutral-800">
                                 <tbody className="divide-y divide-neutral-800 bg-neutral-950">
-                                {Object.entries(product.parameters).map(([key, value]) => (
-                                    <tr key={key}>
-                                        <td className="px-6 py-4 text-sm font-medium text-neutral-400 border-r border-neutral-800">{key}</td>
-                                        <td className="px-6 py-4 text-sm text-neutral-200">{value as string}</td>
+                                {specs.map((spec) => (
+                                    <tr key={`${spec.label}-${spec.value}`}>
+                                        <td className="px-6 py-4 text-sm font-medium text-neutral-400 border-r border-neutral-800">{spec.label}</td>
+                                        <td className="px-6 py-4 text-sm text-neutral-200">{spec.value}</td>
                                     </tr>
                                 ))}
                                 </tbody>
