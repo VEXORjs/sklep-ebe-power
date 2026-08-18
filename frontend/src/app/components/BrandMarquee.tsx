@@ -14,7 +14,7 @@ const brands = [
 export default function BrandMarquee() {
     return (
         <section className="w-full overflow-hidden border-y border-neutral-800 bg-[#0d0f10] py-8">
-            <p className="mb-6 text-center text-[10px] font-bold uppercase tracking-[0.35em] text-neutral-500">
+            <p className="mb-6 text-center text-[10px] font-bold uppercase tracking-[0.35em] text-neutral-400">
                 Oryginalne produkty wiodących producentów
             </p>
 
@@ -29,7 +29,7 @@ export default function BrandMarquee() {
                             {brands.map((brand) => (
                                 <span
                                     key={`${half}-${brand}`}
-                                    className="whitespace-nowrap text-xl font-extrabold uppercase tracking-[0.2em] text-neutral-600 transition-colors hover:text-emerald-400"
+                                    className="whitespace-nowrap text-xl font-extrabold uppercase tracking-[0.2em] text-neutral-400 transition-colors hover:text-emerald-400"
                                 >
                                     {brand}
                                 </span>

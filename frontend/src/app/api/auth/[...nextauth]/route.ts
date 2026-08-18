@@ -2,7 +2,7 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 
-const API_URL = process.env.API_URL;
+const API_URL = process.env.API_URL || "http://localhost:8080";
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -58,7 +58,7 @@ export const authOptions: NextAuthOptions = {
             if (user) {
                 token.id = user.id;
                 token.email = user.email;
-                token.springToken = (user as any).token;
+                token.springToken = user.token;
             }
             return token;
         },
@@ -99,7 +99,7 @@ export const authOptions: NextAuthOptions = {
                     if (response.ok) {
                         const data = await response.json();
                         user.id = data.id;
-                        (user as any).springToken = data.token; // Zakładam, że Twój endpoint ze Springa zwraca też wygenerowany token JWT dla tego użytkownika
+                        user.token = data.token; // Zakładam, że Twój endpoint ze Springa zwraca też wygenerowany token JWT dla tego użytkownika
                         return true;
                     }
 

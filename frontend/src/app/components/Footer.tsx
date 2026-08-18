@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import {Mail, Phone} from "lucide-react";
 
 export default function Footer() {
     return (
@@ -16,8 +17,8 @@ export default function Footer() {
                             Dostarczamy profesjonalne transformatory, zasilacze, rozdzielnice, kable oraz nowoczesne rozwiązania z zakresu energii.
                         </p>
                         <div className="text-xs text-neutral-400 space-y-1">
-                            <p>NIP: 000-000-00-00</p>
-                            <p>REGON: 000000000</p>
+                            <p>NIP: 769 183 05 28</p>
+                            <p>REGON: 384398249</p>
                         </div>
                     </div>
 
@@ -86,16 +87,25 @@ export default function Footer() {
                         </h4>
                         <ul className="space-y-2 text-xs text-neutral-400">
                             <li>
-                                <span className="text-neutral-200">Adres:</span> ul. Przykładowa 12, 00-000 Warszawa
+                                <span className="text-neutral-200">Adres:</span> Borki 10, 97-400 Bełchatów
                             </li>
                             <li>
-                                <span className="text-neutral-200">E-mail:</span>{' '}
-                                <a href="mailto:kontakt@ebe-power.pl" className="text-emerald-400 hover:underline">
-                                    kontakt@trafo-energia.pl
-                                </a>
+                                <Link
+                                    href="mailto:kontakt@ebe-power.pl"
+                                    className="flex items-center gap-1.5 transition-colors hover:text-emerald-400"
+                                >
+                                    <Mail className="h-3 w-3 text-emerald-500" />
+                                    kontakt@ebe-power.pl
+                                </Link>
                             </li>
                             <li>
-                                <span className="text-neutral-200">Telefon:</span> +48 000 000 000
+                                <Link
+                                    href="tel:+48123456789"
+                                    className="flex items-center gap-1.5 transition-colors hover:text-emerald-400"
+                                >
+                                    <Phone className="h-3 w-3 text-emerald-500" />
+                                    +48 88888 32 32
+                                </Link>
                             </li>
                             <li>
                                 <span className="text-neutral-200">Godziny:</span> Pn–Pt: 8:00 – 16:00
@@ -109,8 +119,8 @@ export default function Footer() {
             {/* ⚖️ Dolny pasek (Prawa autorskie) */}
             <div className="border-t border-neutral-800 bg-[#0d0e10] py-4">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-neutral-400 gap-2">
-                    <p>© {new Date().getFullYear()} TRAFO ENERGIA (ebe-power.pl). Wszelkie prawa zastrzeżone.</p>
-                    <p>Bezpieczne zasilanie dla Twojego biznesu ⚡</p>
+                    <p>® {new Date().getFullYear()} TRAFO ENERGIA (ebe-power.pl). Wszelkie prawa zastrzeżone.</p>
+                    <p>Bezpieczne zasilanie dla Twojego biznesu</p>
                 </div>
             </div>
         </footer>

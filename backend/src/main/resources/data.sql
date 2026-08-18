@@ -32,7 +32,7 @@ INSERT INTO product_images (product_id, image_url) VALUES
                                                        -- ID 5: Wallbox EV
                                                        (5, 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&q=80&w=800'),
                                                        -- ID 6: Toroid
-                                                       (6, 'https://unsplash.com/photos/two-square-blue-led-lights-ImcUkZ72oUs'),
+                                                       (6, 'https://images.unsplash.com/photo-1589276534126-adef63a95e05?q=80&w=1170&auto=format&fit=crop&q=80&w=800'),
                                                        -- ID 7: Przetwornica
                                                        (7, 'https://images.unsplash.com/photo-1581092162384-8987c1d64718?auto=format&fit=crop&q=80&w=800'),
                                                        -- ID 8: Miernik
