@@ -2,6 +2,9 @@
 TRUNCATE TABLE product_parameters RESTART IDENTITY CASCADE;
 TRUNCATE TABLE product_images RESTART IDENTITY CASCADE;
 
+-- 2. Czyszczenie tabeli głównej
+TRUNCATE TABLE products RESTART IDENTITY CASCADE;
+
 -- 3. Wstawianie produktów (ID generowane sekwencyjnie 1..10)
 INSERT INTO products (name, price, old_price, stock, description, category, sku) VALUES
                                                            ('Transformator sieciowy TS40', 89.99, 109.99, 15, 'Klasyczny transformator sieciowy do układów zasilania niskonapięciowego.', 'Transformatory', 'TRA-0001'),
