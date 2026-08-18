@@ -50,7 +50,6 @@ interface ProductCardProps {
 const BADGE_STYLE: Record<string, string> = {
     Promocja: "bg-red-600 text-white",
     Nowość: "bg-emerald-500 text-slate-950",
-    Nowosc: "bg-emerald-500 text-slate-950",
     Bestseller: "bg-neutral-100 text-black",
     Wyprzedaż: "bg-amber-500 text-slate-950",
 };
