@@ -40,6 +40,16 @@ FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
+# NEXTAUTH_URL musi być ustawione RÓWNIEŻ tutaj (stage "runner"), a nie tylko
+# w stage "builder". NextAuth czyta je w RUNTIME i buduje z niego redirect_uri
+# wysyłane do Google (https://<domena>/api/auth/callback/google). Bez tej
+# zmiennej w kontenerze NextAuth zgaduje adres po nagłówku Host żądania — gdy
+# aplikacja jest wywoływana przez adres *.run.app (np. health-check Google),
+# redirect_uri nie zgadza się z tym zarejestrowanym w Google Cloud Console
+# i dostajemy błąd 400: redirect_uri_mismatch.
+ARG NEXTAUTH_URL=https://ebe-power.pl
+ENV NEXTAUTH_URL=$NEXTAUTH_URL
+
 # Kopiujemy tylko niezbędne pliki statyczne i wygenerowany serwer standalone
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static

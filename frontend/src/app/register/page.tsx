@@ -3,9 +3,11 @@
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { Loader2, Lock, Mail, User } from "lucide-react";
 
 import AuthShell from "@/app/components/AuthShell";
+import GoogleSignInButton from "@/app/components/GoogleSignInButton";
 
 export default function RegisterPage() {
     const [name, setName] = useState("");
@@ -13,6 +15,7 @@ export default function RegisterPage() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [googleLoading, setGoogleLoading] = useState(false);
     const router = useRouter();
 
     const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
@@ -43,6 +46,15 @@ export default function RegisterPage() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleGoogle = () => {
+        if (loading || googleLoading) return;
+        setError("");
+        setGoogleLoading(true);
+        // Google nie rozróżnia rejestracji od logowania — pierwsze zalogowanie
+        // automatycznie tworzy konto (backend robi to w /api/auth/oauth-success).
+        void signIn("google", { callbackUrl: "/" });
     };
 
     return (
@@ -134,13 +146,29 @@ export default function RegisterPage() {
 
                     <button
                         type="submit"
-                        disabled={loading}
+                        disabled={loading || googleLoading}
                         className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-500 py-3 text-sm font-extrabold text-slate-950 shadow-lg shadow-emerald-950/40 transition-colors hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         {loading && <Loader2 className="h-4 w-4 animate-spin" />}
                         {loading ? "Tworzenie konta..." : "Załóż konto"}
                     </button>
                 </form>
+
+                <div className="relative flex items-center">
+                    <div className="flex-grow border-t border-neutral-800" />
+                    <span className="flex-shrink px-3 text-[11px] font-semibold uppercase tracking-wider text-neutral-500">
+                        lub
+                    </span>
+                    <div className="flex-grow border-t border-neutral-800" />
+                </div>
+
+                <GoogleSignInButton
+                    loading={googleLoading}
+                    disabled={loading}
+                    onClick={handleGoogle}
+                    label="Zarejestruj się z Google"
+                    loadingLabel="Przekierowanie do Google..."
+                />
 
                 <p className="text-center text-sm text-neutral-400">
                     Masz już konto?{" "}
