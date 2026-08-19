@@ -1,8 +1,23 @@
+# Substitutions są definiowane w ustawieniach triggera Cloud Build.
+# _APP_URL MUSI wskazywać na produkcyjną domenę (https://ebe-power.pl),
+# nigdy na wewnętrzny adres *.run.app — z niego NextAuth buduje redirect_uri
+# wysyłane do Google podczas logowania OAuth.
 substitutions:
   _APP_URL: 'https://ebe-power.pl'
 
+# WAŻNE — dlaczego "SHA" każdego buildu jest inne:
+# Docker buduje obrazy content-addressed, więc digest (SHA256) zmienia się przy
+# KAŻDYM buildzie — to normalne i tak ma być. Problem pojawia się dopiero wtedy,
+# gdy serwis Cloud Run wskazuje na digest (sha256:...) zamiast na stały tag.
+# Poniżej obraz dostaje DWA tagi:
+#   * :v1         — stały, "ruchomy" tag. To na niego ma wskazywać Cloud Run
+#                   (deploy zawsze bierze najnowszy obraz z tego tagu).
+#   * :$SHORT_SHA — unikalny tag per build (7 znaków commita), do podglądu,
+#                   wycofań (rollback) i identyfikacji konkretnej wersji.
+# Dzięki temu serwis nigdy nie ma "złego SHA" — śledzi :v1, a :$SHORT_SHA
+# zostaje jako etykieta danej wersji.
 steps:
-  # Budowanie obrazu Docker z argumentami (ARG)
+  # Budowanie obrazu Docker z argumentami (ARG) i dwoma tagami
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
@@ -22,11 +37,15 @@ steps:
       - 'NEXTAUTH_URL=$_APP_URL'
       - '-t'
       - 'europe-west1-docker.pkg.dev/$PROJECT_ID/sklep-repo/sklep-frontend:v1'
+      - '-t'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/sklep-repo/sklep-frontend:$SHORT_SHA'
       - './frontend'
 
 options:
   logging: CLOUD_LOGGING_ONLY
 
-# Zapisanie gotowego obrazu w Artifact Registry (Google)
+# Obrazy zapisane w Artifact Registry po buildzie.
+# :v1 jest pierwszy — to z niego Cloud Run bierze nową rewizję po pushu.
 images:
   - 'europe-west1-docker.pkg.dev/$PROJECT_ID/sklep-repo/sklep-frontend:v1'
+  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/sklep-repo/sklep-frontend:$SHORT_SHA'
