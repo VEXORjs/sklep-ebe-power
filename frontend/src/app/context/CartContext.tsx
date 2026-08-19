@@ -55,9 +55,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             try {
                 const res = await fetch(`${API_BASE_URL}`, {
                     method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                    headers: token
+                        ? { Authorization: `Bearer ${token}` }
+                        : {},
                 });
                 if (!res.ok) throw new Error(`Backend zwrócił kod błędu: ${res.status} ${res.statusText}`);
                 const data: CartDto = await res.json();
@@ -109,7 +109,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             const fetchCart = async () => {
                 try {
                     const res = await fetch(`${API_BASE_URL}`, {
-                        headers: { 'Authorization': `Bearer ${token}` }
+                        headers: token
+                            ? { Authorization: `Bearer ${token}` }
+                            : {},
                     });
                     if (!res.ok) throw new Error(`Błąd: ${res.status}`);
                     const data: CartDto = await res.json();

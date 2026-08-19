@@ -8,6 +8,21 @@ import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
 
 import { safeCallbackUrl } from "@/app/lib/auth-redirect";
 
+/** Polskie komunikaty dla błędów przekazywanych przez NextAuth w ?error=... */
+const AUTH_ERROR_MESSAGES: Record<string, string> = {
+    AccessDenied:
+        "Odmowa dostępu. Logowanie przez Google zostało odrzucone — spróbuj ponownie za chwilę lub użyj e-maila i hasła.",
+    OAuthSignin:
+        "Nie udało się rozpocząć logowania przez Google. Spróbuj ponownie.",
+    OAuthCallback:
+        "Logowanie przez Google zostało przerwane. Spróbuj ponownie.",
+    OAuthCreateAccount:
+        "Nie udało się utworzyć konta przez Google. Spróbuj ponownie.",
+    OAuthAccountNotLinked:
+        "Konto Google nie zostało połączone. Zaloguj się e-mailem i hasłem.",
+    Configuration: "Błąd konfiguracji logowania. Spróbuj ponownie później.",
+};
+
 export default function SignInForm() {
     const searchParams = useSearchParams();
     const { status } = useSession();
@@ -17,6 +32,15 @@ export default function SignInForm() {
         [searchParams]
     );
     const fromCheckout = callbackUrl.startsWith("/checkout");
+
+    const authError = useMemo(() => {
+        const code = searchParams.get("error");
+        if (!code) return null;
+        return (
+            AUTH_ERROR_MESSAGES[code] ??
+            "Nie udało się zalogować. Spróbuj ponownie."
+        );
+    }, [searchParams]);
 
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
@@ -93,6 +117,15 @@ export default function SignInForm() {
                         : "Wejdź na konto, żeby śledzić zamówienia i szybciej wracać do kasy."}
                 </p>
             </div>
+
+            {authError && (
+                <div
+                    role="alert"
+                    className="rounded-lg border border-amber-500/25 bg-amber-500/10 px-3 py-2.5 text-center text-xs font-medium text-amber-400"
+                >
+                    {authError}
+                </div>
+            )}
 
             {error && (
                 <div
