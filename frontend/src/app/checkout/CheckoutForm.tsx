@@ -8,6 +8,7 @@ import {
     useStripe,
 } from '@stripe/react-stripe-js';
 import { useState } from 'react';
+import { getSiteUrl } from '@/app/lib/site';
 
 export default function CheckoutForm() {
     const stripe = useStripe();
@@ -30,7 +31,7 @@ export default function CheckoutForm() {
             const { error } = await stripe.confirmPayment({
                 elements,
                 confirmParams: {
-                    return_url: `${window.location.origin}/completion`,
+                    return_url: `${getSiteUrl()}/completion`,
                 },
             });
 

@@ -10,7 +10,11 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**") // Zezwól na wszystkie endpointy
-                .allowedOrigins("http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:3001", "http://127.0.0.1:3001", "https://frontend-1078992546635.europe-west1.run.app")
+                .allowedOrigins(
+                        "http://localhost:3000", "http://127.0.0.1:3000",
+                        "http://localhost:3001", "http://127.0.0.1:3001",
+                        "https://frontend-1078992546635.europe-west1.run.app",
+                        "https://ebe-power.pl", "https://www.ebe-power.pl")
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
