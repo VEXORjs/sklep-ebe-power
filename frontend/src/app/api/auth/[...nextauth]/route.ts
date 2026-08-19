@@ -1,6 +1,7 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+import { safeCallbackUrl } from "@/app/lib/auth-redirect";
 
 const API_URL = process.env.API_URL || "http://localhost:8080";
 
@@ -111,11 +112,17 @@ export const authOptions: NextAuthOptions = {
             }
             return true;
         },
+        async redirect({ url, baseUrl }) {
+            // Zawsze sklejamy bazę z samą ścieżką — nigdy nie puszczamy
+            // pełnego URL-a jako ścieżki względnej ("/https://...").
+            const path = safeCallbackUrl(url, "/");
+            return `${baseUrl.replace(/\/$/, "")}${path}`;
+        },
     },
     secret: process.env.NEXTAUTH_SECRET,
     pages: {
-        signIn: '/auth/signin',
-    }
+        signIn: "/auth/signin",
+    },
 };
 
 const handler = NextAuth(authOptions);

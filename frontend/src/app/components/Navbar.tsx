@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { useCart } from '@/app/context/CartContext';
 import Image from "next/image";
+import { currentPathCallbackUrl } from '@/app/lib/auth-redirect';
 
 export default function Navbar() {
     const { data: session } = useSession();
@@ -64,7 +65,7 @@ export default function Navbar() {
               Cześć, <span className="text-white font-semibold">{session.user?.name}</span>
             </span>
                         <button
-                            onClick={() => signOut()}
+                            onClick={() => signOut({ callbackUrl: '/' })}
                             className="bg-neutral-900 hover:bg-red-950 hover:text-red-400 text-neutral-300 px-4 py-2 rounded-md text-sm font-medium border border-neutral-800 hover:border-red-900 transition-all"
                         >
                             Wyloguj się
@@ -79,7 +80,7 @@ export default function Navbar() {
                             Zarejestruj się
                         </Link>
                         <button
-                            onClick={() => signIn()}
+                            onClick={() => signIn(undefined, { callbackUrl: currentPathCallbackUrl() })}
                             className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-md text-sm font-semibold shadow-md shadow-emerald-950/40 transition-all"
                         >
                             Zaloguj się
