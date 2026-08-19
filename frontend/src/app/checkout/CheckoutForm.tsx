@@ -1,8 +1,13 @@
 'use client';
 
-import { LinkAuthenticationElement, AddressElement, useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
-import React, { useState } from 'react';
-import { signIn } from 'next-auth/react';
+import {
+    AddressElement,
+    LinkAuthenticationElement,
+    PaymentElement,
+    useElements,
+    useStripe,
+} from '@stripe/react-stripe-js';
+import { useState } from 'react';
 
 export default function CheckoutForm() {
     const stripe = useStripe();
@@ -13,25 +18,8 @@ export default function CheckoutForm() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const data = new FormData(e.currentTarget);
-        const email = data.get('email') as string;
-        const password = data.get('password') as string;
-
-        if (!email || !password) {
-            alert("Wypełnij wszystkie pola!");
-            return;
-        }
-
-        // Wywołanie logowania NextAuth
-        const result = await signIn('credentials', {
-            redirect: false,
-            email,
-            password,
-        });
-
-        // Krytyczne sprawdzenie dostępności API Stripe
         if (!stripe || !elements) {
-            console.log("🛑 STOP: Stripe.js nie został w pełni zainicjalizowany.");
+            setMessage('Formularz płatności jeszcze się ładuje. Spróbuj za chwilę.');
             return;
         }
 
@@ -47,42 +35,57 @@ export default function CheckoutForm() {
             });
 
             if (error) {
-                console.log("❌ Błąd płatności:", error.message);
-                setMessage(error.message || "Wystąpił błąd płatności");
+                setMessage(error.message || 'Wystąpił błąd płatności');
             }
         } catch (err) {
-            console.error("💥 Krytyczny błąd wysyłania formularza:", err);
+            console.error('Krytyczny błąd wysyłania formularza:', err);
+            setMessage('Nie udało się połączyć z systemem płatności. Spróbuj ponownie.');
         } finally {
             setIsProcessing(false);
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            <div>
+                <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-neutral-400">
+                    E-mail do potwierdzenia
+                </label>
+                <LinkAuthenticationElement />
+            </div>
 
-            <LinkAuthenticationElement/>
+            <div>
+                <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-neutral-400">
+                    Adres dostawy
+                </label>
+                <AddressElement options={{ mode: 'shipping', allowedCountries: ['PL'] }} />
+            </div>
 
-            <AddressElement options={{ mode: 'shipping', allowedCountries: ['PL']}}/>
-
-            <PaymentElement />
+            <div>
+                <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-neutral-400">
+                    Metoda płatności
+                </label>
+                <PaymentElement />
+            </div>
 
             <button
                 type="submit"
                 disabled={isProcessing || !stripe || !elements}
-                style={{
-                    padding: '0.75rem',
-                    backgroundColor: (isProcessing || !stripe || !elements) ? '#ccc' : '#635bff',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: (isProcessing || !stripe || !elements) ? 'not-allowed' : 'pointer',
-                    fontWeight: 'bold'
-                }}
+                className="rounded-md bg-emerald-500 px-5 py-3.5 text-sm font-extrabold uppercase tracking-wide text-slate-950 transition-colors hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-50"
             >
-                {isProcessing ? "Przetwarzanie..." : "Zapłać teraz"}
+                {isProcessing ? 'Przetwarzanie...' : 'Zapłać bezpiecznie'}
             </button>
 
-            {message && <div style={{ marginTop: '1rem', color: 'red' }}>{message}</div>}
+            {message && (
+                <div className="rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+                    {message}
+                </div>
+            )}
+
+            <p className="text-[11px] leading-relaxed text-neutral-500">
+                Klikając „Zapłać bezpiecznie” akceptujesz regulamin sklepu. Płatność realizuje Stripe —
+                dane karty nie przechodzą przez nasze serwery.
+            </p>
         </form>
     );
 }

@@ -1,5 +1,6 @@
 package com.example.trafo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
@@ -13,93 +14,163 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 import java.math.BigDecimal;
-
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:3001", "http://127.0.0.1:3001", "https://frontend-1078992546635.europe-west1.run.app"})
 @RequestMapping("/api/payment")
 public class PaymentController {
 
+    private static final BigDecimal VAT_MULTIPLIER = new BigDecimal("1.23");
+    private static final BigDecimal FREE_SHIPPING_THRESHOLD = new BigDecimal("500.00");
+    private static final BigDecimal SHIPPING_COST = new BigDecimal("16.99");
+
     @Value("${stripe.webhook.secret}")
     private String webhookSecret;
 
-    private final OrderRepository orderRepository;
-    private final EmailService emailService;
+    private final OrderService orderService;
     private final CartService cartService;
+    private final ProductRepository productRepository;
 
-    public PaymentController(OrderRepository orderRepository, EmailService emailService, CartService cartService) {
-        this.orderRepository = orderRepository;
-        this.emailService = emailService;
+    public PaymentController(OrderService orderService, CartService cartService, ProductRepository productRepository) {
+        this.orderService = orderService;
         this.cartService = cartService;
+        this.productRepository = productRepository;
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class CheckoutRequest {
         private String userId;
-        private java.util.List<ItemRequest> items;
+        private String customerEmail;
+        private List<ItemRequest> items;
 
         public String getUserId() { return userId; }
-        public java.util.List<ItemRequest> getItems() { return items; }
+        public void setUserId(String userId) { this.userId = userId; }
+        public String getCustomerEmail() { return customerEmail; }
+        public void setCustomerEmail(String customerEmail) { this.customerEmail = customerEmail; }
+        public List<ItemRequest> getItems() { return items; }
+        public void setItems(List<ItemRequest> items) { this.items = items; }
 
+        @JsonIgnoreProperties(ignoreUnknown = true)
         public static class ItemRequest {
             private Long productId;
             private int quantity;
 
             public Long getProductId() { return productId; }
+            public void setProductId(Long productId) { this.productId = productId; }
             public int getQuantity() { return quantity; }
+            public void setQuantity(int quantity) { this.quantity = quantity; }
         }
     }
 
     @PostMapping("/create-payment-intent")
-    public ResponseEntity<?> createPaymentIntent(@RequestBody CheckoutRequest paymentRequest) throws StripeException {
+    public ResponseEntity<?> createPaymentIntent(@RequestBody CheckoutRequest paymentRequest) {
         try {
-            String userId = paymentRequest.getUserId();
-            BigDecimal totalAmount;
+            if (paymentRequest == null) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Brak danych zamówienia"));
+            }
 
-            // 1. Zabezpieczenie przed null / pustym stringiem z frontendu
-            if (userId != null && !userId.trim().isEmpty()) {
+            String userId = paymentRequest.getUserId();
+            boolean hasUser = userId != null && !userId.trim().isEmpty() && !"guest".equalsIgnoreCase(userId.trim());
+
+            List<OrderItem> orderItems = new ArrayList<>();
+            BigDecimal netTotal;
+
+            if (hasUser) {
                 Cart cart = cartService.getOrCreateCart(userId);
-                if (cart == null || cart.getItems() == null || cart.getItems().isEmpty()) {
+                if (cart != null && cart.getItems() != null && !cart.getItems().isEmpty()) {
+                    netTotal = BigDecimal.ZERO;
+                    for (CartItem cartItem : cart.getItems()) {
+                        Product product = cartItem.getProduct();
+                        BigDecimal line = product.getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity()));
+                        netTotal = netTotal.add(line);
+                        orderItems.add(new OrderItem(null, product, cartItem.getQuantity(), product.getPrice()));
+                    }
+                } else if (paymentRequest.getItems() != null && !paymentRequest.getItems().isEmpty()) {
+                    netTotal = buildItemsFromRequest(paymentRequest.getItems(), orderItems);
+                } else {
                     return ResponseEntity.badRequest().body(Map.of("error", "Koszyk jest pusty"));
                 }
-                totalAmount = new CartDto(cart).getCartTotal();
             } else {
-                // 🚪 Gość: sprawdzamy przesłaną listę produktów
                 if (paymentRequest.getItems() == null || paymentRequest.getItems().isEmpty()) {
                     return ResponseEntity.badRequest().body(Map.of("error", "Koszyk gościa jest pusty"));
                 }
-                // Obliczamy sumę na podstawie przesłanych produktów
-                totalAmount = cartService.calculateTotalForItems(paymentRequest.getItems());
+                netTotal = buildItemsFromRequest(paymentRequest.getItems(), orderItems);
             }
 
-            long amountInCents = totalAmount.multiply(BigDecimal.valueOf(100)).longValue();
+            BigDecimal gross = netTotal.multiply(VAT_MULTIPLIER).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal shipping = gross.compareTo(FREE_SHIPPING_THRESHOLD) >= 0 ? BigDecimal.ZERO : SHIPPING_COST;
+            BigDecimal payable = gross.add(shipping).setScale(2, RoundingMode.HALF_UP);
+            long amountInGrosze = payable.movePointRight(2).longValueExact();
 
-            PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
-                    .setAmount(amountInCents)
+            if (amountInGrosze < 200) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Kwota zamówienia jest zbyt niska do płatności Stripe"));
+            }
+
+            String email = resolveEmail(paymentRequest.getCustomerEmail(), userId);
+
+            PaymentIntentCreateParams.Builder paramsBuilder = PaymentIntentCreateParams.builder()
+                    .setAmount(amountInGrosze)
                     .setCurrency("pln")
+                    .putMetadata("userId", hasUser ? userId : "guest")
+                    .putMetadata("email", email)
                     .setAutomaticPaymentMethods(
                             PaymentIntentCreateParams.AutomaticPaymentMethods.builder()
                                     .setEnabled(true)
                                     .build()
-                    )
-                    .build();
+                    );
 
-            PaymentIntent paymentIntent = PaymentIntent.create(params);
+            if (email != null && email.contains("@") && !email.endsWith("@domain.com")) {
+                paramsBuilder.setReceiptEmail(email);
+            }
 
-            String customerEmail = (userId != null) ? "klient_" + userId + "@domain.com" : "gosc@domain.com";
-            Order order = new Order(customerEmail, totalAmount, paymentIntent.getId());
-            orderRepository.save(order);
+            PaymentIntent paymentIntent = PaymentIntent.create(paramsBuilder.build());
+            orderService.createPendingOrder(email, payable, paymentIntent.getId(), orderItems);
 
-            return ResponseEntity.ok(Map.of("clientSecret", paymentIntent.getClientSecret()));
+            return ResponseEntity.ok(Map.of(
+                    "clientSecret", paymentIntent.getClientSecret(),
+                    "amount", payable,
+                    "currency", "pln"
+            ));
         } catch (StripeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Błąd Stripe: " + e.getMessage()));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
+            String message = e.getMessage() != null ? e.getMessage() : "Nie udało się utworzyć płatności";
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", message));
         }
+    }
+
+    private BigDecimal buildItemsFromRequest(List<CheckoutRequest.ItemRequest> items, List<OrderItem> orderItems) {
+        BigDecimal total = BigDecimal.ZERO;
+        for (CheckoutRequest.ItemRequest item : items) {
+            if (item.getProductId() == null || item.getQuantity() <= 0) {
+                throw new IllegalArgumentException("Nieprawidłowa pozycja koszyka");
+            }
+            Product product = productRepository.findById(item.getProductId())
+                    .orElseThrow(() -> new RuntimeException("Nie znaleziono produktu o ID: " + item.getProductId()));
+            if (product.getStock() != null && product.getStock() < item.getQuantity()) {
+                throw new IllegalArgumentException("Niewystarczający stan magazynowy: " + product.getName());
+            }
+            BigDecimal line = product.getPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
+            total = total.add(line);
+            orderItems.add(new OrderItem(null, product, item.getQuantity(), product.getPrice()));
+        }
+        return total;
+    }
+
+    private String resolveEmail(String requested, String userId) {
+        if (requested != null && requested.contains("@")) {
+            return requested.trim();
+        }
+        if (userId != null && !userId.isBlank() && !"guest".equalsIgnoreCase(userId)) {
+            return "klient_" + userId + "@domain.com";
+        }
+        return "gosc@domain.com";
     }
 
     @PostMapping("/webhook")
@@ -120,28 +191,16 @@ public class PaymentController {
         System.out.println("📬 Odebrano webhook od Stripe. Typ zdarzenia: " + eventType);
 
         if ("payment_intent.succeeded".equals(eventType)) {
-            // Wyciągamy dane o płatności
             EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
             if (dataObjectDeserializer.getObject().isPresent()) {
                 PaymentIntent paymentIntent = (PaymentIntent) dataObjectDeserializer.getObject().get();
-
                 String stripeId = paymentIntent.getId();
                 System.out.println("💰 Płatność zakończona sukcesem dla ID: " + stripeId);
-                System.out.println("💵 Kwota: " + paymentIntent.getAmount() + " " + paymentIntent.getCurrency());
-
-                //zmiana statusu w bazie danych na oplacone oraz email do klienta
-                Optional<Order> orderOptional = orderRepository.findByStripePaymentIntentId(stripeId);
-
-                if(orderOptional.isPresent()){
-                    Order order = orderOptional.get();
-                    order.setStatus(OrderStatus.PAID);
-                    orderRepository.save(order);
-                    System.out.println("✅ Zamówienie #" + order.getId() + " zostało oznaczone jako OPŁACONE w PostgreSQL.");
-
-                    emailService.sendOrderConfirmation(order.getCustomerEmail(), order.getId(), order.getAmount());
-                }
-                else {
-                    System.out.println("⚠️ Otrzymano płatność dla Stripe ID: " + stripeId + ", ale nie znaleziono takiego zamówienia w bazie danych!");
+                try {
+                    orderService.processSuccessfulPayment(stripeId);
+                } catch (Exception e) {
+                    System.out.println("❌ Błąd przetwarzania zamówienia: " + e.getMessage());
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Order processing failed");
                 }
             }
         } else {

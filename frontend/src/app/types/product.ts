@@ -5,7 +5,7 @@ export interface Product {
     description: string;
     stock: number;
     images: string[];
-    videos: string[];
+    videos?: string[];
     /**
      * Parametry techniczne. Backend (Hibernate) zwraca mapę `{ klucz: wartość }`,
      * dane demonstracyjne używają zapisu tekstowego `"moc: 40VA; napięcie: 230V"`.
