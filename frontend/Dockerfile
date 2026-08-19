@@ -32,7 +32,6 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 # Kopiujemy tylko niezbędne pliki statyczne i wygenerowany serwer standalone
-COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
