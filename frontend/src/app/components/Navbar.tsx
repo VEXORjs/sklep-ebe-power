@@ -26,6 +26,9 @@ export default function Navbar() {
             <div className="flex items-center gap-6">
                 {/* NAWIGACJA (desktop) */}
                 <div className="hidden items-center gap-6 lg:flex">
+                    <Link href="/kategoria" className="text-sm font-medium text-neutral-300 transition-colors hover:text-emerald-400">
+                        Kategorie
+                    </Link>
                     <Link href="/#produkty" className="text-sm font-medium text-neutral-300 transition-colors hover:text-emerald-400">
                         Oferta
                     </Link>
