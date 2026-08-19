@@ -25,7 +25,7 @@ export default function TopBar() {
                 <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
                     <span className="flex items-center gap-1.5 font-semibold text-emerald-500">
                         <Truck className="h-3.5 w-3.5" />
-                        Pierwsze uruchomienie od 1000 zł
+                        Pierwsze uruchomienie 1000 zł
                     </span>
                     <span className="flex items-center gap-1.5">
                         <Clock className="h-3 w-3 text-neutral-500" />
