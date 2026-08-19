@@ -8,6 +8,7 @@ import { Loader2, Lock, Mail, User } from "lucide-react";
 
 import AuthShell from "@/app/components/AuthShell";
 import GoogleSignInButton from "@/app/components/GoogleSignInButton";
+import { getPublicApiUrl } from "@/app/lib/api";
 
 export default function RegisterPage() {
     const [name, setName] = useState("");
@@ -18,7 +19,7 @@ export default function RegisterPage() {
     const [googleLoading, setGoogleLoading] = useState(false);
     const router = useRouter();
 
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+    const API_URL = getPublicApiUrl();
 
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
