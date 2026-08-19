@@ -28,8 +28,9 @@ public class PaymentController {
     private static final BigDecimal VAT_MULTIPLIER = new BigDecimal("1.23");
     private static final BigDecimal FREE_SHIPPING_THRESHOLD = new BigDecimal("500.00");
     private static final BigDecimal SHIPPING_COST = new BigDecimal("16.99");
+    public static final BigDecimal FIRST_STARTUP_FEE = new BigDecimal("1000.00");
 
-    @Value("${stripe.webhook.secret}")
+    @Value("${stripe.webhook.secret:}")
     private String webhookSecret;
 
     private final OrderService orderService;
@@ -46,12 +47,15 @@ public class PaymentController {
     public static class CheckoutRequest {
         private String userId;
         private String customerEmail;
+        private boolean firstStartup;
         private List<ItemRequest> items;
 
         public String getUserId() { return userId; }
         public void setUserId(String userId) { this.userId = userId; }
         public String getCustomerEmail() { return customerEmail; }
         public void setCustomerEmail(String customerEmail) { this.customerEmail = customerEmail; }
+        public boolean isFirstStartup() { return firstStartup; }
+        public void setFirstStartup(boolean firstStartup) { this.firstStartup = firstStartup; }
         public List<ItemRequest> getItems() { return items; }
         public void setItems(List<ItemRequest> items) { this.items = items; }
 
@@ -102,13 +106,22 @@ public class PaymentController {
                 netTotal = buildItemsFromRequest(paymentRequest.getItems(), orderItems);
             }
 
+            if (paymentRequest.isFirstStartup()) {
+                netTotal = netTotal.add(FIRST_STARTUP_FEE);
+            }
+
             BigDecimal gross = netTotal.multiply(VAT_MULTIPLIER).setScale(2, RoundingMode.HALF_UP);
             BigDecimal shipping = gross.compareTo(FREE_SHIPPING_THRESHOLD) >= 0 ? BigDecimal.ZERO : SHIPPING_COST;
             BigDecimal payable = gross.add(shipping).setScale(2, RoundingMode.HALF_UP);
-            long amountInGrosze = payable.movePointRight(2).longValueExact();
+            long amountInGrosze = payable.movePointRight(2).setScale(0, RoundingMode.HALF_UP).longValue();
 
             if (amountInGrosze < 200) {
                 return ResponseEntity.badRequest().body(Map.of("error", "Kwota zamówienia jest zbyt niska do płatności Stripe"));
+            }
+
+            if (com.stripe.Stripe.apiKey == null || com.stripe.Stripe.apiKey.isBlank()) {
+                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                        .body(Map.of("error", "Brak konfiguracji Stripe (STRIPE_SECRET_KEY)"));
             }
 
             String email = resolveEmail(paymentRequest.getCustomerEmail(), userId);
@@ -118,6 +131,7 @@ public class PaymentController {
                     .setCurrency("pln")
                     .putMetadata("userId", hasUser ? userId : "guest")
                     .putMetadata("email", email)
+                    .putMetadata("firstStartup", paymentRequest.isFirstStartup() ? "true" : "false")
                     .setAutomaticPaymentMethods(
                             PaymentIntentCreateParams.AutomaticPaymentMethods.builder()
                                     .setEnabled(true)
@@ -179,6 +193,10 @@ public class PaymentController {
             @RequestHeader("Stripe-Signature") String sigHeader) {
 
         Event event;
+
+        if (webhookSecret == null || webhookSecret.isBlank()) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("Webhook secret not configured");
+        }
 
         try {
             event = Webhook.constructEvent(payload, sigHeader, webhookSecret);

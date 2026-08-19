@@ -85,24 +85,29 @@ export default function ProductInfoTabs({
                                 Specyfikacja tego modelu jest dostępna na zapytanie u doradcy.
                             </p>
                         ) : (
-                            <div className="overflow-hidden rounded-lg border border-neutral-800">
-                                <table className="min-w-full divide-y divide-neutral-800">
-                                    <tbody className="divide-y divide-neutral-800">
-                                        {specs.map((spec, index) => (
-                                            <tr
-                                                key={`${spec.label}-${spec.value}`}
-                                                className={index % 2 === 0 ? "bg-[#101214]" : "bg-[#16181a]"}
-                                            >
-                                                <th className="w-1/3 px-5 py-3 text-left text-sm font-medium text-neutral-400">
-                                                    {spec.label}
-                                                </th>
-                                                <td className="px-5 py-3 text-sm font-semibold text-neutral-100">
-                                                    {spec.value}
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                            <div className="relative overflow-hidden rounded-lg border border-neutral-800">
+                                <div className={specs.length > 8 ? "max-h-80 overflow-hidden" : ""}>
+                                    <table className="min-w-full divide-y divide-neutral-800">
+                                        <tbody className="divide-y divide-neutral-800">
+                                            {specs.map((spec, index) => (
+                                                <tr
+                                                    key={`${spec.label}-${spec.value}`}
+                                                    className={index % 2 === 0 ? "bg-[#101214]" : "bg-[#16181a]"}
+                                                >
+                                                    <th className="w-1/3 px-5 py-3 text-left text-sm font-medium text-neutral-400">
+                                                        {spec.label}
+                                                    </th>
+                                                    <td className="px-5 py-3 text-sm font-semibold text-neutral-100">
+                                                        {spec.value}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {specs.length > 8 && (
+                                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#141618] via-[#141618]/85 to-transparent" />
+                                )}
                             </div>
                         )}
                     </div>

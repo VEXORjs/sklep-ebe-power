@@ -247,27 +247,32 @@ export default function ProductCard({
         </div>
     );
 
+    const specLimit = variant === "list" ? 6 : 4;
     const specList = specs.length > 0 && (
-        <dl
-            className={`mb-4 grid gap-x-4 gap-y-1.5 rounded-md border border-neutral-800/80 bg-[#111315] p-3 ${
-                variant === "list" ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1"
-            }`}
-        >
-            {specs.slice(0, variant === "list" ? 6 : 4).map((spec) => (
-                <div key={`${spec.label}-${spec.value}`} className="flex items-baseline justify-between gap-3">
-                    <dt className="truncate text-[11px] text-neutral-500">{spec.label}</dt>
-                    <dd className="shrink-0 text-[11px] font-semibold text-neutral-200">{spec.value}</dd>
+        <div className="relative mb-4 overflow-hidden rounded-md border border-neutral-800/80 bg-[#111315]">
+            <dl
+                className={`grid gap-x-4 gap-y-1.5 p-3 ${
+                    variant === "list" ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1"
+                } ${specs.length > specLimit ? "max-h-[7.25rem]" : ""}`}
+            >
+                {specs.map((spec) => (
+                    <div key={`${spec.label}-${spec.value}`} className="flex items-baseline justify-between gap-3">
+                        <dt className="truncate text-[11px] text-neutral-500">{spec.label}</dt>
+                        <dd className="shrink-0 text-[11px] font-semibold text-neutral-200">{spec.value}</dd>
+                    </div>
+                ))}
+            </dl>
+            {specs.length > specLimit && (
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[#111315] via-[#111315]/90 to-transparent">
+                    <Link
+                        href={href}
+                        className="pointer-events-auto absolute inset-x-0 bottom-1.5 text-center text-[11px] font-semibold text-emerald-400 transition-colors hover:text-emerald-300"
+                    >
+                        + {specs.length - specLimit} więcej parametrów
+                    </Link>
                 </div>
-            ))}
-            {specs.length > (variant === "list" ? 6 : 4) && (
-                <Link
-                    href={href}
-                    className="text-[11px] font-semibold text-emerald-400 transition-colors hover:text-emerald-300"
-                >
-                    + {specs.length - (variant === "list" ? 6 : 4)} więcej parametrów
-                </Link>
             )}
-        </dl>
+        </div>
     );
 
     const availability = (

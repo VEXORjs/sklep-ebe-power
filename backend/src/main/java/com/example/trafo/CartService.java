@@ -50,6 +50,22 @@ public class CartService {
         return cartRepository.save(cart);
     }
 
+    @Transactional
+    public Cart updateProductQuantity(String userId, Long productId, int quantity) {
+        if (quantity <= 0) {
+            return removeProductFromCart(userId, productId);
+        }
+        Cart cart = getOrCreateCart(userId);
+        Optional<CartItem> existingItem = cart.getItems().stream()
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst();
+        if (existingItem.isEmpty()) {
+            return addProductToCart(userId, productId, quantity);
+        }
+        existingItem.get().setQuantity(quantity);
+        return cartRepository.save(cart);
+    }
+
     // 🗑️ Usuwanie konkretnej pozycji z koszyka
     @Transactional
     public Cart removeProductFromCart(String userId, Long productId) {

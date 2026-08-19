@@ -42,4 +42,8 @@ public class CartItem {
     public void incrementQuantity(int amount) {
         this.quantity += amount;
     }
+
+    public void decrementQuantity(int amount) {
+        this.quantity = Math.max(0, this.quantity - amount);
+    }
 }
