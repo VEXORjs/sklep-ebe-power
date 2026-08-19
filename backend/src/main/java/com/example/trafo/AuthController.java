@@ -53,11 +53,16 @@ public class AuthController {
             return ResponseEntity.status(401).body("Nieprawidłowy email lub hasło");
         }
 
-        // Jeśli logowanie się udał, zwracamy dane użytkownika, które NextAuth zapisze w sesji
+        // Jeśli logowanie się udało, zwracamy dane użytkownika, które NextAuth zapisze w sesji.
+        // `mockToken` jest używany przez frontend jako token koszyka (JwtService zwraca go
+        // bez zmian, bo nie zawiera kropki), więc musi być tu tak samo jak w /oauth-success.
+        String mockToken = "user" + user.getId();
+
         return ResponseEntity.ok(Map.of(
                 "id", user.getId(),
                 "email", user.getEmail(),
-                "name", user.getName()
+                "name", user.getName(),
+                "mockToken", mockToken
         ));
     }
 }
