@@ -1,9 +1,15 @@
-# Substitutions są definiowane w ustawieniach triggera Cloud Build.
-# _APP_URL MUSI wskazywać na produkcyjną domenę (https://ebe-power.pl),
-# nigdy na wewnętrzny adres *.run.app — z niego NextAuth buduje redirect_uri
-# wysyłane do Google podczas logowania OAuth.
+# Substitutions są definiowane w ustawieniach triggera Cloud Build
+# (można je nadpisać per trigger, bez edytowania tego pliku).
+#
+#   _APP_URL       — produkcyjna domena. MUSI wskazywać na https://ebe-power.pl,
+#                    nigdy na wewnętrzny adres *.run.app — z niego NextAuth
+#                    buduje redirect_uri wysyłane do Google podczas OAuth.
+#   _REGION        — region Cloud Run.
+#   _SERVICE_NAME  — nazwa usługi Cloud Run (frontend).
 substitutions:
   _APP_URL: 'https://ebe-power.pl'
+  _REGION: 'europe-west1'
+  _SERVICE_NAME: 'frontend'
 
 # WAŻNE — dlaczego "SHA" każdego buildu jest inne:
 # Docker buduje obrazy content-addressed, więc digest (SHA256) zmienia się przy
@@ -17,7 +23,7 @@ substitutions:
 # Dzięki temu serwis nigdy nie ma "złego SHA" — śledzi :v1, a :$SHORT_SHA
 # zostaje jako etykieta danej wersji.
 steps:
-  # Budowanie obrazu Docker z argumentami (ARG) i dwoma tagami
+  # 1. Budowanie obrazu Docker z argumentami (ARG) i dwoma tagami
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
@@ -41,11 +47,43 @@ steps:
       - 'europe-west1-docker.pkg.dev/$PROJECT_ID/sklep-repo/sklep-frontend:$SHORT_SHA'
       - './frontend'
 
+  # 2. Wdrożenie nowej rewizji do Cloud Run.
+  #    Deploy bierze obraz ze stałego tagu :v1 (czyli zawsze najnowszy build).
+  #
+  #    UWAGA — wymagane uprawnienia dla konta usługowego Cloud Build
+  #    (PROJECT_NUMBER@cloudbuild.gserviceaccount.com):
+  #      * roles/run.admin               (Cloud Run Admin)
+  #      * roles/iam.serviceAccountUser  (na koncie serwisowym, którym działa
+  #                                        usługa Cloud Run)
+  #
+  #    Nie ustawiamy tutaj zmiennych środowiskowych celowo: `--set-env-vars`
+  #    WYMAZUJE pozostałe zmienne (NEXTAUTH_SECRET, GOOGLE_CLIENT_ID,
+  #    GOOGLE_CLIENT_SECRET), które są skonfigurowane bezpośrednio w usłudze.
+  #    Jeśli chcesz coś dopisać, użyj `--update-env-vars` (dopisuje, nie czyści).
+  #
+  #    Jeśli trigger jest jednocześnie skonfigurowany jako "continuous
+  #    deployment" w Cloud Run, ten krok wywoła drugie, nieszkodliwe wdrożenie
+  #    tej samej rewizji — ostatnia wygrywa. Wtedy można usunąć ten krok.
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - '$_SERVICE_NAME'
+      - '--image'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/sklep-repo/sklep-frontend:v1'
+      - '--region'
+      - '$_REGION'
+      - '--platform'
+      - 'managed'
+      - '--project'
+      - '$PROJECT_ID'
+
 options:
   logging: CLOUD_LOGGING_ONLY
 
 # Obrazy zapisane w Artifact Registry po buildzie.
-# :v1 jest pierwszy — to z niego Cloud Run bierze nową rewizję po pushu.
+# :v1 jest pierwszy — to z niego krok deploy bierze nową rewizję.
 images:
   - 'europe-west1-docker.pkg.dev/$PROJECT_ID/sklep-repo/sklep-frontend:v1'
   - 'europe-west1-docker.pkg.dev/$PROJECT_ID/sklep-repo/sklep-frontend:$SHORT_SHA'
