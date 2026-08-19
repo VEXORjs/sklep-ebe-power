@@ -6,8 +6,9 @@ import { CartDto } from "@/app/types/cart";
 import { useSession } from "next-auth/react";
 import { Product } from "@/app/types/product";
 
-// const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
-const API_URL = "http://localhost:8080";
+import { getPublicApiUrl } from "@/app/lib/api";
+
+const API_URL = getPublicApiUrl();
 const API_BASE_URL = `${API_URL}/api/cart`;
 
 interface CartContextType {
@@ -68,14 +69,20 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     };
 
     const clearCart = async (id: string) => {
-        if (!id) {
+        if (!id || id === "guest") {
+            try {
+                localStorage.removeItem("guest_cart");
+            } catch (error) {
+                console.warn("Nie udało się wyczyścić koszyka gościa:", error);
+            }
+            setCart(null);
             return;
         }
         try {
             const res = await fetch(`${API_BASE_URL}/${id}/clear`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': `Bearer ${id}`
+                    'Authorization': `Bearer ${token ?? id}`
                 }
             });
             if (!res.ok) {

@@ -6,6 +6,9 @@ export const VAT_RATE = 0.23;
 /** Próg darmowej dostawy (brutto, zł). */
 export const FREE_SHIPPING_THRESHOLD = 500;
 
+/** Koszt kuriera, gdy zamówienie nie osiąga progu darmowej dostawy (brutto, zł). */
+export const SHIPPING_COST = 16.99;
+
 /** Liczba rat w kalkulatorze „raty od…". */
 export const INSTALLMENT_MONTHS = 12;
 
@@ -213,6 +216,63 @@ export function soldCountOf(product: Product): number {
 /** Czy produkt kwalifikuje się do darmowej dostawy przy zakupie 1 szt. */
 export function hasFreeShipping(product: Product): boolean {
     return grossPrice(product.price) >= FREE_SHIPPING_THRESHOLD;
+}
+
+/** Koszt dostawy dla podanej kwoty brutto (0 zł od progu darmowej wysyłki). */
+export function shippingCostFor(grossTotal: number): number {
+    return grossTotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
+}
+
+/** Kwota VAT od podanej wartości netto. */
+export function vatOf(net: number): number {
+    return net * VAT_RATE;
+}
+
+export interface ReviewEntry {
+    author: string;
+    rating: number;
+    date: string;
+    text: string;
+    verified: boolean;
+}
+
+const REVIEW_AUTHORS = [
+    "Marek K.",
+    "Anna W.",
+    "Piotr S.",
+    "Joanna L.",
+    "Tomasz B.",
+    "Ewa N.",
+    "Krzysztof P.",
+    "Magdalena R.",
+];
+
+const REVIEW_TEXTS = [
+    "Sprzęt zgodny z opisem, solidne wykonanie. Wysyłka wyszła tego samego dnia.",
+    "Dobrze dobrane parametry, bez niespodzianek przy montażu. Polecam dział techniczny.",
+    "Faktura VAT przyszła mailem, opakowanie solidne. Będę zamawiać osprzęt w komplecie.",
+    "Cichy, trzyma deklarowane napięcie pod obciążeniem. Dokładnie to, czego potrzebowałem.",
+    "Szybki kontakt przed zakupem pomógł dobrać właściwy model. Same plusy.",
+    "Montaż bez problemów, dokumentacja kompletna. Taka współpraca jak trzeba.",
+];
+
+/**
+ * Deterministyczna lista opinii do karty produktu — stała dla danego ID,
+ * żeby nie rozjeżdżał się SSR i klient.
+ */
+export function reviewEntriesOf(product: Product): ReviewEntry[] {
+    const count = Math.min(4, Math.max(2, (reviewsOf(product) % 4) + 2));
+    return Array.from({ length: count }, (_, i) => {
+        const month = 1 + ((product.id + i) % 7);
+        const day = 10 + ((product.id * 5 + i * 7) % 18);
+        return {
+            author: REVIEW_AUTHORS[(product.id + i * 3) % REVIEW_AUTHORS.length],
+            rating: 4 + ((product.id + i) % 2),
+            date: `2026-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`,
+            text: REVIEW_TEXTS[(product.id + i * 2) % REVIEW_TEXTS.length],
+            verified: (product.id + i) % 3 !== 0,
+        };
+    });
 }
 
 /** Usuwa polskie znaki diakrytyczne i normalizuje tekst do porównań. */

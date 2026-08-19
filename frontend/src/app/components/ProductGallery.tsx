@@ -1,212 +1,242 @@
 "use client";
 
-import {useEffect, useState} from "react";
-import {Product} from "@/app/types/product";
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import { ChevronLeft, ChevronRight, Package, Play, X } from "lucide-react";
+
+import { Product } from "@/app/types/product";
 
 interface ProductDetailProps {
     product: Product;
 }
 
-export default function ProductGallery({product}: ProductDetailProps) {
+export default function ProductGallery({ product }: ProductDetailProps) {
+    const images = product.images ?? [];
+    const videos = product.videos ?? [];
     const [isOpen, setIsOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [activeTab, setActiveTab] = useState<'photos' | 'videos'>('photos');
+    const [activeTab, setActiveTab] = useState<"photos" | "videos">("photos");
+
+    const mediaCount = activeTab === "photos" ? images.length : videos.length;
+    const hasMedia = mediaCount > 0;
 
     const handleNext = () => {
-        if (activeTab === 'photos') {
-            if (currentImageIndex === product.images.length - 1) {
-                setCurrentImageIndex(0);
-            }
-            else {
-                setCurrentImageIndex(currentImageIndex + 1);
-            }
-        }
-        else {
-            if (currentImageIndex === product.videos.length - 1) {
-                setCurrentImageIndex(0);
-            }
-            else {
-                setCurrentImageIndex(currentImageIndex + 1);
-            }
-        }
+        if (!hasMedia) return;
+        setCurrentImageIndex((index) => (index + 1) % mediaCount);
     };
 
     const handlePrev = () => {
-        if (activeTab === 'photos') {
-            if (currentImageIndex === 0) {
-                setCurrentImageIndex(product.images.length - 1);
-            }
-            else {
-                setCurrentImageIndex(currentImageIndex - 1);
-            }
-        }
-        else {
-            if (currentImageIndex === 0) {
-                setCurrentImageIndex(product.videos.length - 1);
-            }
-            else {
-                setCurrentImageIndex(currentImageIndex - 1);
-            }
-        }
+        if (!hasMedia) return;
+        setCurrentImageIndex((index) => (index - 1 + mediaCount) % mediaCount);
     };
 
     useEffect(() => {
+        if (!isOpen) return;
+
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'Escape'){
+            if (e.key === "Escape") {
                 setIsOpen(false);
-            }
-            else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D'){
+            } else if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
                 e.preventDefault();
                 handleNext();
-            }
-            else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A'){
+            } else if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
                 e.preventDefault();
                 handlePrev();
             }
         };
-        if (isOpen){
-            window.addEventListener('keydown', handleKeyDown);
-        }
 
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-        }
-    }, [isOpen, currentImageIndex, activeTab]);
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [isOpen, currentImageIndex, activeTab, mediaCount]);
 
     const handleOpenLightbox = (index: number) => {
-        setActiveTab('photos');
-        setIsOpen(true);
+        setActiveTab("photos");
         setCurrentImageIndex(index);
-    }
+        setIsOpen(true);
+    };
 
-    const handleTabChange = (tab: 'photos' | 'videos') => {
+    const handleTabChange = (tab: "photos" | "videos") => {
         setActiveTab(tab);
         setCurrentImageIndex(0);
     };
 
-return (
-    <div className="p-4">
-        {/* 🍱 Siatka zdjęć (Grid) */}
-        {product?.images && product.images.length > 0 && (
-            <div className="grid grid-cols-4 gap-2 max-w-sm mx-auto">
-                <div
-                    className="col-span-3 cursor-pointer overflow-hidden rounded-base border"
-                    onClick={() => handleOpenLightbox(0)}
-                >
-                    <Image
-                        width={800}
-                        height={600}
-                        src={product.images[0]}
-                        alt="Główne"
-                        className="w-full h-full object-cover hover:scale-105 transition-transform"
-                    />
-                </div>
+    const cover = images[currentImageIndex] ?? images[0];
 
-                <div className="flex flex-col gap-2">
-                    {product.images.slice(1, 4).map((url, index) => (
-                        <div
-                            key={index + 1}
-                            className="cursor-pointer overflow-hidden rounded-base border aspect-square"
-                            onClick={() => handleOpenLightbox(index + 1)}
+    return (
+        <div className="space-y-3">
+            <div
+                className="relative aspect-[4/3] overflow-hidden rounded-xl border border-neutral-800 bg-white"
+                onClick={() => cover && handleOpenLightbox(currentImageIndex)}
+            >
+                {cover ? (
+                    <Image
+                        src={cover}
+                        alt={product.name}
+                        fill
+                        priority
+                        sizes="(max-width: 1024px) 100vw, 50vw"
+                        className="cursor-zoom-in object-contain p-6 transition-transform duration-500 hover:scale-105"
+                    />
+                ) : (
+                    <div className="flex h-full flex-col items-center justify-center gap-2 text-neutral-400">
+                        <Package className="h-10 w-10" />
+                        <span className="text-xs font-semibold uppercase tracking-wider">
+                            Zdjęcie wkrótce
+                        </span>
+                    </div>
+                )}
+
+                {images.length > 1 && (
+                    <>
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handlePrev();
+                            }}
+                            aria-label="Poprzednie zdjęcie"
+                            className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/70 text-white transition-colors hover:bg-black"
                         >
-                            <Image
-                                width={800}
-                                height={600}
-                                src={url}
-                                alt={`Miniatura ${index + 1}`}
-                                className="w-full h-full object-cover hover:opacity-80 transition-opacity"
-                            />
-                        </div>
+                            <ChevronLeft className="h-5 w-5" />
+                        </button>
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleNext();
+                            }}
+                            aria-label="Następne zdjęcie"
+                            className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/70 text-white transition-colors hover:bg-black"
+                        >
+                            <ChevronRight className="h-5 w-5" />
+                        </button>
+                    </>
+                )}
+            </div>
+
+            {(images.length > 1 || videos.length > 0) && (
+                <div className="flex gap-2 overflow-x-auto pb-1">
+                    {images.map((url, index) => (
+                        <button
+                            key={url}
+                            type="button"
+                            onClick={() => {
+                                setActiveTab("photos");
+                                setCurrentImageIndex(index);
+                            }}
+                            aria-label={`Zdjęcie ${index + 1}`}
+                            className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-md border bg-white ${
+                                activeTab === "photos" && currentImageIndex === index
+                                    ? "border-emerald-500"
+                                    : "border-neutral-800 hover:border-neutral-600"
+                            }`}
+                        >
+                            <Image src={url} alt="" fill sizes="64px" className="object-contain p-1" />
+                        </button>
+                    ))}
+                    {videos.map((url, index) => (
+                        <button
+                            key={url}
+                            type="button"
+                            onClick={() => {
+                                setActiveTab("videos");
+                                setCurrentImageIndex(index);
+                                setIsOpen(true);
+                            }}
+                            aria-label={`Wideo ${index + 1}`}
+                            className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-md border border-neutral-800 bg-neutral-900 text-emerald-400 hover:border-emerald-500/60"
+                        >
+                            <Play className="h-5 w-5" />
+                        </button>
                     ))}
                 </div>
-            </div>
-        )}
-        {isOpen && (
-            <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50"
-            onClick={() => setIsOpen(false)}
-            >
-                <div className="relative max-w-3xl max-h-[80vh] flex flex-col items-center p-4"
-                onClick={(e) => e.stopPropagation()}
+            )}
+
+            {isOpen && hasMedia && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+                    onClick={() => setIsOpen(false)}
                 >
-
-                    {/* ❌ Przycisk zamknięcia */}
-                    <button
-                        onClick={() => setIsOpen(false)}
-                        className="absolute -top-12 right-0 text-white text-sm bg-neutral-900 border border-neutral-800 px-3 py-1 rounded-md hover:text-gray-300 transition-colors"
+                    <div
+                        className="relative flex max-h-[90vh] w-full max-w-4xl flex-col items-center"
+                        onClick={(e) => e.stopPropagation()}
                     >
-                        ✕ Zamknij (ESC)
-                    </button>
+                        <button
+                            onClick={() => setIsOpen(false)}
+                            className="absolute -top-12 right-0 inline-flex items-center gap-2 rounded-md border border-neutral-800 bg-neutral-900 px-3 py-1.5 text-sm text-white hover:text-emerald-300"
+                        >
+                            <X className="h-4 w-4" />
+                            Zamknij (ESC)
+                        </button>
 
-                    {/* 🖼️ Wyświetlanie mediów: Zdjęcie LUB Wideo */}
-                    {activeTab === 'photos' ? (
-                        <Image
-                            width={800}
-                            height={600}
-                            src={product.images[currentImageIndex]}
-                            alt="Podgląd zdjęcia"
-                            className="max-w-full max-h-[65vh] object-contain rounded-lg"
-                        />
-                    ) : (
-                        <video
-                            src={product.videos?.[currentImageIndex]}
-                            controls
-                            autoPlay
-                            className="max-w-full max-h-[65vh] rounded-lg"
-                        />
-                    )}
+                        {activeTab === "photos" ? (
+                            <Image
+                                width={1200}
+                                height={900}
+                                src={images[currentImageIndex]}
+                                alt={`${product.name} — zdjęcie ${currentImageIndex + 1}`}
+                                className="max-h-[70vh] w-auto rounded-lg object-contain"
+                            />
+                        ) : (
+                            <video
+                                src={videos[currentImageIndex]}
+                                controls
+                                autoPlay
+                                className="max-h-[70vh] w-full rounded-lg"
+                            />
+                        )}
 
-                    {/* ⬅️ Strzałka w lewo */}
-                    <button
-                        onClick={handlePrev}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-white text-4xl bg-black/40 p-2 rounded-full hover:bg-black/60"
-                    >
-                        ‹
-                    </button>
+                        {mediaCount > 1 && (
+                            <>
+                                <button
+                                    onClick={handlePrev}
+                                    aria-label="Poprzednie"
+                                    className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-3xl text-white hover:bg-black/70"
+                                >
+                                    ‹
+                                </button>
+                                <button
+                                    onClick={handleNext}
+                                    aria-label="Następne"
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-3xl text-white hover:bg-black/70"
+                                >
+                                    ›
+                                </button>
+                            </>
+                        )}
 
-                    {/* ➡️ Strzałka w prawo */}
-                    <button
-                        onClick={handleNext}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-white text-4xl bg-black/40 p-2 rounded-full hover:bg-black/60"
-                    >
-                        ›
-                    </button>
-
-                    <div className="flex items-center gap-4 mt-6">
-
-                        {/* 🎛️ Przyciski przełączania (Filtry) */}
-                        <div className="flex gap-2 bg-neutral-950 p-1 rounded-full border border-neutral-800">
-                            <button
-                                onClick={() => handleTabChange('photos')}
-                                className={`px-4 py-1.5 rounded-full text-sm transition-colors ${
-                                    activeTab === 'photos'
-                                        ? 'bg-neutral-800 text-white font-medium'
-                                        : 'text-neutral-400 hover:text-white'
-                                }`}
-                            >
-                                🖼️ Zdjęcia
-                            </button>
-                            <button
-                                onClick={() => handleTabChange('videos')}
-                                className={`px-4 py-1.5 rounded-full text-sm transition-colors ${
-                                    activeTab === 'videos'
-                                        ? 'bg-neutral-800 text-white font-medium'
-                                        : 'text-neutral-400 hover:text-white'
-                                }`}
-                            >
-                                🎥 Wideo
-                            </button>
+                        <div className="mt-6 flex items-center gap-4">
+                            {videos.length > 0 && (
+                                <div className="flex gap-2 rounded-full border border-neutral-800 bg-neutral-950 p-1">
+                                    <button
+                                        onClick={() => handleTabChange("photos")}
+                                        className={`rounded-full px-4 py-1.5 text-sm transition-colors ${
+                                            activeTab === "photos"
+                                                ? "bg-neutral-800 font-medium text-white"
+                                                : "text-neutral-400 hover:text-white"
+                                        }`}
+                                    >
+                                        Zdjęcia
+                                    </button>
+                                    <button
+                                        onClick={() => handleTabChange("videos")}
+                                        className={`rounded-full px-4 py-1.5 text-sm transition-colors ${
+                                            activeTab === "videos"
+                                                ? "bg-neutral-800 font-medium text-white"
+                                                : "text-neutral-400 hover:text-white"
+                                        }`}
+                                    >
+                                        Wideo
+                                    </button>
+                                </div>
+                            )}
+                            <div className="rounded-full border border-neutral-800 bg-neutral-900/80 px-3 py-1 text-sm text-neutral-400">
+                                {currentImageIndex + 1} / {mediaCount}
+                            </div>
                         </div>
-
-                        {/* 🔢 Dynamiczny licznik (zdjęcia lub wideo) */}
-                        <div className="text-neutral-400 text-sm bg-neutral-900/80 border border-neutral-800 px-3 py-1 rounded-full">
-                            {currentImageIndex + 1} / {activeTab === 'photos' ? product.images.length : (product.videos?.length || 0)}
-                        </div>
-
                     </div>
                 </div>
-            </div>
-        )}
-    </div>
-);
+            )}
+        </div>
+    );
 }

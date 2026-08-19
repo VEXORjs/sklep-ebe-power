@@ -51,6 +51,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/payment/create-payment-intent").permitAll()
                         .requestMatchers("/api/products/**").permitAll()
                         .requestMatchers("/api/payment", "/api/payment/**").permitAll()
+                        .requestMatchers("/api/webhook", "/api/webhook/**").permitAll()
                         .requestMatchers("/admin/**").permitAll()
                         .anyRequest().authenticated()
                 );
