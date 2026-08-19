@@ -15,6 +15,9 @@ steps:
       - 'europe-west1-docker.pkg.dev/$PROJECT_ID/sklep-repo/sklep-frontend:v1'
       - './frontend'
 
+options:
+  logging: CLOUD_LOGGING_ONLY
+
 # Zapisanie gotowego obrazu w Artifact Registry 📦
 images:
   - 'europe-west1-docker.pkg.dev/$PROJECT_ID/sklep-repo/sklep-frontend:v1'
