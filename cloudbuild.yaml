@@ -1,5 +1,5 @@
 steps:
-  # Krok 1: Budowanie obrazu Docker z argumentami (ARG)
+  # Budowanie obrazu Docker z argumentami (ARG)
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
@@ -18,6 +18,6 @@ steps:
 options:
   logging: CLOUD_LOGGING_ONLY
 
-# Zapisanie gotowego obrazu w Artifact Registry 📦
+# Zapisanie gotowego obrazu w Artifact Registry (Google)
 images:
   - 'europe-west1-docker.pkg.dev/$PROJECT_ID/sklep-repo/sklep-frontend:v1'
