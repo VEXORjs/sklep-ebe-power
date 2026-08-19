@@ -439,7 +439,7 @@ export const CATEGORIES: CategoryDef[] = [
         ],
     },
     {
-        slug: "stacje-ladowania",
+        slug: "stacje-ladowania-ev",
         name: "Stacje ładowania EV",
         tagline: "Wallboxy 7,4–22 kW z Typem 2 i pomiarem energii",
         description:
