@@ -1,7 +1,27 @@
 import { Product } from '../types/product';
 import { DEMO_PRODUCTS } from '../data/demoProducts';
+import { getServerApiUrl } from '@/app/lib/api';
 
-const API_URL = process.env.API_URL || 'http://localhost:8080';
+const API_URL = getServerApiUrl();
+
+function normalizeProduct(raw: Partial<Product> & { id: number; name: string; price: number }): Product {
+    return {
+        id: Number(raw.id),
+        name: raw.name,
+        price: Number(raw.price),
+        oldPrice: raw.oldPrice != null ? Number(raw.oldPrice) : undefined,
+        description: raw.description ?? "",
+        stock: Number(raw.stock ?? 0),
+        images: Array.isArray(raw.images) ? raw.images : [],
+        videos: Array.isArray(raw.videos) ? raw.videos : [],
+        parameters: raw.parameters ?? {},
+        category: raw.category,
+        sku: raw.sku,
+        badge: raw.badge,
+        rating: raw.rating,
+        reviews: raw.reviews,
+    };
+}
 
 export async function getProducts(): Promise<Product[]> {
     console.log("👉 Next.js pobiera produkty z adresu:", `${API_URL}/api/products`);
@@ -18,7 +38,9 @@ export async function getProducts(): Promise<Product[]> {
 
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
-            return data;
+            return data.map((item: Partial<Product> & { id: number; name: string; price: number }) =>
+                normalizeProduct(item)
+            );
         }
         throw new Error("Pusta lista produktów z serwera");
     } catch (error) {
@@ -27,6 +49,30 @@ export async function getProducts(): Promise<Product[]> {
             error
         );
         return DEMO_PRODUCTS;
+    }
+}
+
+export async function getProduct(id: string | number): Promise<Product | null> {
+    try {
+        const res = await fetch(`${API_URL}/api/products/${id}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+            cache: "no-store",
+            signal: AbortSignal.timeout(3000),
+        });
+
+        if (!res.ok) {
+            throw new Error(`Backend zwrócił kod: ${res.status}`);
+        }
+
+        const data = await res.json();
+        return normalizeProduct(data);
+    } catch (error) {
+        console.warn(
+            "⚠️ Backend niedostępny — podgląd produktu z danych demonstracyjnych.",
+            error
+        );
+        return DEMO_PRODUCTS.find((p) => p.id === Number(id)) ?? null;
     }
 }
 

@@ -233,6 +233,17 @@ export default function ProductCard({
                 Zobacz szczegóły
                 <ArrowRight className="h-3.5 w-3.5" />
             </Link>
+
+            {product.images && product.images.length > 1 && (
+                <div className="pointer-events-none absolute inset-x-0 bottom-10 z-10 flex justify-center gap-1">
+                    {product.images.slice(0, 4).map((src, index) => (
+                        <span
+                            key={src}
+                            className={`h-1.5 rounded-full ${index === 0 ? "w-4 bg-emerald-400" : "w-1.5 bg-black/40"}`}
+                        />
+                    ))}
+                </div>
+            )}
         </div>
     );
 

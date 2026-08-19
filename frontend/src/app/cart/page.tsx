@@ -75,10 +75,16 @@ export default function CartPage() {
                             <span className="text-white font-medium">{cart.items.length}</span>
                         </div>
 
+                        <div className="flex justify-between text-sm text-neutral-400">
+                            <span>VAT 23%:</span>
+                            <span className="text-white font-medium">{(cart.cartTotal * 0.23).toFixed(2)} PLN</span>
+                        </div>
+
                         <div className="flex justify-between text-xl font-bold border-t border-neutral-800 pt-4">
                             <span>Do zapłaty:</span>
-                            <span className="text-emerald-400">{cart.cartTotal.toFixed(2)} PLN</span>
+                            <span className="text-emerald-400">{(cart.cartTotal * 1.23).toFixed(2)} PLN</span>
                         </div>
+                        <p className="text-[11px] text-neutral-500">Kwota brutto. Dostawa doliczana w kasie.</p>
 
                         <Link
                             href="/checkout"
