@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -10,17 +12,23 @@
   --color-foreground: var(--foreground);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html.light {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  color-scheme: light;
+}
+
+html.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  color-scheme: dark;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* Pasek marek — przewijana karuzela */
@@ -39,4 +47,138 @@ body {
 
 .animate-marquee:hover {
   animation-play-state: paused;
+}
+
+/* ──────────────────────────────────────────
+   Light mode — nadpisania ciemnych powierzchni
+   Zostawiamy akcenty (emerald, red, amber) bez zmian.
+   Overlay-e typu bg-black/80 zostają ciemne dla kontrastu.
+   ────────────────────────────────────────── */
+
+/* Główne tła stron / sekcji */
+html.light .bg-black {
+  background-color: #f8fafc !important;
+}
+html.light .bg-neutral-950 {
+  background-color: #ffffff !important;
+}
+html.light [class*="bg-[#111315]"] {
+  background-color: #ffffff !important;
+}
+html.light [class*="bg-[#0d0e10]"] {
+  background-color: #f1f5f9 !important;
+}
+html.light [class*="bg-[#0d0f10]"] {
+  background-color: #f1f5f9 !important;
+}
+html.light [class*="bg-[#141618]"] {
+  background-color: #ffffff !important;
+}
+html.light [class*="bg-[#1a1c1e]"] {
+  background-color: #ffffff !important;
+}
+html.light [class*="bg-[#101214]"] {
+  background-color: #ffffff !important;
+}
+html.light [class*="bg-[#0f1113]"] {
+  background-color: #f8fafc !important;
+}
+
+/* Karty / panele neutral-900 */
+html.light .bg-neutral-900 {
+  background-color: #ffffff !important;
+}
+html.light [class*="bg-neutral-900/"] {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+html.light .bg-neutral-800 {
+  background-color: #f1f5f9 !important;
+}
+
+/* Inputy ciemne -> jasne */
+html.light [class*="bg-white/10"] {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+html.light [class*="border-white/20"] {
+  border-color: #e2e8f0 !important;
+}
+
+/* Teksty */
+html.light .text-white {
+  color: #0f172a !important;
+}
+html.light [class*="text-white/"] {
+  color: #0f172a !important;
+}
+html.light .text-neutral-200 {
+  color: #262626 !important;
+}
+html.light .text-neutral-300 {
+  color: #404040 !important;
+}
+html.light .text-neutral-400 {
+  color: #525252 !important;
+}
+html.light .text-neutral-500 {
+  color: #737373 !important;
+}
+html.light .text-neutral-600 {
+  color: #525252 !important;
+}
+
+/* Zachowaj emerald / red / amber akcenty — nie nadpisuj */
+html.light .text-emerald-400,
+html.light .text-emerald-500,
+html.light .text-emerald-300,
+html.light .text-red-400,
+html.light .text-red-500,
+html.light .text-amber-400 {
+  /* leave as is */
+}
+
+/* Borders */
+html.light .border-neutral-800 {
+  border-color: #e2e8f0 !important;
+}
+html.light .border-neutral-700 {
+  border-color: #e2e8f0 !important;
+}
+html.light [class*="border-neutral-800/"] {
+  border-color: #e2e8f0 !important;
+}
+html.light .border-neutral-850 {
+  border-color: #e2e8f0 !important;
+}
+
+/* Placeholdery */
+html.light input::placeholder,
+html.light textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+/* Cienie — lżejsze w light */
+html.light .shadow-black\/60,
+html.light [class*="shadow-black"] {
+  --tw-shadow-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+}
+html.light .shadow-2xl {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Hero / gradienty — rozjaśnij subtelnie */
+html.light .from-black\/95 {
+  --tw-gradient-from: rgba(255, 255, 255, 0.9) !important;
+}
+html.light .via-black\/50 {
+  --tw-gradient-via: rgba(248, 250, 252, 0.5) !important;
+}
+
+/* Scrollbar */
+html.light ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+html.light ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
 }

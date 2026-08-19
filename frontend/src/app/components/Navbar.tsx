@@ -5,6 +5,7 @@ import { signIn, signOut, useSession } from 'next-auth/react';
 import { useCart } from '@/app/context/CartContext';
 import Image from "next/image";
 import { currentPathCallbackUrl } from '@/app/lib/auth-redirect';
+import ThemeToggle from '@/app/components/ThemeToggle';
 
 export default function Navbar() {
     const { data: session } = useSession();
@@ -40,6 +41,9 @@ export default function Navbar() {
                         Serwis
                     </Link>
                 </div>
+
+                {/* MOTYW */}
+                <ThemeToggle />
 
                 {/* KOSZYK */}
                 <button
