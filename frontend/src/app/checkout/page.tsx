@@ -7,6 +7,7 @@ import { useCart } from '@/app/context/CartContext';
 import FormWrapper from '@/app/checkout/FormWrapper';
 import {
     formatPLN,
+    FIRST_STARTUP_FEE,
     FREE_SHIPPING_THRESHOLD,
     grossPrice,
     shippingCostFor,
@@ -43,7 +44,8 @@ export default function CheckoutPage() {
         );
     }
 
-    const net = cart.cartTotal;
+    const startup = Boolean(cart.firstStartup);
+    const net = cart.cartTotal + (startup ? FIRST_STARTUP_FEE : 0);
     const vat = vatOf(net);
     const gross = grossPrice(net);
     const shipping = shippingCostFor(gross);
@@ -87,6 +89,12 @@ export default function CheckoutPage() {
                             </ul>
 
                             <dl className="mt-5 space-y-2 text-sm">
+                                {startup && (
+                                    <div className="flex justify-between text-neutral-400">
+                                        <dt>Pierwsze uruchomienie</dt>
+                                        <dd className="text-white">{formatPLN(FIRST_STARTUP_FEE)}</dd>
+                                    </div>
+                                )}
                                 <div className="flex justify-between text-neutral-400">
                                     <dt>Netto</dt>
                                     <dd className="text-white">{formatPLN(net)}</dd>

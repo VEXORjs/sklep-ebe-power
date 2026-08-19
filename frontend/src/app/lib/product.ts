@@ -9,6 +9,9 @@ export const FREE_SHIPPING_THRESHOLD = 500;
 /** Koszt kuriera, gdy zamówienie nie osiąga progu darmowej dostawy (brutto, zł). */
 export const SHIPPING_COST = 16.99;
 
+/** Dopłata netto za pierwsze uruchomienie sprzętu (zł). */
+export const FIRST_STARTUP_FEE = 1000;
+
 /** Liczba rat w kalkulatorze „raty od…". */
 export const INSTALLMENT_MONTHS = 12;
 

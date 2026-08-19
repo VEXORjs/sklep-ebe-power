@@ -29,6 +29,10 @@ public class StripeWebhookController {
 
         Event event;
 
+        if (endpointSecret == null || endpointSecret.isBlank()) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("Webhook secret not configured");
+        }
+
         try {
             // 1. Weryfikacja czy żądanie naprawdę pochodzi od Stripe
             event = Webhook.constructEvent(payload, sigHeader, endpointSecret);

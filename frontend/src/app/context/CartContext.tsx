@@ -16,6 +16,8 @@ interface CartContextType {
     loading: boolean;
     addToCart: (product: Product, quantity?: number) => Promise<void>;
     removeFromCart: (productId: number) => Promise<void>;
+    updateQuantity: (productId: number, quantity: number) => Promise<void>;
+    setFirstStartup: (enabled: boolean) => void;
     refreshCart: () => Promise<void>;
     clearCart: (id: string) => Promise<void>;
     isCartOpen: boolean;
@@ -59,7 +61,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 });
                 if (!res.ok) throw new Error(`Backend zwrócił kod błędu: ${res.status} ${res.statusText}`);
                 const data: CartDto = await res.json();
-                setCart(data);
+                const stored = localStorage.getItem(`first_startup_${userId}`);
+                setCart({ ...data, firstStartup: stored === "1" || data.firstStartup });
             } catch (error) {
                 console.error("Szczegółowy błąd pobierania koszyka z sieci:", error);
             } finally {
@@ -110,7 +113,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                     });
                     if (!res.ok) throw new Error(`Błąd: ${res.status}`);
                     const data: CartDto = await res.json();
-                    if (isMounted) setCart(data);
+                    const stored = localStorage.getItem(`first_startup_${userId}`);
+                    if (isMounted) setCart({ ...data, firstStartup: stored === "1" || data.firstStartup });
                 } catch (error) {
                     console.error("Błąd pobierania koszyka:", error);
                 } finally {
@@ -171,6 +175,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 userId: 'guest',
                 items: currentItems,
                 cartTotal: newTotal,
+                firstStartup: cart?.firstStartup ?? false,
             };
 
             setCart(updatedCart);
@@ -187,7 +192,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 });
                 if (!res.ok) throw new Error('Błąd podczas dodawania do koszyka');
                 const updatedCart: CartDto = await res.json();
-                setCart(updatedCart);
+                setCart({ ...updatedCart, firstStartup: cart?.firstStartup ?? false });
             } catch (error) {
                 console.error(error);
             }
@@ -208,6 +213,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 userId: 'guest',
                 items: updatedItems,
                 cartTotal: newTotal,
+                firstStartup: cart?.firstStartup ?? false,
             };
 
             setCart(updatedCart);
@@ -225,15 +231,72 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 });
                 if (!res.ok) throw new Error('Błąd podczas usuwania z koszyka');
                 const updatedCart: CartDto = await res.json();
-                setCart(updatedCart);
+                setCart({ ...updatedCart, firstStartup: cart?.firstStartup ?? false });
             } catch (error) {
                 console.error(error);
             }
         }
     };
 
+    const persistGuest = (next: CartDto) => {
+        setCart(next);
+        localStorage.setItem("guest_cart", JSON.stringify(next));
+    };
+
+    const updateQuantity = async (productId: number, quantity: number) => {
+        if (quantity <= 0) {
+            await removeFromCart(productId);
+            return;
+        }
+        if (!userId) {
+            const currentItems = cart?.items ? [...cart.items] : [];
+            const existingIndex = currentItems.findIndex((i) => i.productId === productId);
+            if (existingIndex === -1) return;
+            currentItems[existingIndex] = {
+                ...currentItems[existingIndex],
+                quantity,
+                totalPrice: quantity * currentItems[existingIndex].productPrice,
+            };
+            persistGuest({
+                userId: 'guest',
+                items: currentItems,
+                cartTotal: currentItems.reduce((total, item) => total + item.totalPrice, 0),
+                firstStartup: cart?.firstStartup ?? false,
+            });
+            return;
+        }
+        try {
+            const res = await fetch(`${API_BASE_URL}/${userId}/item/${productId}?quantity=${quantity}`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (!res.ok) throw new Error('Błąd podczas aktualizacji ilości');
+            const updatedCart: CartDto = await res.json();
+            setCart({ ...updatedCart, firstStartup: cart?.firstStartup ?? false });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const setFirstStartup = (enabled: boolean) => {
+        const base: CartDto = cart ?? { userId: userId ?? 'guest', items: [], cartTotal: 0 };
+        const next = { ...base, firstStartup: enabled };
+        setCart(next);
+        if (!userId) {
+            localStorage.setItem("guest_cart", JSON.stringify(next));
+        } else {
+            try {
+                localStorage.setItem(`first_startup_${userId}`, enabled ? "1" : "0");
+            } catch {
+                /* ignore */
+            }
+        }
+    };
+
     return (
-        <CartContext.Provider value={{ cart, loading: loading || status === 'loading', addToCart, removeFromCart, refreshCart, clearCart, isCartOpen, openCart: () => setIsCartOpen(true), closeCart: () => setIsCartOpen(false) }}>
+        <CartContext.Provider value={{ cart, loading: loading || status === 'loading', addToCart, removeFromCart, updateQuantity, setFirstStartup, refreshCart, clearCart, isCartOpen, openCart: () => setIsCartOpen(true), closeCart: () => setIsCartOpen(false) }}>
             {children}
         </CartContext.Provider>
     );

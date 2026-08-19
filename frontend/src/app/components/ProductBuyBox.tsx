@@ -7,6 +7,8 @@ import { Product } from "@/app/types/product";
 import AddToCartButton from "@/app/components/AddToCart";
 import BuyNowButton from "@/app/components/BuyNowButton";
 import { useWishlist } from "@/app/hooks/useWishlist";
+import { useCart } from "@/app/context/CartContext";
+import { FIRST_STARTUP_FEE, formatPLN } from "@/app/lib/product";
 
 interface ProductBuyBoxProps {
     product: Product;
@@ -15,6 +17,8 @@ interface ProductBuyBoxProps {
 export default function ProductBuyBox({ product }: ProductBuyBoxProps) {
     const [quantity, setQuantity] = useState(1);
     const { toggle, isWishlisted } = useWishlist();
+    const { cart, setFirstStartup } = useCart();
+    const firstStartup = Boolean(cart?.firstStartup);
     const wishlisted = isWishlisted(product.id);
     const outOfStock = !product.stock || product.stock <= 0;
     const max = Math.max(1, product.stock || 1);
@@ -90,6 +94,34 @@ export default function ProductBuyBox({ product }: ProductBuyBoxProps) {
                     {wishlisted ? "Zapisane" : "Do schowka"}
                 </button>
             </div>
+
+            <fieldset className="rounded-md border border-neutral-800 bg-[#0f1113] p-3">
+                <legend className="px-1 text-[11px] font-bold uppercase tracking-wider text-neutral-400">
+                    Pierwsze uruchomienie
+                </legend>
+                <div className="flex flex-col gap-2 text-sm text-neutral-300">
+                    <label className="flex cursor-pointer items-center gap-2">
+                        <input
+                            type="radio"
+                            name={`first-startup-${product.id}`}
+                            checked={!firstStartup}
+                            onChange={() => setFirstStartup(false)}
+                            className="accent-emerald-500"
+                        />
+                        Bez uruchomienia
+                    </label>
+                    <label className="flex cursor-pointer items-center gap-2">
+                        <input
+                            type="radio"
+                            name={`first-startup-${product.id}`}
+                            checked={firstStartup}
+                            onChange={() => setFirstStartup(true)}
+                            className="accent-emerald-500"
+                        />
+                        Z pierwszym uruchomieniem (+ {formatPLN(FIRST_STARTUP_FEE)} netto)
+                    </label>
+                </div>
+            </fieldset>
 
             {outOfStock && (
                 <p className="rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-200">

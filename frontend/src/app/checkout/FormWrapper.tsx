@@ -32,6 +32,7 @@ export default function FormWrapper() {
         const payload = {
             userId: session?.user?.id || null,
             customerEmail: session?.user?.email || null,
+            firstStartup: Boolean(cart.firstStartup),
             items: cart.items.map((item) => ({
                 productId: item.productId,
                 quantity: item.quantity,

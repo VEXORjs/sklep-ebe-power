@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { useCart } from "@/app/context/CartContext";
-import { ShoppingCart, Trash2, X, Zap } from "lucide-react";
+import { Minus, Plus, ShoppingCart, Trash2, X, Zap } from "lucide-react";
 
 export default function CartDrawer() {
-    const { cart, isCartOpen, closeCart, removeFromCart } = useCart();
+    const { cart, isCartOpen, closeCart, removeFromCart, updateQuantity } = useCart();
 
     const items = cart?.items ?? [];
     const count = items.reduce((acc, item) => acc + item.quantity, 0);
@@ -83,10 +83,32 @@ export default function CartDrawer() {
                                         <p className="truncate text-xs font-bold text-white">
                                             {item.productName}
                                         </p>
-                                        <p className="mt-0.5 text-[11px] text-neutral-500">
-                                            {item.quantity} ×{" "}
-                                            {item.productPrice.toFixed(2).replace(".", ",")} zł
-                                        </p>
+                                        <div className="mt-1.5 flex items-center gap-2">
+                                            <div className="flex items-center rounded border border-neutral-700">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => updateQuantity(item.productId, item.quantity - 1)}
+                                                    aria-label="Zmniejsz ilość"
+                                                    className="flex h-6 w-6 items-center justify-center text-neutral-400 hover:text-white"
+                                                >
+                                                    <Minus className="h-3 w-3" />
+                                                </button>
+                                                <span className="min-w-[1.25rem] text-center text-[11px] font-bold text-white">
+                                                    {item.quantity}
+                                                </span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                                                    aria-label="Zwiększ ilość"
+                                                    className="flex h-6 w-6 items-center justify-center text-neutral-400 hover:text-white"
+                                                >
+                                                    <Plus className="h-3 w-3" />
+                                                </button>
+                                            </div>
+                                            <p className="text-[11px] text-neutral-500">
+                                                × {item.productPrice.toFixed(2).replace(".", ",")} zł
+                                            </p>
+                                        </div>
                                         <p className="mt-0.5 text-xs font-semibold text-emerald-400">
                                             {item.totalPrice.toFixed(2).replace(".", ",")} zł
                                         </p>

@@ -11,4 +11,5 @@ export interface CartDto {
     userId: string;
     items: CartItemDto[];
     cartTotal: number;
+    firstStartup?: boolean;
 }

@@ -58,6 +58,15 @@ public class CartController {
         return new CartDto(updatedCart);
     }
 
+    @PatchMapping("/{userId}/item/{productId}")
+    public CartDto updateQuantity(
+            @PathVariable String userId,
+            @PathVariable Long productId,
+            @RequestParam int quantity) {
+        Cart updatedCart = cartService.updateProductQuantity(userId, productId, quantity);
+        return new CartDto(updatedCart);
+    }
+
     @DeleteMapping("/{userId}/clear")
     public ResponseEntity<?> clearCart(@PathVariable String userId){
         Cart clearedCart = cartService.clearCartByUserId(userId);
