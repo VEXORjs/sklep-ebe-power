@@ -1,96 +1,157 @@
 "use client";
 
-import { useState } from "react";
+import { FormEvent, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Loader2, Lock, Mail, User } from "lucide-react";
+
+import AuthShell from "@/app/components/AuthShell";
 
 export default function RegisterPage() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
 
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001' || 'http://localhost:3000';
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        const res = await fetch(`${API_URL}/api/auth/register`, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-                name: name,
-                email: email,
-                password: password,
-            })
-        });
-        if (res.status === 200) {
-            router.push("/api/auth/signin");
-        }
-        else {
-            const error = await res.text();
-            setError(error || "Coś poszło nie tak");
+    const handleSubmit = async (event: FormEvent) => {
+        event.preventDefault();
+        if (loading) return;
+
+        setError("");
+        setLoading(true);
+
+        try {
+            const res = await fetch(`${API_URL}/api/auth/register`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, email, password }),
+            });
+
+            if (res.ok) {
+                router.push("/auth/signin");
+                return;
+            }
+
+            const message = await res.text();
+            setError(message || "Nie udało się założyć konta. Spróbuj ponownie.");
+        } catch {
+            setError("Brak połączenia z serwerem. Sprawdź sieć i spróbuj jeszcze raz.");
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
-            <form onSubmit={handleSubmit} className="bg-neutral-900 border border-neutral-800 p-8 rounded-lg max-w-sm w-full space-y-4">
-                <h2 className="text-2xl font-bold text-center mb-6">Rejestracja TRAFO</h2>
+        <AuthShell
+            eyebrow="Nowy klient"
+            headline="Załóż konto w TRAFO ENERGIA"
+            description="Jedno konto — faktury VAT, historia zamówień i szybsza kasa przy kolejnych zakupach."
+        >
+            <div className="space-y-6">
+                <div>
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-400">
+                        TRAFO ENERGIA
+                    </p>
+                    <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-white">
+                        Rejestracja
+                    </h2>
+                    <p className="mt-1.5 text-sm text-neutral-400">
+                        Uzupełnij dane — potem od razu przejdziesz do logowania.
+                    </p>
+                </div>
 
                 {error && (
-                    <div className="bg-red-500/10 border border-red-500/20 text-red-500 text-xs p-3 rounded font-medium text-center">
+                    <div
+                        role="alert"
+                        className="rounded-lg border border-red-500/25 bg-red-500/10 px-3 py-2.5 text-center text-xs font-medium text-red-400"
+                    >
                         {error}
                     </div>
                 )}
 
-                {/* POLE: IMIĘ */}
-                <div>
-                    <label className="block text-sm text-neutral-400 mb-1">Imię</label>
-                    <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                        className="w-full bg-black border border-neutral-800 rounded p-2 text-white focus:border-emerald-500 outline-none"
-                        placeholder="Twoje imię"
-                    />
-                </div>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label htmlFor="name" className="mb-1.5 block text-xs font-semibold text-neutral-400">
+                            Imię
+                        </label>
+                        <div className="relative">
+                            <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+                            <input
+                                id="name"
+                                type="text"
+                                value={name}
+                                onChange={(event) => setName(event.target.value)}
+                                autoComplete="name"
+                                required
+                                placeholder="Jan Kowalski"
+                                className="w-full rounded-lg border border-neutral-800 bg-black py-3 pl-10 pr-3 text-sm text-white outline-none transition-colors placeholder:text-neutral-600 focus:border-emerald-500"
+                            />
+                        </div>
+                    </div>
 
-                {/* POLE: EMAIL */}
-                <div>
-                    <label className="block text-sm text-neutral-400 mb-1">Email</label>
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        autoComplete="username"
-                        required
-                        className="w-full bg-black border border-neutral-800 rounded p-2 text-white focus:border-emerald-500 outline-none"
-                        placeholder="user@domain.com"
-                    />
-                </div>
+                    <div>
+                        <label htmlFor="email" className="mb-1.5 block text-xs font-semibold text-neutral-400">
+                            E-mail
+                        </label>
+                        <div className="relative">
+                            <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+                            <input
+                                id="email"
+                                type="email"
+                                value={email}
+                                onChange={(event) => setEmail(event.target.value)}
+                                autoComplete="username"
+                                required
+                                placeholder="jan@firma.pl"
+                                className="w-full rounded-lg border border-neutral-800 bg-black py-3 pl-10 pr-3 text-sm text-white outline-none transition-colors placeholder:text-neutral-600 focus:border-emerald-500"
+                            />
+                        </div>
+                    </div>
 
-                {/* POLE: HASŁO */}
-                <div>
-                    <label className="block text-sm text-neutral-400 mb-1">Hasło</label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        autoComplete="new-password"
-                        required
-                        className="w-full bg-black border border-neutral-800 rounded p-2 text-white focus:border-emerald-500 outline-none"
-                    />
-                </div>
+                    <div>
+                        <label htmlFor="password" className="mb-1.5 block text-xs font-semibold text-neutral-400">
+                            Hasło
+                        </label>
+                        <div className="relative">
+                            <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+                            <input
+                                id="password"
+                                type="password"
+                                value={password}
+                                onChange={(event) => setPassword(event.target.value)}
+                                autoComplete="new-password"
+                                required
+                                minLength={6}
+                                placeholder="Minimum 6 znaków"
+                                className="w-full rounded-lg border border-neutral-800 bg-black py-3 pl-10 pr-3 text-sm text-white outline-none transition-colors placeholder:text-neutral-600 focus:border-emerald-500"
+                            />
+                        </div>
+                    </div>
 
-                {/* PRZYCISK */}
-                <button
-                    type="submit"
-                    className="w-full bg-emerald-600 hover:bg-emerald-700 font-bold py-2 rounded transition-colors mt-2"
-                >
-                    Zarejestruj się
-                </button>
-            </form>
-        </div>
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-500 py-3 text-sm font-extrabold text-slate-950 shadow-lg shadow-emerald-950/40 transition-colors hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                        {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+                        {loading ? "Tworzenie konta..." : "Załóż konto"}
+                    </button>
+                </form>
+
+                <p className="text-center text-sm text-neutral-400">
+                    Masz już konto?{" "}
+                    <Link
+                        href="/auth/signin"
+                        className="font-semibold text-emerald-400 transition-colors hover:text-emerald-300"
+                    >
+                        Zaloguj się
+                    </Link>
+                </p>
+            </div>
+        </AuthShell>
     );
 }

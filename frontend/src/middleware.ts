@@ -13,7 +13,7 @@ export default withAuth(
         },
         pages: {
             // Jeśli użytkownik jest niezalogowany, przekieruj go tutaj:
-            signIn: "/api/auth/signin",
+            signIn: "/auth/signin",
         },
     }
 );
