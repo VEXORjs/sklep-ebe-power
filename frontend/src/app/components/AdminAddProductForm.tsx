@@ -4,6 +4,7 @@ import {useEffect, useState} from 'react';
 import { uploadProductImage } from '@/lib/uploadImage';
 import {Product} from "@/app/types/product";
 import Image from "next/image";
+import { getPublicApiUrl } from "@/app/lib/api";
 
 interface ProductFormProps {
     onProductAdded: (product: Product) => void;
@@ -12,7 +13,7 @@ interface ProductFormProps {
     onCancel?: () => void;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001' || 'http://localhost:3000';
+const API_URL = getPublicApiUrl();
 
 export default function ProductForm({ onProductAdded, onProductUpdated, editingProduct, onCancel }: ProductFormProps) {
     const [name, setName] = useState('');

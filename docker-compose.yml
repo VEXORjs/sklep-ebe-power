@@ -55,7 +55,10 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8080
+      # Serwer Next.js (SSR / proxy /api/backend) łączy się z backendem po
+      # wewnętrznej sieci Dockera. Przeglądarka NIE dostaje tego adresu —
+      # klient używa ścieżki względnej /api/backend (same-origin, bez CORS).
+      - API_URL=http://backend-api:8080
       - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
       - NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
       - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
