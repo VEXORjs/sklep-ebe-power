@@ -1,0 +1,70 @@
+# Cloud Build — backend Spring Boot (usługa Cloud Run `trafo`).
+#
+# TEN PLIK buduje wyłącznie ./backend i wdraża obraz na usługę `trafo`.
+# Frontend (Next.js) ma osobny plik w katalogu głównym: cloudbuild.yaml
+# (usługa `frontend`). Trigger o nazwie "backend" MUSI wskazywać tutaj
+# (`backend/cloudbuild.yaml`). Gdy wskazywał na główny cloudbuild.yaml,
+# na usługę `trafo` wjeżdżał sklep Next.js — /api/products i /api/cart
+# zwracały HTML zamiast JSON, a koszyk na ebe-power.pl sypał 404.
+#
+# Substitutions (nadpisywane w ustawieniach triggera, jeśli trzeba):
+#
+#   _REGION         — region Cloud Run (domyślnie europe-west1).
+#   _SERVICE_NAME   — IGNOROWANE celowo. Usługa jest zahardkodowana jako
+#                     `trafo`, żeby trigger z inną substytucją nie mógł
+#                     wrzucić tego obrazu na frontend (i odwrotnie).
+#
+# Zmienne środowiskowe Springa (SPRING_DATASOURCE_*, MAIL_*, STRIPE_*)
+# są ustawione BEZPOŚREDNIO w usłudze Cloud Run. Nie ustawiamy ich tutaj:
+# `--set-env-vars` WYMAZUJE pozostałe zmienne. Dopisywanie: --update-env-vars.
+substitutions:
+  _REGION: 'europe-west1'
+
+steps:
+  # 1. Obraz Docker z dwoma tagami:
+  #      :v1         — stały, „ruchomy” tag, na który wskazuje Cloud Run
+  #      :$SHORT_SHA — unikalny tag per commit, do rollbacku
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/sklep-repo/sklep-backend:v1'
+      - '-t'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/sklep-repo/sklep-backend:$SHORT_SHA'
+      - './backend'
+
+  # 2. Wdrożenie nowej rewizji. Deploy bierze obraz ze stałego tagu :v1.
+  #
+  #    Wymagane uprawnienia konta Cloud Build
+  #    (PROJECT_NUMBER@cloudbuild.gserviceaccount.com):
+  #      * roles/run.admin
+  #      * roles/iam.serviceAccountUser (na koncie, którym działa usługa)
+  #
+  #    Nazwa usługi jest literałem `trafo` — nie $_SERVICE_NAME — żeby
+  #    pomyłkowa substytucja triggera nie nadpisała frontendu.
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'trafo'
+      - '--image'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/sklep-repo/sklep-backend:v1'
+      - '--region'
+      - '$_REGION'
+      - '--platform'
+      - 'managed'
+      - '--project'
+      - '$PROJECT_ID'
+      - '--allow-unauthenticated'
+      - '--port'
+      - '8080'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: '1200s'
+
+images:
+  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/sklep-repo/sklep-backend:v1'
+  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/sklep-repo/sklep-backend:$SHORT_SHA'
