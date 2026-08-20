@@ -167,6 +167,11 @@ html.light .shadow-2xl {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
 }
 
+/* Marquee — boki (fade) dopasowane do jasnego tła */
+html.light [class*="from-[#0d0f10]"] {
+  --tw-gradient-from: #f1f5f9 !important;
+}
+
 /* Hero / gradienty — rozjaśnij subtelnie */
 html.light .from-black\/95 {
   --tw-gradient-from: rgba(255, 255, 255, 0.9) !important;

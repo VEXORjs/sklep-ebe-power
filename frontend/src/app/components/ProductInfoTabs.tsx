@@ -143,7 +143,7 @@ export default function ProductInfoTabs({
                             <h2 className="mb-3 text-lg font-extrabold text-white">Płatność</h2>
                             <ul className="space-y-3 text-sm text-neutral-300">
                                 <li className="rounded-lg border border-neutral-800 bg-[#101214] p-4">
-                                    <p className="font-bold text-white">Stripe — karta, BLIK, Apple Pay</p>
+                                    <p className="font-bold text-white">Stripe — karta, BLIK</p>
                                     <p className="mt-1 text-neutral-400">
                                         Płatność szyfrowana, 3-D Secure. Kwota pobierana jest brutto, z VAT 23%.
                                     </p>
@@ -152,12 +152,6 @@ export default function ProductInfoTabs({
                                     <p className="font-bold text-white">Faktura VAT</p>
                                     <p className="mt-1 text-neutral-400">
                                         Wystawiamy automatycznie po zaksięgowaniu płatności. Dane firmy podajesz w kasie.
-                                    </p>
-                                </li>
-                                <li className="rounded-lg border border-neutral-800 bg-[#101214] p-4">
-                                    <p className="font-bold text-white">Raty 0%</p>
-                                    <p className="mt-1 text-neutral-400">
-                                        Przy zakupie przez kasę możesz rozłożyć płatność na 12 rat 0% (oferta informacyjna).
                                     </p>
                                 </li>
                             </ul>

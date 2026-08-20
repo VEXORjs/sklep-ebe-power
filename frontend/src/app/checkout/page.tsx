@@ -123,7 +123,7 @@ export default function CheckoutPage() {
                             </li>
                             <li className="flex items-center gap-2">
                                 <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
-                                3-D Secure, BLIK, karta, Apple Pay
+                                3-D Secure, BLIK, karta
                             </li>
                             <li className="flex items-center gap-2">
                                 <Truck className="h-3.5 w-3.5 text-emerald-500" />

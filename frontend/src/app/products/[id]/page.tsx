@@ -25,8 +25,6 @@ import {
     FREE_SHIPPING_THRESHOLD,
     grossPrice,
     hasFreeShipping,
-    INSTALLMENT_MONTHS,
-    installmentOf,
     parseParameters,
     ratingOf,
     reviewEntriesOf,
@@ -265,9 +263,6 @@ export default async function ProductPage({ params }: PageProps) {
                                     </span>
                                 )}
                             </div>
-                            <p className="mt-2 text-sm text-neutral-400">
-                                lub {INSTALLMENT_MONTHS} × {formatPLN(installmentOf(product))} w ratach 0%
-                            </p>
                         </div>
 
                         {product.description && (
@@ -337,7 +332,7 @@ export default async function ProductPage({ params }: PageProps) {
                             </li>
                             <li className="flex items-start gap-3">
                                 <FileText className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
-                                Faktura VAT 23% · BLIK, karta i Apple Pay przez Stripe
+                                Faktura VAT 23% · BLIK i karta przez Stripe
                             </li>
                             <li className="flex items-start gap-3">
                                 <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
