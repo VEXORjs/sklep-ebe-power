@@ -54,7 +54,7 @@ export default function CategoryGrid({ products, limit = 9 }: CategoryGridProps)
                         >
                             <Image
                                 src={category.image}
-                                alt={category.name}
+                                alt={`${category.name} — ${category.tagline}`}
                                 fill
                                 quality={70}
                                 sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) calc(50vw - 2rem), 400px"

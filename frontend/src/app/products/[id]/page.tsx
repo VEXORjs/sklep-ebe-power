@@ -41,6 +41,12 @@ export const revalidate = 60;
 const loadProduct = cache(getProduct);
 const loadProducts = cache(getProducts);
 
+/** Pre-render all known product pages at build time for SEO. */
+export async function generateStaticParams() {
+    const products = await getProducts();
+    return products.map((p) => ({ id: String(p.id) }));
+}
+
 interface PageProps {
     params: Promise<{ id: string }>;
 }
@@ -64,19 +70,45 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const product = await loadProduct(id);
 
     if (!product) {
-        return { title: "Nie znaleziono produktu | ebe power" };
+        return { title: "Nie znaleziono produktu" };
     }
 
+    const gross = grossPrice(product.price);
+    const category = categoryOf(product);
+    const descriptionText = product.description?.slice(0, 155) || `${product.name} — kup w sklepie ebe power. Wysyłka w 24 h, gwarancja 24 mies., faktura VAT.`;
+
     return {
-        title: `${product.name} | ebe power`,
-        description: product.description?.slice(0, 300) || `${product.name} — sklep TRAFO ENERGIA`,
+        title: `${product.name}${category ? ` — ${category.name}` : ""} | Kup online`,
+        description: `${descriptionText} Cena: ${gross.toFixed(2).replace(".", ",")} zł brutto. Darmowa dostawa od 500 zł.`,
         alternates: { canonical: `/products/${product.id}` },
+        keywords: [
+            product.name,
+            product.category ?? "",
+            "kup online",
+            "sklep elektryczny",
+            "ebe power",
+        ].filter(Boolean),
         openGraph: {
-            title: product.name,
-            description: product.description?.slice(0, 300),
-            images: product.images?.[0] ? [product.images[0]] : [],
-            type: "website",
+            title: `${product.name} — Kup w ebe power`,
+            description: descriptionText,
+            images: product.images?.length
+                ? product.images.map((img) => ({
+                      url: img,
+                      width: 800,
+                      height: 600,
+                      alt: product.name,
+                  }))
+                : [],
+            type: "article",
+            url: `/products/${product.id}`,
         },
+        twitter: {
+            card: "summary_large_image",
+            title: product.name,
+            description: descriptionText,
+            images: product.images?.[0] ? [product.images[0]] : [],
+        },
+        robots: { index: true, follow: true },
     };
 }
 
@@ -114,30 +146,92 @@ export default async function ProductPage({ params }: PageProps) {
         })
         .slice(0, 3);
 
+    const site = "https://ebe-power.pl";
+
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "Product",
         name: product.name,
         description: product.description,
         sku,
+        mpn: sku,
         image: product.images,
         brand: { "@type": "Brand", name: "TRAFO ENERGIA" },
         category: product.category,
+        url: `${site}/products/${product.id}`,
         offers: {
             "@type": "Offer",
             priceCurrency: "PLN",
             price: gross.toFixed(2),
+            priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
             availability:
                 product.stock > 0
                     ? "https://schema.org/InStock"
                     : "https://schema.org/OutOfStock",
-            url: `/products/${product.id}`,
+            itemCondition: "https://schema.org/NewCondition",
+            url: `${site}/products/${product.id}`,
+            seller: {
+                "@type": "Organization",
+                name: "ebe power — TRAFO ENERGIA",
+                url: site,
+            },
+            shippingDetails: {
+                "@type": "OfferShippingDetails",
+                shippingRate: {
+                    "@type": "MonetaryAmount",
+                    value: hasFreeShipping(product) ? "0" : "16.99",
+                    currency: "PLN",
+                },
+                shippingDestination: {
+                    "@type": "DefinedRegion",
+                    addressCountry: "PL",
+                },
+                deliveryTime: {
+                    "@type": "ShippingDeliveryTime",
+                    handlingTime: { "@type": "QuantitativeValue", minValue: 0, maxValue: 1, unitCode: "d" },
+                    transitTime: { "@type": "QuantitativeValue", minValue: 1, maxValue: 3, unitCode: "d" },
+                },
+            },
+            hasMerchantReturnPolicy: {
+                "@type": "MerchantReturnPolicy",
+                applicableCountry: "PL",
+                returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+                merchantReturnDays: 30,
+                returnMethod: "https://schema.org/ReturnByMail",
+                returnFees: "https://schema.org/FreeReturn",
+            },
         },
         aggregateRating: {
             "@type": "AggregateRating",
             ratingValue: rating,
+            bestRating: 5,
+            worstRating: 1,
             reviewCount: reviews,
         },
+        review: reviewEntries.map((r) => ({
+            "@type": "Review",
+            author: { "@type": "Person", name: r.author },
+            datePublished: r.date,
+            reviewRating: {
+                "@type": "Rating",
+                ratingValue: r.rating,
+                bestRating: 5,
+            },
+            reviewBody: r.text,
+        })),
+    };
+
+    const breadcrumbJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Strona główna", item: site },
+            { "@type": "ListItem", position: 2, name: "Kategorie", item: `${site}/kategoria` },
+            ...(category
+                ? [{ "@type": "ListItem", position: 3, name: category.name, item: `${site}/kategoria/${category.slug}` }]
+                : []),
+            { "@type": "ListItem", position: category ? 4 : 3, name: product.name, item: `${site}/products/${product.id}` },
+        ],
     };
 
     return (
@@ -145,6 +239,10 @@ export default async function ProductPage({ params }: PageProps) {
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
             />
 
             <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
@@ -366,13 +464,13 @@ export default async function ProductPage({ params }: PageProps) {
                 </div>
 
                 {related.length > 0 && (
-                    <section className="mt-16">
+                    <section className="mt-16" aria-labelledby="related-products-heading">
                         <div className="mb-6 flex items-end justify-between gap-4">
                             <div>
                                 <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
                                     Dobierz do zamówienia
                                 </span>
-                                <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-white">
+                                <h2 id="related-products-heading" className="mt-1 text-2xl font-extrabold tracking-tight text-white">
                                     Podobne produkty
                                 </h2>
                             </div>

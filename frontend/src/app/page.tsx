@@ -7,18 +7,20 @@ import BrandMarquee from "@/app/components/BrandMarquee";
 import TrustBar from "@/app/components/FeatureBar";
 import type { Metadata } from "next";
 import { getSiteUrl } from "@/app/lib/site";
+import { allCategories } from "@/app/data/categories";
+import Link from "next/link";
 
 export const metadata: Metadata = {
     title: {
-        absolute: "ebe power | Transformatory, rozdzielnice i osprzęt elektryczny",
+        absolute: "ebe power — Transformatory, zasilacze, rozdzielnice i osprzęt elektryczny | Sklep online",
     },
     description:
-        "Sklep z transformatorami, zasilaczami, rozdzielnicami, kablami i osprzętem elektrycznym. Darmowa dostawa od 500 zł, wysyłka w 24 h.",
+        "Sklep internetowy z transformatorami, zasilaczami, rozdzielnicami, kablami i osprzętem elektrycznym. Darmowa dostawa od 500 zł, wysyłka w 24 h, gwarancja 24 miesięcy, faktura VAT. Bełchatów.",
     alternates: { canonical: "/" },
     openGraph: {
-        title: "ebe power | Transformatory i osprzęt elektryczny",
+        title: "ebe power — Transformatory, zasilacze i osprzęt elektryczny | Sklep online",
         description:
-            "Transformatory, zasilacze, rozdzielnice, kable i osprzęt. Darmowa dostawa od 500 zł, wysyłka w 24 h.",
+            "Transformatory, zasilacze, rozdzielnice, kable i osprzęt elektryczny. Darmowa dostawa od 500 zł, wysyłka w 24 h, gwarancja 24 mies.",
         url: "/",
         siteName: "ebe power",
         locale: "pl_PL",
@@ -31,7 +33,7 @@ export const revalidate = 60;
 export default async function HomePage() {
     const products = await getProducts();
 
-    // Produkt promocyjny trafia do sekcji „Oferta tygodnia”
+    // Produkt promocyjny trafia do sekcji „Oferta tygodnia"
     const featured =
         products.find((p) => p.badge === "Promocja") ??
         products.find((p) => p.oldPrice != null) ??
@@ -39,27 +41,44 @@ export default async function HomePage() {
         null;
 
     const site = getSiteUrl();
-    const jsonLd = {
+    const categories = allCategories(products);
+
+    const itemListJsonLd = {
         "@context": "https://schema.org",
-        "@type": "Organization",
-        name: "ebe power",
-        url: site,
-        email: "kontakt@ebe-power.pl",
-        telephone: "+48 88888 32 32",
-        address: {
-            "@type": "PostalAddress",
-            streetAddress: "Borki 10",
-            postalCode: "97-400",
-            addressLocality: "Bełchatów",
-            addressCountry: "PL",
-        },
+        "@type": "ItemList",
+        name: "Popularne produkty w sklepie ebe power",
+        numberOfItems: Math.min(products.length, 9),
+        itemListElement: products.slice(0, 9).map((p, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: p.name,
+            url: `${site}/products/${p.id}`,
+            image: p.images?.[0],
+        })),
+    };
+
+    const breadcrumbJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+            {
+                "@type": "ListItem",
+                position: 1,
+                name: "Strona główna",
+                item: site,
+            },
+        ],
     };
 
     return (
         <main className="min-h-screen bg-black text-white">
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
             />
             {featured && <Hero product={featured} />}
             <CategoryGrid products={products} />
@@ -68,6 +87,37 @@ export default async function HomePage() {
             </Suspense>
             <BrandMarquee />
             <TrustBar />
+
+            {/* SEO: Crawlowalna treść tekstowa z linkami do kategorii */}
+            <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+                <h2 className="mb-4 text-lg font-bold text-neutral-300">
+                    Sklep z osprzętem elektrycznym — ebe power
+                </h2>
+                <p className="mb-4 text-sm leading-relaxed text-neutral-500">
+                    ebe power (TRAFO ENERGIA) to sklep internetowy specjalizujący się w sprzedaży
+                    transformatorów sieciowych i toroidalnych, zasilaczy impulsowych na szynę DIN,
+                    przetwornic napięcia, rozdzielnic modułowych, bezpieczników, kabli i przewodów
+                    elektrycznych, mierników, agregatów prądotwórczych, stacji ładowania samochodów
+                    elektrycznych (wallbox EV) oraz akcesoriów instalatorskich. Wysyłamy z magazynu
+                    w Bełchatowie w ciągu 24 godzin, oferujemy darmową dostawę od 500 zł brutto,
+                    24-miesięczną gwarancję na cały asortyment oraz fakturę VAT do każdego zamówienia.
+                </p>
+                <nav aria-label="Kategorie produktów">
+                    <h3 className="mb-2 text-sm font-semibold text-neutral-400">Przeglądaj kategorie:</h3>
+                    <ul className="flex flex-wrap gap-2">
+                        {categories.map((cat) => (
+                            <li key={cat.slug}>
+                                <Link
+                                    href={`/kategoria/${cat.slug}`}
+                                    className="inline-block rounded-full border border-neutral-800 px-3 py-1 text-xs text-neutral-400 transition-colors hover:border-emerald-500/60 hover:text-emerald-300"
+                                >
+                                    {cat.name}
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
+                </nav>
+            </section>
         </main>
     );
 }

@@ -101,7 +101,7 @@ export default function ShopSection({ products, initialVisible = 9 }: ShopSectio
                         Nasz sklep
                     </span>
                     <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-white">
-                        Produkty ⚡
+                        Produkty
                     </h2>
                     <p className="mt-2 max-w-2xl text-sm text-neutral-400">
                         Transformatory, zasilacze, rozdzielnice, kable i osprzęt — gotowe do wysyłki w 24 h.

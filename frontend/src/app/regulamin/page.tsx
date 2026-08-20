@@ -1,10 +1,18 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import LegalPageShell, { LegalSection } from "@/app/components/LegalPageShell";
 
 export const metadata: Metadata = {
-    title: "Regulamin sklepu | ebe power",
+    title: "Regulamin sklepu internetowego",
     description:
-        "Regulamin sklepu internetowego TRAFO ENERGIA — zasady składania zamówień, płatności, dostawy oraz prawa konsumenta.",
+        "Regulamin sklepu internetowego ebe power (TRAFO ENERGIA) — zasady składania zamówień, płatności, dostawy, prawa konsumenta, gwarancja i serwis.",
+    alternates: { canonical: "/regulamin" },
+    openGraph: {
+        title: "Regulamin sklepu | ebe power",
+        description: "Zasady składania zamówień, płatności, dostawy oraz prawa konsumenta w sklepie ebe power.",
+        url: "/regulamin",
+        type: "website",
+    },
 };
 
 export default function RegulaminPage() {
@@ -51,7 +59,7 @@ export default function RegulaminPage() {
                     Wszystkie ceny podane w sklepie są cenami brutto i zawierają
                     podatek VAT. Do każdego zamówienia wystawiana jest faktura VAT
                     23%. Dostępne formy płatności opisane są na stronie{" "}
-                    <span className="text-white">Dostawa i płatności</span> — w tym
+                    <Link href="/dostawa" className="text-emerald-400 hover:text-emerald-300 transition-colors">Dostawa i płatności</Link> — w tym
                     płatności online obsługiwane przez Stripe.
                 </p>
             </LegalSection>
@@ -61,7 +69,7 @@ export default function RegulaminPage() {
                     Zamówienia wysyłamy z magazynu w Bełchatowie. Standardowy czas
                     realizacji to 24 godziny od zaksięgowania płatności. Szczegóły
                     dotyczące kosztów i sposobów dostawy znajdują się na stronie{" "}
-                    <span className="text-white">Dostawa i płatności</span>.
+                    <Link href="/dostawa" className="text-emerald-400 hover:text-emerald-300 transition-colors">Dostawa i płatności</Link>.
                 </p>
             </LegalSection>
 
@@ -70,7 +78,7 @@ export default function RegulaminPage() {
                     Konsumentowi przysługuje prawo odstąpienia od umowy w terminie
                     14 dni od otrzymania towaru, bez podania przyczyny. Zasady
                     zwrotów oraz tryb składania reklamacji opisane są na stronie{" "}
-                    <span className="text-white">Zwroty i reklamacje</span>.
+                    <Link href="/zwroty" className="text-emerald-400 hover:text-emerald-300 transition-colors">Zwroty i reklamacje</Link>.
                 </p>
             </LegalSection>
 
@@ -86,9 +94,9 @@ export default function RegulaminPage() {
                 <p>
                     W sprawach dotyczących zamówień i realizacji umów prosimy o
                     kontakt telefoniczny pod numerem{" "}
-                    <span className="text-white">+48 88888 32 32</span> lub
+                    <a href="tel:+488888832332" className="text-emerald-400 hover:text-emerald-300 transition-colors">+48 88888 32 32</a> lub
                     mailowy:{" "}
-                    <span className="text-white">kontakt@ebe-power.pl</span>, w
+                    <a href="mailto:kontakt@ebe-power.pl" className="text-emerald-400 hover:text-emerald-300 transition-colors">kontakt@ebe-power.pl</a>, w
                     dni robocze w godzinach 8:00–16:00.
                 </p>
             </LegalSection>

@@ -2,9 +2,16 @@ import type { Metadata } from "next";
 import LegalPageShell, { LegalSection } from "@/app/components/LegalPageShell";
 
 export const metadata: Metadata = {
-    title: "Polityka prywatności | ebe power",
+    title: "Polityka prywatności — RODO",
     description:
-        "Polityka prywatności sklepu TRAFO ENERGIA — jakie dane zbieramy, w jakim celu i jakie masz prawa (RODO).",
+        "Polityka prywatności sklepu ebe power (TRAFO ENERGIA) — jakie dane zbieramy, w jakim celu i jakie masz prawa na podstawie RODO.",
+    alternates: { canonical: "/polityka-prywatnosci" },
+    openGraph: {
+        title: "Polityka prywatności | ebe power",
+        description: "Informacje o przetwarzaniu danych osobowych, cookies i Twoich prawach (RODO).",
+        url: "/polityka-prywatnosci",
+        type: "website",
+    },
 };
 
 export default function PolitykaPrywatnosciPage() {
@@ -19,7 +26,7 @@ export default function PolitykaPrywatnosciPage() {
                     Administratorem danych osobowych jest TRAFO ENERGIA z siedzibą
                     w Bełchatowie. W sprawach dotyczących danych osobowych możesz
                     się z nami skontaktować mailowo:{" "}
-                    <span className="text-white">kontakt@ebe-power.pl</span>.
+                    <a href="mailto:kontakt@ebe-power.pl" className="text-emerald-400 hover:text-emerald-300 transition-colors">kontakt@ebe-power.pl</a>.
                 </p>
             </LegalSection>
 

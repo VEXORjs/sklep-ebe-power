@@ -11,17 +11,59 @@ import { formatPLN, grossPrice, productsLabel } from "@/app/lib/product";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-    title: "Kategorie produktów | ebe power",
+    title: "Kategorie produktów — transformatory, zasilacze, rozdzielnice i więcej",
     description:
-        "Pełna oferta sklepu TRAFO ENERGIA w podziale na kategorie: transformatory, zasilacze, rozdzielnice, bezpieczniki, kable, mierniki, agregaty, stacje ładowania EV i akcesoria.",
+        "Pełna oferta sklepu ebe power (TRAFO ENERGIA) w podziale na kategorie: transformatory, zasilacze, rozdzielnice, bezpieczniki, kable, mierniki, agregaty prądotwórcze, stacje ładowania EV i akcesoria instalatorskie.",
+    alternates: { canonical: "/kategoria" },
+    openGraph: {
+        title: "Kategorie produktów | ebe power",
+        description: "Przeglądaj pełną ofertę w podziale na kategorie. Transformatory, zasilacze, rozdzielnice i więcej.",
+        url: "/kategoria",
+        type: "website",
+    },
 };
 
 export default async function CategoriesPage() {
     const products = await getProducts();
     const categories = allCategories(products);
 
+    const breadcrumbJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Strona główna", item: "https://ebe-power.pl" },
+            { "@type": "ListItem", position: 2, name: "Kategorie", item: "https://ebe-power.pl/kategoria" },
+        ],
+    };
+
+    const collectionJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        name: "Kategorie produktów",
+        description: "Pełna oferta sklepu ebe power w podziale na kategorie.",
+        url: "https://ebe-power.pl/kategoria",
+        mainEntity: {
+            "@type": "ItemList",
+            numberOfItems: categories.length,
+            itemListElement: categories.map((cat, i) => ({
+                "@type": "ListItem",
+                position: i + 1,
+                name: cat.name,
+                url: `https://ebe-power.pl/kategoria/${cat.slug}`,
+            })),
+        },
+    };
+
     return (
         <main className="min-h-screen bg-black text-white">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
+            />
             <header className="border-b border-neutral-900 bg-[#0b0d0e]">
                 <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
                     <nav aria-label="Okruszki" className="mb-6 flex items-center gap-1.5 text-xs text-neutral-500">

@@ -19,6 +19,13 @@ export const revalidate = 60;
 /** Jedno pobranie produktów na żądanie — współdzielone przez metadane i stronę. */
 const loadProducts = cache(getProducts);
 
+/** Pre-render all known category pages at build time for SEO. */
+export async function generateStaticParams() {
+    const products = await getProducts();
+    const categories = allCategories(products);
+    return categories.map((c) => ({ slug: c.slug }));
+}
+
 interface PageProps {
     params: Promise<{ slug: string }>;
 }
@@ -67,19 +74,14 @@ export default async function CategoryPage({ params }: PageProps) {
         .filter((c) => c.slug !== category.slug)
         .slice(0, 8);
 
+    const site = "https://ebe-power.pl";
+
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "CollectionPage",
         name: category.name,
         description: category.description,
-        breadcrumb: {
-            "@type": "BreadcrumbList",
-            itemListElement: [
-                { "@type": "ListItem", position: 1, name: "Strona główna", item: "/" },
-                { "@type": "ListItem", position: 2, name: "Kategorie", item: "/kategoria" },
-                { "@type": "ListItem", position: 3, name: category.name, item: `/kategoria/${category.slug}` },
-            ],
-        },
+        url: `${site}/kategoria/${category.slug}`,
         mainEntity: {
             "@type": "ItemList",
             numberOfItems: items.length,
@@ -87,10 +89,33 @@ export default async function CategoryPage({ params }: PageProps) {
                 "@type": "ListItem",
                 position: i + 1,
                 name: p.name,
-                url: `/products/${p.id}`,
+                url: `${site}/products/${p.id}`,
             })),
         },
     };
+
+    const breadcrumbJsonLd = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Strona główna", item: site },
+            { "@type": "ListItem", position: 2, name: "Kategorie", item: `${site}/kategoria` },
+            { "@type": "ListItem", position: 3, name: category.name, item: `${site}/kategoria/${category.slug}` },
+        ],
+    };
+
+    const faqJsonLd = category.faq.length > 0 ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: category.faq.map((item) => ({
+            "@type": "Question",
+            name: item.question,
+            acceptedAnswer: {
+                "@type": "Answer",
+                text: item.answer,
+            },
+        })),
+    } : null;
 
     return (
         <main className="min-h-screen bg-black text-white">
@@ -98,12 +123,22 @@ export default async function CategoryPage({ params }: PageProps) {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+            />
+            {faqJsonLd && (
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+                />
+            )}
 
             {/* Nagłówek kategorii */}
             <header className="relative overflow-hidden border-b border-neutral-900">
                 <Image
                     src={category.image}
-                    alt=""
+                    alt={`${category.name} — ${category.tagline}`}
                     fill
                     priority
                     quality={70}
