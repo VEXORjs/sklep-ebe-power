@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LegalPageShell, { LegalSection } from "@/app/components/LegalPageShell";
 
 export const metadata: Metadata = {
-    title: "Polityka prywatności | TRAFO ENERGIA",
+    title: "Polityka prywatności | ebe power",
     description:
         "Polityka prywatności sklepu TRAFO ENERGIA — jakie dane zbieramy, w jakim celu i jakie masz prawa (RODO).",
 };

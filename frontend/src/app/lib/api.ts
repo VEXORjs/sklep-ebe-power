@@ -34,15 +34,28 @@ export function getPublicApiUrl(): string {
  * `https://backend-....europe-west1.run.app` albo `http://backend-api:8080`
  * w sieci Cloud Run / Docker Compose.
  */
-export function getServerApiUrl(): string {
-    const explicit =
-        process.env.API_URL?.trim() ||
-        process.env.NEXT_PUBLIC_API_URL?.trim();
-    if (explicit && explicit.length > 0) {
-        return explicit.replace(/\/$/, "");
+function getAbsoluteServerUrl(value?: string): string | null {
+    const trimmed = value?.trim();
+    if (!trimmed) {
+        return null;
     }
 
-    return "http://localhost:8080";
+    // Route handlery / SSR muszą łączyć się z backendem po bezwzględnym URL-u.
+    // Wartości względne typu `/api/backend` są poprawne WYŁĄCZNIE dla kodu
+    // przeglądarkowego i nie mogą trafiać do serwerowego fetch().
+    if (!/^https?:\/\//i.test(trimmed)) {
+        return null;
+    }
+
+    return trimmed.replace(/\/$/, "");
+}
+
+export function getServerApiUrl(): string {
+    return (
+        getAbsoluteServerUrl(process.env.API_URL) ??
+        getAbsoluteServerUrl(process.env.NEXT_PUBLIC_API_URL) ??
+        "http://localhost:8080"
+    );
 }
 
 export { getSiteUrl, getAppUrl } from "./site";

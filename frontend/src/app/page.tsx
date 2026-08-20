@@ -10,17 +10,17 @@ import { getSiteUrl } from "@/app/lib/site";
 
 export const metadata: Metadata = {
     title: {
-        absolute: "TRAFO ENERGIA | Transformatory, rozdzielnice i osprzęt elektryczny",
+        absolute: "ebe power | Transformatory, rozdzielnice i osprzęt elektryczny",
     },
     description:
         "Sklep z transformatorami, zasilaczami, rozdzielnicami, kablami i osprzętem elektrycznym. Darmowa dostawa od 500 zł, wysyłka w 24 h.",
     alternates: { canonical: "/" },
     openGraph: {
-        title: "TRAFO ENERGIA | Transformatory i osprzęt elektryczny",
+        title: "ebe power | Transformatory i osprzęt elektryczny",
         description:
             "Transformatory, zasilacze, rozdzielnice, kable i osprzęt. Darmowa dostawa od 500 zł, wysyłka w 24 h.",
         url: "/",
-        siteName: "TRAFO ENERGIA",
+        siteName: "ebe power",
         locale: "pl_PL",
         type: "website",
     },
@@ -42,7 +42,7 @@ export default async function HomePage() {
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "Organization",
-        name: "TRAFO ENERGIA",
+        name: "ebe power",
         url: site,
         email: "kontakt@ebe-power.pl",
         telephone: "+48 88888 32 32",

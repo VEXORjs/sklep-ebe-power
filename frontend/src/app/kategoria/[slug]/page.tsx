@@ -29,16 +29,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const category = resolveCategory(slug, products);
 
     if (!category) {
-        return { title: "Nie znaleziono kategorii | TRAFO ENERGIA" };
+        return { title: "Nie znaleziono kategorii | ebe power" };
     }
 
     return {
-        title: `${category.name} — ${category.tagline} | TRAFO ENERGIA`,
+        title: `${category.name} — ${category.tagline} | ebe power`,
         description: category.description.slice(0, 300),
         keywords: category.keywords,
         alternates: { canonical: `/kategoria/${category.slug}` },
         openGraph: {
-            title: `${category.name} | TRAFO ENERGIA`,
+            title: `${category.name} | ebe power`,
             description: category.description.slice(0, 300),
             images: [category.image],
             type: "website",

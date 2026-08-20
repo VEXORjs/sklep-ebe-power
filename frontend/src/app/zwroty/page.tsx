@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LegalPageShell, { LegalSection } from "@/app/components/LegalPageShell";
 
 export const metadata: Metadata = {
-    title: "Zwroty i reklamacje | TRAFO ENERGIA",
+    title: "Zwroty i reklamacje | ebe power",
     description:
         "Zwroty i reklamacje w sklepie TRAFO ENERGIA — 14 dni na odstąpienie od umowy, 24 miesiące gwarancji, własny serwis.",
 };

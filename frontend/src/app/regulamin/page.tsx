@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LegalPageShell, { LegalSection } from "@/app/components/LegalPageShell";
 
 export const metadata: Metadata = {
-    title: "Regulamin sklepu | TRAFO ENERGIA",
+    title: "Regulamin sklepu | ebe power",
     description:
         "Regulamin sklepu internetowego TRAFO ENERGIA — zasady składania zamówień, płatności, dostawy oraz prawa konsumenta.",
 };

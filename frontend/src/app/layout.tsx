@@ -9,10 +9,12 @@ import Footer from "@/app/components/Footer";
 import TopBar from "@/app/components/TopBar";
 import CartDrawer from "@/app/components/CartDrawer";
 
+const BRAND_LOGO_URL = "https://iyugrhskjjyegxppeqoj.supabase.co/storage/v1/object/public/product_images/Zrzut%20ekranu%202026-07-12%20165154.png";
+
 export const metadata: Metadata = {
     metadataBase: new URL("https://ebe-power.pl"),
     title: {
-        default: "TRAFO ENERGIA | Transformatory, rozdzielnice i osprzęt elektryczny",
+        default: "ebe power",
         template: "%s",
     },
     description:
@@ -21,7 +23,12 @@ export const metadata: Metadata = {
     openGraph: {
         type: "website",
         locale: "pl_PL",
-        siteName: "TRAFO ENERGIA",
+        siteName: "ebe power",
+    },
+    icons: {
+        icon: [{ url: BRAND_LOGO_URL, type: "image/png" }],
+        apple: [{ url: BRAND_LOGO_URL, type: "image/png" }],
+        shortcut: [BRAND_LOGO_URL],
     },
 };
 

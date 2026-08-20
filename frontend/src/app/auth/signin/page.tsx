@@ -5,7 +5,7 @@ import AuthShell from "@/app/components/AuthShell";
 import SignInForm from "./SignInForm";
 
 export const metadata: Metadata = {
-    title: "Logowanie | TRAFO ENERGIA",
+    title: "Logowanie | ebe power",
     description: "Zaloguj się do sklepu TRAFO ENERGIA — zamówienia, faktury i szybsza kasa.",
 };
 

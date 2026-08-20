@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LegalPageShell, { LegalSection } from "@/app/components/LegalPageShell";
 
 export const metadata: Metadata = {
-    title: "Dostawa i płatności | TRAFO ENERGIA",
+    title: "Dostawa i płatności | ebe power",
     description:
         "Dostawa i płatności w sklepie TRAFO ENERGIA — wysyłka w 24 h z magazynu w Bełchatowie, transport HDS, płatności online Stripe.",
 };
