@@ -12,9 +12,6 @@ export const SHIPPING_COST = 16.99;
 /** Dopłata netto za pierwsze uruchomienie sprzętu (zł). */
 export const FIRST_STARTUP_FEE = 1000;
 
-/** Liczba rat w kalkulatorze „raty od…". */
-export const INSTALLMENT_MONTHS = 12;
-
 export interface SpecEntry {
     label: string;
     value: string;
@@ -204,11 +201,6 @@ export function stockInfo(stock: number): StockInfo {
         detail: `${stock >= 100 ? "100+" : stock} szt. w magazynie`,
         barPercent: Math.min(100, Math.round((stock / 40) * 100) + 25),
     };
-}
-
-/** Orientacyjna rata 0% — wyłącznie do celów prezentacyjnych na karcie. */
-export function installmentOf(product: Product): number {
-    return grossPrice(product.price) / INSTALLMENT_MONTHS;
 }
 
 /** Deterministyczny „licznik sprzedaży" — stały dla danego produktu (brak rozjazdu SSR/CSR). */

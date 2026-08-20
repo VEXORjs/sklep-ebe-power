@@ -27,8 +27,6 @@ import {
     formatPLN,
     grossPrice,
     hasFreeShipping,
-    installmentOf,
-    INSTALLMENT_MONTHS,
     parseParameters,
     ratingOf,
     reviewsOf,
@@ -332,9 +330,6 @@ export default function ProductCard({
                     </span>
                 )}
             </div>
-            <p className="mt-1 text-[11px] text-neutral-500">
-                lub {INSTALLMENT_MONTHS} × {formatPLN(installmentOf(product))} w ratach 0 %
-            </p>
         </div>
     );
 
