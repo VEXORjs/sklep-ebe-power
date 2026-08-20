@@ -2,9 +2,16 @@ import type { Metadata } from "next";
 import LegalPageShell, { LegalSection } from "@/app/components/LegalPageShell";
 
 export const metadata: Metadata = {
-    title: "Zwroty i reklamacje | ebe power",
+    title: "Zwroty i reklamacje — 30 dni na zwrot, gwarancja 24 miesiące",
     description:
-        "Zwroty i reklamacje w sklepie TRAFO ENERGIA — 14 dni na odstąpienie od umowy, 24 miesiące gwarancji, własny serwis.",
+        "Zwroty i reklamacje w sklepie ebe power (TRAFO ENERGIA) — 14 dni na odstąpienie od umowy, 24 miesiące gwarancji, własny serwis, szybkie rozpatrzenie reklamacji.",
+    alternates: { canonical: "/zwroty" },
+    openGraph: {
+        title: "Zwroty i reklamacje | ebe power",
+        description: "14 dni na odstąpienie od umowy, 24 miesiące gwarancji, własny serwis.",
+        url: "/zwroty",
+        type: "website",
+    },
 };
 
 export default function ZwrotyPage() {
@@ -19,7 +26,7 @@ export default function ZwrotyPage() {
                     Jako konsument masz prawo odstąpić od umowy w terminie 14 dni
                     od dnia otrzymania towaru, bez podawania przyczyny. Wystarczy,
                     że poinformujesz nas o odstąpieniu (np. mailowo na adres{" "}
-                    <span className="text-white">kontakt@ebe-power.pl</span>), a
+                    <a href="mailto:kontakt@ebe-power.pl" className="text-emerald-400 hover:text-emerald-300 transition-colors">kontakt@ebe-power.pl</a>), a
                     następnie odeślesz towar w terminie 14 dni.
                 </p>
                 <p>
@@ -52,7 +59,7 @@ export default function ZwrotyPage() {
                 <ol className="list-decimal pl-6 space-y-2">
                     <li>
                         Napisz do nas na{" "}
-                        <span className="text-white">kontakt@ebe-power.pl</span> —
+                        <a href="mailto:kontakt@ebe-power.pl" className="text-emerald-400 hover:text-emerald-300 transition-colors">kontakt@ebe-power.pl</a> —
                         podaj numer zamówienia i powód zgłoszenia.
                     </li>
                     <li>

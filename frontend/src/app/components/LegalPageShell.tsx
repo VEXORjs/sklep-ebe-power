@@ -1,7 +1,12 @@
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
+
 interface LegalPageProps {
     eyebrow: string;
     title: string;
     updated: string;
+    /** URL path of this page for breadcrumb (e.g. "/regulamin") */
+    breadcrumbPath?: string;
     children: React.ReactNode;
 }
 
@@ -10,13 +15,23 @@ export default function LegalPageShell({
     eyebrow,
     title,
     updated,
+    breadcrumbPath,
     children,
 }: LegalPageProps) {
     return (
         <main className="min-h-screen bg-black text-white py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-4xl mx-auto">
-                {/* 🏷️ Nagłówek strony */}
-                <div className="border-b border-neutral-800 pb-8 mb-10">
+            <article className="max-w-4xl mx-auto">
+                {/* Nawigacja okruszkowa */}
+                <nav aria-label="Okruszki" className="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-neutral-500">
+                    <Link href="/" className="transition-colors hover:text-emerald-400">
+                        Strona główna
+                    </Link>
+                    <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span className="font-semibold text-neutral-300">{title}</span>
+                </nav>
+
+                {/* Nagłówek strony */}
+                <header className="border-b border-neutral-800 pb-8 mb-10">
                     <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
                         {eyebrow}
                     </span>
@@ -24,14 +39,14 @@ export default function LegalPageShell({
                         {title}
                     </h1>
                     <p className="text-neutral-500 mt-3 text-xs sm:text-sm">
-                        Ostatnia aktualizacja: {updated}
+                        Ostatnia aktualizacja: <time>{updated}</time>
                     </p>
-                </div>
+                </header>
 
                 <div className="space-y-10 text-sm sm:text-base leading-relaxed text-neutral-300">
                     {children}
                 </div>
-            </div>
+            </article>
         </main>
     );
 }
