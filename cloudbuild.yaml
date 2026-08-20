@@ -1,3 +1,10 @@
+# Cloud Build — frontend Next.js (usługa Cloud Run `frontend`).
+#
+# TEN PLIK buduje wyłącznie ./frontend i wdraża obraz na usługę `frontend`.
+# Backend Spring Boot ma osobny plik: backend/cloudbuild.yaml (usługa `trafo`).
+# Trigger o nazwie "backend" NIE MOŻE wskazywać tutaj — wcześniej nadpisywał
+# usługę `trafo` obrazem sklepu Next.js (HTML zamiast JSON API).
+#
 # Substitutions są definiowane w ustawieniach triggera Cloud Build
 # (można je nadpisać per trigger, bez edytowania tego pliku).
 #
@@ -5,7 +12,9 @@
 #                    nigdy na wewnętrzny adres *.run.app — z niego NextAuth
 #                    buduje redirect_uri wysyłane do Google podczas OAuth.
 #   _REGION        — region Cloud Run.
-#   _SERVICE_NAME  — nazwa usługi Cloud Run (frontend).
+#
+# Nazwa usługi Cloud Run jest zahardkodowana jako `frontend` (nie substytucja),
+# żeby trigger z _SERVICE_NAME=trafo nie mógł wrzucić tego obrazu na backend.
 #
 # API_URL (wewnętrzny adres backendu Spring Boot) jest ustawione BEZPOŚREDNIO
 # w usłudze Cloud Run (sekcja „Zmienne i sekrety"), np.
@@ -14,7 +23,6 @@
 substitutions:
   _APP_URL: 'https://ebe-power.pl'
   _REGION: 'europe-west1'
-  _SERVICE_NAME: 'frontend'
 
 # WAŻNE — dlaczego "SHA" każdego buildu jest inne:
 # Docker buduje obrazy content-addressed, więc digest (SHA256) zmienia się przy
@@ -67,12 +75,15 @@ steps:
   #    Jeśli trigger jest jednocześnie skonfigurowany jako "continuous
   #    deployment" w Cloud Run, ten krok wywoła drugie, nieszkodliwe wdrożenie
   #    tej samej rewizji — ostatnia wygrywa. Wtedy można usunąć ten krok.
+  #
+  #    Usługa jest literałem `frontend` (nie $_SERVICE_NAME) — pomyłkowa
+  #    substytucja triggera nie może nadpisać backendu (`trafo`).
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args:
       - 'run'
       - 'deploy'
-      - '$_SERVICE_NAME'
+      - 'frontend'
       - '--image'
       - 'europe-west1-docker.pkg.dev/$PROJECT_ID/sklep-repo/sklep-frontend:v1'
       - '--region'

@@ -62,6 +62,96 @@ Kod na bieżącym `master` został zweryfikowany lokalnie w trybie produkcyjnym
    gcloud compute url-maps invalidate-cdn-cache <URL_MAP> --path "/api/*"
    ```
 
+## Backend: usługa `trafo` musi serwować Spring Boot, nie frontend
+
+Drugi, niezależny powód 404 na koszyku: usługa Cloud Run **`trafo`**
+(to na nią wskazuje `API_URL` frontendu) serwowała **HTML sklepu Next.js**
+zamiast API Spring Boot. Trigger Cloud Build o nazwie `backend` budował
+główny `cloudbuild.yaml` (`./frontend`) i wdrażał ten obraz na `trafo`.
+Wtedy:
+
+```
+curl https://trafo-….europe-west1.run.app/api/products
+# HTML sklepu  →  frontend nadpisał backend
+# JSON produktów → Spring działa
+```
+
+Proxy na ebe-power.pl jest wtedy sprawne (`X-Backend-Proxy: ebe-power-proxy/2`),
+ale upstream zwraca 404 HTML, więc koszyk i tak sypie błędem.
+
+### Naprawa — w tej kolejności
+
+Projekt GCP: `trafo-500415`, region: `europe-west1`.
+
+**1. Zdejmij wadliwy trigger, zanim znowu nadpisze backend:**
+
+```bash
+gcloud builds triggers delete backend --project trafo-500415
+```
+
+**2. Wdróż prawdziwy backend** (Dockerfile w `./backend`):
+
+```bash
+gcloud run deploy trafo --source ./backend --region europe-west1 --project trafo-500415
+```
+
+Albo, po zmergowaniu tego PR, przez Cloud Build:
+
+```bash
+gcloud builds submit --config backend/cloudbuild.yaml --project trafo-500415
+```
+
+**3. Zmienne środowiskowe.** Bez `SPRING_DATASOURCE_URL` Spring połączy się
+z hostem Dockera `postgres-db` (nieistniejącym na Cloud Run) i nie wstanie.
+`MAIL_USERNAME` / `MAIL_PASSWORD` mają puste defaulty w
+`application.properties` — brak ich nie zabija startu, ale poczta nie wyjdzie.
+
+```bash
+# host bazy:
+gcloud sql instances list --project trafo-500415
+
+gcloud run services update trafo --region europe-west1 --project trafo-500415 \
+  --update-env-vars SPRING_DATASOURCE_URL='jdbc:postgresql://<HOST_BAZY>:5432/sklep_db' \
+  --update-env-vars SPRING_DATASOURCE_USERNAME=shop_user \
+  --update-env-vars SPRING_DATASOURCE_PASSWORD='<hasło>' \
+  --update-env-vars MAIL_USERNAME='<mailtrap-user>' \
+  --update-env-vars MAIL_PASSWORD='<mailtrap-pass>'
+# + dla płatności: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
+```
+
+`--update-env-vars` dopisuje, nie czyści. Nie używaj `--set-env-vars`.
+
+**4. Weryfikacja:**
+
+```bash
+curl -s https://trafo-1078992546635.europe-west1.run.app/api/products | head -c 150
+# JSON z produktami = Spring działa (HTML sklepu = nadal frontend)
+
+curl -s https://ebe-power.pl/api/backend/api/cart
+# oczekiwane: {"items":[],"totalItems":0,"isGuest":true}
+```
+
+`API_URL` na usłudze `frontend` zostaje jak jest — wskazuje na tę samą
+usługę `trafo`, która od teraz serwuje właściwą aplikację.
+
+### Odtworzenie triggera (żeby nie wrócił błąd)
+
+```bash
+gcloud builds triggers create github \
+  --name=backend \
+  --repo-owner=VEXORjs \
+  --repo-name=trafo \
+  --branch-pattern='^master$' \
+  --build-config=backend/cloudbuild.yaml \
+  --project=trafo-500415 \
+  --region=europe-west1
+```
+
+Kluczowe: `--build-config=backend/cloudbuild.yaml`. Ten plik buduje
+`./backend` i wdraża **wyłącznie** na usługę `trafo` (nazwa zahardkodowana,
+nie substytucja). Główny `cloudbuild.yaml` analogicznie wdraża wyłącznie
+na `frontend`.
+
 ## Ułatwienia wprowadzone w kodzie
 
 - `src/app/api/backend/[[...path]]/route.ts`
