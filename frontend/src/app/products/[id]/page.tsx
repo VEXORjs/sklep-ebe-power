@@ -36,7 +36,7 @@ import {
     stockInfo,
 } from "@/app/lib/product";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 const loadProduct = cache(getProduct);
 const loadProducts = cache(getProducts);

@@ -11,14 +11,17 @@ import { normalizeText, productsLabel, ratingOf, slugify } from "@/app/lib/produ
 
 interface ShopSectionProps {
     products: Product[];
+    /** Ile kart wyrenderować na starcie (reszta po kliknięciu — mniejszy DOM / TBT). */
+    initialVisible?: number;
 }
 
 type SortKey = "popularnosc" | "cena-asc" | "cena-desc" | "ocena-desc";
 
-export default function ShopSection({ products }: ShopSectionProps) {
+export default function ShopSection({ products, initialVisible = 9 }: ShopSectionProps) {
     const [query, setQuery] = useState("");
     const [sort, setSort] = useState<SortKey>("popularnosc");
     const [view, setView] = useState<ProductCardVariant>("grid");
+    const [expanded, setExpanded] = useState(false);
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -82,9 +85,11 @@ export default function ShopSection({ products }: ShopSectionProps) {
 
         const queryString = params.toString();
         const targetURL = queryString ? `${pathname}?${queryString}` : pathname;
+        setExpanded(false);
         router.replace(targetURL, { scroll: false });
     };
 
+    const visible = expanded ? filtered.length : initialVisible;
     const categoryCount = allCategories(products).length;
 
     return (
@@ -118,13 +123,19 @@ export default function ShopSection({ products }: ShopSectionProps) {
                     <input
                         type="text"
                         value={query}
-                        onChange={(e) => setQuery(e.target.value)}
+                        onChange={(e) => {
+                            setQuery(e.target.value);
+                            setExpanded(false);
+                        }}
                         placeholder="Szukaj: nazwa, SKU, kategoria..."
                         className="w-full rounded-md border border-neutral-800 bg-[#141618] py-3 pl-11 pr-10 text-sm text-white placeholder:text-neutral-500 outline-none transition-colors focus:border-emerald-500/60"
                     />
                     {query && (
                         <button
-                            onClick={() => setQuery("")}
+                            onClick={() => {
+                                setQuery("");
+                                setExpanded(false);
+                            }}
                             aria-label="Wyczyść wyszukiwanie"
                             className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-neutral-500 hover:text-white"
                         >
@@ -137,7 +148,10 @@ export default function ShopSection({ products }: ShopSectionProps) {
                     <SlidersHorizontal className="h-4 w-4 shrink-0 text-neutral-500" />
                     <select
                         value={sort}
-                        onChange={(e) => setSort(e.target.value as SortKey)}
+                        onChange={(e) => {
+                            setSort(e.target.value as SortKey);
+                            setExpanded(false);
+                        }}
                         aria-label="Sortowanie produktów"
                         className="w-full rounded-md border border-neutral-800 bg-[#141618] px-4 py-3 text-sm text-white outline-none transition-colors focus:border-emerald-500/60 md:w-auto"
                     >
@@ -224,23 +238,33 @@ export default function ShopSection({ products }: ShopSectionProps) {
                         Wyczyść filtry
                     </button>
                 </div>
-            ) : view === "grid" ? (
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    {filtered.map((product, index) => (
-                        <ProductCard key={product.id} product={product} priority={index < 3} />
-                    ))}
-                </div>
             ) : (
-                <div className="flex flex-col gap-5">
-                    {filtered.map((product, index) => (
-                        <ProductCard
-                            key={product.id}
-                            product={product}
-                            variant="list"
-                            priority={index < 2}
-                        />
-                    ))}
-                </div>
+                <>
+                    {view === "grid" ? (
+                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                            {filtered.slice(0, visible).map((product) => (
+                                <ProductCard key={product.id} product={product} />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="flex flex-col gap-5">
+                            {filtered.slice(0, visible).map((product) => (
+                                <ProductCard key={product.id} product={product} variant="list" />
+                            ))}
+                        </div>
+                    )}
+                    {filtered.length > visible && (
+                        <div className="mt-8 flex justify-center">
+                            <button
+                                type="button"
+                                onClick={() => setExpanded(true)}
+                                className="rounded-md border border-neutral-700 bg-neutral-900 px-6 py-3 text-sm font-bold text-white transition-colors hover:border-emerald-500/60 hover:text-emerald-300"
+                            >
+                                Pokaż wszystkie {filtered.length} {productsLabel(filtered.length)}
+                            </button>
+                        </div>
+                    )}
+                </>
             )}
         </section>
     );

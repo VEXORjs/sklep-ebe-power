@@ -14,7 +14,7 @@ import {
 import { formatPLN, grossPrice, ratingOf } from "@/app/lib/product";
 import CategoryCatalog from "./CategoryCatalog";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 /** Jedno pobranie produktów na żądanie — współdzielone przez metadane i stronę. */
 const loadProducts = cache(getProducts);
@@ -106,6 +106,7 @@ export default async function CategoryPage({ params }: PageProps) {
                     alt=""
                     fill
                     priority
+                    quality={70}
                     sizes="100vw"
                     className="object-cover opacity-25"
                 />

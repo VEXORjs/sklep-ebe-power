@@ -11,7 +11,6 @@ import {
     Package,
     Plus,
     ShieldCheck,
-    Star,
     Truck,
     Zap,
 } from "lucide-react";
@@ -35,6 +34,10 @@ import {
     soldCountOf,
     stockInfo,
 } from "@/app/lib/product";
+
+const GRID_SIZES =
+    "(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) calc(50vw - 2.5rem), 380px";
+const LIST_SIZES = "(max-width: 640px) calc(100vw - 2rem), 224px";
 
 export type ProductCardVariant = "grid" | "list";
 
@@ -60,20 +63,24 @@ const STOCK_TONE: Record<string, { dot: string; text: string; bar: string }> = {
 };
 
 function Rating({ rating, reviews }: { rating: number; reviews: number }) {
+    const percent = Math.max(0, Math.min(100, Math.round((rating / 5) * 100)));
     return (
         <div className="flex items-center gap-1.5">
-            <div className="flex items-center gap-0.5">
-                {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
-                        key={i}
-                        className={`h-3.5 w-3.5 ${
-                            i < Math.round(rating)
-                                ? "fill-emerald-400 text-emerald-400"
-                                : "text-neutral-700"
-                        }`}
-                    />
-                ))}
-            </div>
+            <span
+                aria-hidden
+                className="inline-block text-[13px] leading-none tracking-tight"
+                style={{
+                    backgroundImage: `linear-gradient(90deg, #34d399 ${percent}%, #404040 ${percent}%)`,
+                    WebkitBackgroundClip: "text",
+                    backgroundClip: "text",
+                    color: "transparent",
+                }}
+            >
+                ★★★★★
+            </span>
+            <span className="sr-only">
+                Ocena {rating.toFixed(1)} na 5 z {reviews} opinii
+            </span>
             <span className="text-xs font-bold text-white">{rating.toFixed(1)}</span>
             <span className="text-[11px] text-neutral-500">({reviews} opinii)</span>
         </div>
@@ -142,7 +149,7 @@ export default function ProductCard({
     const sold = soldCountOf(product);
     const href = `/products/${product.id}`;
     const cover = product.images?.[0];
-    const hoverImage = product.images?.[1];
+    const imageSizes = variant === "list" ? LIST_SIZES : GRID_SIZES;
 
     const media = (
         <div
@@ -159,20 +166,10 @@ export default function ProductCard({
                         alt={product.name}
                         fill
                         priority={priority}
+                        quality={75}
                         onError={() => setImageFailed(true)}
-                        sizes={variant === "list" ? "224px" : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"}
-                        className={`object-contain p-4 transition-all duration-500 ${
-                            hoverImage ? "group-hover:opacity-0" : "group-hover:scale-105"
-                        }`}
-                    />
-                )}
-                {hoverImage && !imageFailed && (
-                    <Image
-                        src={hoverImage}
-                        alt={`${product.name} — ujęcie dodatkowe`}
-                        fill
-                        sizes={variant === "list" ? "224px" : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"}
-                        className="object-contain p-4 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                        sizes={imageSizes}
+                        className="object-contain p-4 transition-transform duration-500 group-hover:scale-105"
                     />
                 )}
                 {(!cover || imageFailed) && (
@@ -251,9 +248,9 @@ export default function ProductCard({
             <dl
                 className={`grid gap-x-4 gap-y-1.5 p-3 ${
                     variant === "list" ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1"
-                } ${specs.length > specLimit ? "max-h-[7.25rem]" : ""}`}
+                }`}
             >
-                {specs.map((spec) => (
+                {specs.slice(0, specLimit).map((spec) => (
                     <div key={`${spec.label}-${spec.value}`} className="flex items-baseline justify-between gap-3">
                         <dt className="truncate text-[11px] text-neutral-500">{spec.label}</dt>
                         <dd className="shrink-0 text-[11px] font-semibold text-neutral-200">{spec.value}</dd>
@@ -261,14 +258,12 @@ export default function ProductCard({
                 ))}
             </dl>
             {specs.length > specLimit && (
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[#111315] via-[#111315]/90 to-transparent">
-                    <Link
-                        href={href}
-                        className="pointer-events-auto absolute inset-x-0 bottom-1.5 text-center text-[11px] font-semibold text-emerald-400 transition-colors hover:text-emerald-300"
-                    >
-                        + {specs.length - specLimit} więcej parametrów
-                    </Link>
-                </div>
+                <Link
+                    href={href}
+                    className="block border-t border-neutral-800/80 py-2 text-center text-[11px] font-semibold text-emerald-400 transition-colors hover:text-emerald-300"
+                >
+                    + {specs.length - specLimit} więcej parametrów
+                </Link>
             )}
         </div>
     );

@@ -8,7 +8,7 @@ import { allCategories, productsInCategory } from "@/app/data/categories";
 import { pluralPL } from "@/app/lib/product";
 import { formatPLN, grossPrice, productsLabel } from "@/app/lib/product";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata: Metadata = {
     title: "Kategorie produktów | TRAFO ENERGIA",
@@ -75,7 +75,8 @@ export default async function CategoriesPage() {
                                         src={category.image}
                                         alt={category.name}
                                         fill
-                                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                        quality={70}
+                                        sizes="(max-width: 768px) calc(100vw - 2rem), (max-width: 1024px) calc(50vw - 2rem), 400px"
                                         className="object-cover transition-transform duration-500 group-hover:scale-110"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-[#141618] via-black/50 to-black/10" />
