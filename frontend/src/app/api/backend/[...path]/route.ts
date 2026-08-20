@@ -24,6 +24,48 @@ const HOP_BY_HOP = new Set([
     "content-length",
 ]);
 
+const RESPONSE_HEADERS_TO_STRIP = new Set([
+    ...HOP_BY_HOP,
+    // Node/undici automatycznie rozpakowuje gzip/br, ale potrafi zachować
+    // oryginalne nagłówki upstreamu. Gdybyśmy odesłali je 1:1, Firefox kończy
+    //łby żądanie błędem `NS_ERROR_INVALID_CONTENT_ENCODING`.
+    "content-encoding",
+    "content-length",
+]);
+
+function jsonError(status: number, error: string, message: string): Response {
+    return new Response(JSON.stringify({ error, message }), {
+        status,
+        headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-store",
+        },
+    });
+}
+
+function validateBackendBase(req: NextRequest): Response | null {
+    let backendUrl: URL;
+    try {
+        backendUrl = new URL(BACKEND_BASE);
+    } catch {
+        return jsonError(
+            502,
+            "backend_invalid_url",
+            "Zmienna API_URL musi być bezwzględnym adresem backendu Spring Boot (http/https)."
+        );
+    }
+
+    if (backendUrl.origin === req.nextUrl.origin) {
+        return jsonError(
+            502,
+            "backend_points_to_frontend",
+            "Zmienna API_URL wskazuje na domenę frontendu zamiast na backend Spring Boot. Ustaw wewnętrzny adres usługi backendu."
+        );
+    }
+
+    return null;
+}
+
 /**
  * Proxy z `/api/backend/*` na backend Spring Boot.
  *
@@ -36,11 +78,22 @@ const HOP_BY_HOP = new Set([
  *   /api/backend/api/cart/123/add -> ${BACKEND_BASE}/api/cart/123/add
  */
 async function proxy(req: NextRequest): Promise<Response> {
+    if (BACKEND_MISCONFIGURED) {
+        return jsonError(
+            502,
+            "backend_not_configured",
+            "Ustaw zmienną środowiskową API_URL na wewnętrzny adres backendu Spring Boot."
+        );
+    }
+
+    const backendValidationError = validateBackendBase(req);
+    if (backendValidationError) {
+        return backendValidationError;
+    }
+
     const path = req.nextUrl.pathname.replace(/^\/api\/backend/, "");
     const targetUrl = `${BACKEND_BASE}${path}${req.nextUrl.search}`;
 
-    // Buforujemy ciało — małe payloady (JSON, formularze), unikamy problemów
-    // ze streamingiem requestu w Node fetch (duplex).
     let body: BodyInit | null = null;
     if (req.method !== "GET" && req.method !== "HEAD") {
         const buf = Buffer.from(await req.arrayBuffer());
@@ -51,25 +104,14 @@ async function proxy(req: NextRequest): Promise<Response> {
 
     const headers = new Headers();
     req.headers.forEach((value, key) => {
-        if (HOP_BY_HOP.has(key.toLowerCase())) return;
-        // Origin/Referer przeglądarki byłyby domeną frontendu — backend i tak
-        // widzi przychodzące połączenie serwer-serwer; nadpisywanie tych
-        // nagłówków tylko myliłoby konfigurację CORS.
-        if (key.toLowerCase() === "origin") return;
-        if (key.toLowerCase() === "referer") return;
+        const lower = key.toLowerCase();
+        if (HOP_BY_HOP.has(lower)) return;
+        if (lower === "origin") return;
+        if (lower === "referer") return;
+        if (lower === "accept-encoding") return;
         headers.append(key, value);
     });
-
-    if (BACKEND_MISCONFIGURED) {
-        return new Response(
-            JSON.stringify({
-                error: "backend_not_configured",
-                message:
-                    "Ustaw zmienną środowiskową API_URL na wewnętrzny adres backendu Spring Boot.",
-            }),
-            { status: 502, headers: { "Content-Type": "application/json" } }
-        );
-    }
+    headers.set("accept-encoding", "identity");
 
     let upstream: Response;
     try {
@@ -85,28 +127,21 @@ async function proxy(req: NextRequest): Promise<Response> {
             targetUrl,
             error: err instanceof Error ? err.message : err,
         });
-        return new Response(
-            JSON.stringify({
-                error: "backend_unreachable",
-                message:
-                    "Nie można połączyć się z backendem. Sprawdź zmienną API_URL.",
-            }),
-            {
-                status: 502,
-                headers: { "Content-Type": "application/json" },
-            }
+        return jsonError(
+            502,
+            "backend_unreachable",
+            "Nie można połączyć się z backendem. Sprawdź zmienną API_URL."
         );
     }
 
     const responseHeaders = new Headers();
     upstream.headers.forEach((value, key) => {
         const lower = key.toLowerCase();
-        if (HOP_BY_HOP.has(lower)) return;
-        // Usuwamy nagłówki CORS — odpowiedź jest teraz tego samego pochodzenia,
-        // a pozostawienie starych wartości (z innym Origin) myli przeglądarki.
+        if (RESPONSE_HEADERS_TO_STRIP.has(lower)) return;
         if (lower.startsWith("access-control-")) return;
         responseHeaders.append(key, value);
     });
+    responseHeaders.set("Cache-Control", "no-store");
 
     return new Response(upstream.body, {
         status: upstream.status,

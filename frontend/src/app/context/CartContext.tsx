@@ -11,6 +11,10 @@ import { getPublicApiUrl } from "@/app/lib/api";
 const API_URL = getPublicApiUrl();
 const API_BASE_URL = `${API_URL}/api/cart`;
 
+function getAuthHeaders(token?: string): HeadersInit | undefined {
+    return token ? { Authorization: `Bearer ${token}` } : undefined;
+}
+
 interface CartContextType {
     cart: CartDto | null;
     loading: boolean;
@@ -55,9 +59,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             try {
                 const res = await fetch(`${API_BASE_URL}`, {
                     method: 'GET',
-                    headers: token
-                        ? { Authorization: `Bearer ${token}` }
-                        : {},
+                    headers: getAuthHeaders(token),
                 });
                 if (!res.ok) throw new Error(`Backend zwrócił kod błędu: ${res.status} ${res.statusText}`);
                 const data: CartDto = await res.json();
@@ -84,9 +86,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         try {
             const res = await fetch(`${API_BASE_URL}/${id}/clear`, {
                 method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token ?? id}`
-                }
+                headers: getAuthHeaders(token)
             });
             if (!res.ok) {
                 throw new Error('Błąd podczas czyszczenia koszyka');
@@ -109,9 +109,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             const fetchCart = async () => {
                 try {
                     const res = await fetch(`${API_BASE_URL}`, {
-                        headers: token
-                            ? { Authorization: `Bearer ${token}` }
-                            : {},
+                        headers: getAuthHeaders(token),
                     });
                     if (!res.ok) throw new Error(`Błąd: ${res.status}`);
                     const data: CartDto = await res.json();
@@ -188,9 +186,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             try {
                 const res = await fetch(`${API_BASE_URL}/${userId}/add?productId=${product.id}&quantity=${quantity}`, {
                     method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                    headers: getAuthHeaders(token)
                 });
                 if (!res.ok) throw new Error('Błąd podczas dodawania do koszyka');
                 const updatedCart: CartDto = await res.json();
@@ -227,9 +223,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             try {
                 const res = await fetch(`${API_BASE_URL}/${userId}/remove/${productId}`, {
                     method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                    headers: getAuthHeaders(token)
                 });
                 if (!res.ok) throw new Error('Błąd podczas usuwania z koszyka');
                 const updatedCart: CartDto = await res.json();
@@ -270,9 +264,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         try {
             const res = await fetch(`${API_BASE_URL}/${userId}/item/${productId}?quantity=${quantity}`, {
                 method: 'PATCH',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+                headers: getAuthHeaders(token)
             });
             if (!res.ok) throw new Error('Błąd podczas aktualizacji ilości');
             const updatedCart: CartDto = await res.json();

@@ -11,7 +11,7 @@ import { formatPLN, grossPrice, productsLabel } from "@/app/lib/product";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-    title: "Kategorie produktów | TRAFO ENERGIA",
+    title: "Kategorie produktów | ebe power",
     description:
         "Pełna oferta sklepu TRAFO ENERGIA w podziale na kategorie: transformatory, zasilacze, rozdzielnice, bezpieczniki, kable, mierniki, agregaty, stacje ładowania EV i akcesoria.",
 };

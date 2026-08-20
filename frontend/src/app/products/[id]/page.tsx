@@ -64,11 +64,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const product = await loadProduct(id);
 
     if (!product) {
-        return { title: "Nie znaleziono produktu | TRAFO ENERGIA" };
+        return { title: "Nie znaleziono produktu | ebe power" };
     }
 
     return {
-        title: `${product.name} | TRAFO ENERGIA`,
+        title: `${product.name} | ebe power`,
         description: product.description?.slice(0, 300) || `${product.name} — sklep TRAFO ENERGIA`,
         alternates: { canonical: `/products/${product.id}` },
         openGraph: {
