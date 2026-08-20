@@ -33,12 +33,21 @@ const RESPONSE_HEADERS_TO_STRIP = new Set([
     "content-length",
 ]);
 
+/**
+ * Nagłówek-marker dodawany do KAŻDEJ odpowiedzi tego handlera (także błędów).
+ * Pozwala jednym rzutem oka w devtools/curl sprawdzić, że żądanie w ogóle
+ * trafiło do proxy, a nie np. na domyślną stronę 404 Next.js starego wydania
+ * (to była przyczyna produkcyjnego "Błąd: 404" przy koszyku).
+ */
+const PROXY_MARKER = "ebe-power-proxy/2";
+
 function jsonError(status: number, error: string, message: string): Response {
     return new Response(JSON.stringify({ error, message }), {
         status,
         headers: {
             "Content-Type": "application/json",
             "Cache-Control": "no-store",
+            "X-Backend-Proxy": PROXY_MARKER,
         },
     });
 }
@@ -67,6 +76,50 @@ function validateBackendBase(req: NextRequest): Response | null {
 }
 
 /**
+ * Diagnostyka wdrożenia — GET /api/backend (bez żadnej ścieżki za proxy).
+ *
+ * Dzięki temu endpointowi po KAŻDYM deployu można jednym żądaniem stwierdzić,
+ * że aktualna rewizja Cloud Run w ogóle serwuje ten handler. Gdyby handler
+ * nie istniał w wydaniu, Next.js zwróciłby tu stronę 404 (HTML) — tak właśnie
+ * wyglądał produkcyjny błąd koszyka ("Błąd: 404" przy pobieraniu/dodawaniu).
+ *
+ * Zwracamy tylko host backendu (bez pełnego URL-a) i rewizję Cloud Run
+ * (K_REVISION jest wstrzykiwane automatycznie przez platformę).
+ */
+function healthResponse(req: NextRequest): Response {
+    let backend: { configured: boolean; host: string | null } | { configured: false; host: null; reason: string };
+    try {
+        const url = new URL(BACKEND_BASE);
+        const pointsToSelf = url.origin === req.nextUrl.origin;
+        backend = {
+            configured: !BACKEND_MISCONFIGURED && !pointsToSelf,
+            host: url.host,
+            ...(BACKEND_MISCONFIGURED ? { reason: "missing_api_url_env" } : {}),
+            ...(pointsToSelf ? { reason: "api_url_points_to_frontend" } : {}),
+        } as { configured: boolean; host: string | null };
+    } catch {
+        backend = { configured: false, host: null, reason: "invalid_api_url" };
+    }
+
+    return new Response(
+        JSON.stringify({
+            ok: true,
+            proxy: PROXY_MARKER,
+            revision: process.env.K_REVISION ?? null,
+            backend,
+        }),
+        {
+            status: 200,
+            headers: {
+                "Content-Type": "application/json",
+                "Cache-Control": "no-store",
+                "X-Backend-Proxy": PROXY_MARKER,
+            },
+        }
+    );
+}
+
+/**
  * Proxy z `/api/backend/*` na backend Spring Boot.
  *
  * Przeglądarka łączy się z tą samą domeną (https://ebe-power.pl), więc nie ma
@@ -76,8 +129,18 @@ function validateBackendBase(req: NextRequest): Response | null {
  *
  * Ścieżka z catch-all jest dołączana wprost, np.
  *   /api/backend/api/cart/123/add -> ${BACKEND_BASE}/api/cart/123/add
+ *
+ * Segment jest OPCJONALNY ([[...path]]), więc samo /api/backend zwraca
+ * diagnostykę (zob. healthResponse) zamiast strony 404.
  */
 async function proxy(req: NextRequest): Promise<Response> {
+    const pathname = req.nextUrl.pathname.replace(/\/+$/, "") || "/";
+
+    // Diagnostyka wdrożenia — tylko dla korzenia proxy.
+    if ((req.method === "GET" || req.method === "HEAD") && pathname === "/api/backend") {
+        return healthResponse(req);
+    }
+
     if (BACKEND_MISCONFIGURED) {
         return jsonError(
             502,
@@ -141,7 +204,11 @@ async function proxy(req: NextRequest): Promise<Response> {
         if (lower.startsWith("access-control-")) return;
         responseHeaders.append(key, value);
     });
+    // no-store przy odpowiedzi i brak cache'owalnych nagłówków z backendu —
+    // żadna warstwa pośrednia (Cloud CDN / browser cache) nie może
+    // z negatywnym cache'em przetrzymać starego błędu (np. 404).
     responseHeaders.set("Cache-Control", "no-store");
+    responseHeaders.set("X-Backend-Proxy", PROXY_MARKER);
 
     return new Response(upstream.body, {
         status: upstream.status,

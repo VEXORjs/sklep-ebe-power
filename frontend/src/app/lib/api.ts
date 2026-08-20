@@ -6,7 +6,7 @@
  * `http://localhost:8080`, co z wiadomych przyczyn nie działa (CORS,
  * mixed-content, 127.0.0.1 u klienta). Zamiast tego zwracamy ścieżkę
  * względną `/api/backend`, która jest serwowana przez Next.js i proxowana
- * do Spring Boota (zob. src/app/api/backend/[...path]/route.ts). Dzięki
+ * do Spring Boota (zob. src/app/api/backend/[[...path]]/route.ts). Dzięki
  * temu żądanie jest tego samego pochodzenia (same-origin) — bez CORS.
  *
  * Lokalnie (npm run dev / Docker) zwracamy bezpośrednio backend, żeby można
