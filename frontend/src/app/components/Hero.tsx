@@ -1,31 +1,18 @@
-'use client';
-
 import { Product } from "@/app/types/product";
-import { useCart } from "@/app/context/CartContext";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, Clock, ShieldCheck, ShoppingCart } from "lucide-react";
+import { ArrowRight, BadgeCheck, Clock, ShieldCheck } from "lucide-react";
+import HeroAddToCart from "@/app/components/HeroAddToCart";
 
 interface HeroProps {
     product: Product;
 }
 
 export default function Hero({ product }: HeroProps) {
-    const { addToCart, openCart } = useCart();
-
     const discount =
         product.oldPrice && product.oldPrice > product.price
             ? Math.round((1 - product.price / product.oldPrice) * 100)
             : null;
-
-    const handleQuickAdd = async () => {
-        try {
-            await addToCart(product, 1);
-            openCart();
-        } catch (error) {
-            console.error("Błąd podczas dodawania do koszyka:", error);
-        }
-    };
 
     return (
         <section className="relative overflow-hidden bg-black">
@@ -83,14 +70,7 @@ export default function Hero({ product }: HeroProps) {
 
                         {/* Akcje */}
                         <div className="flex flex-wrap items-center gap-4">
-                            <button
-                                onClick={handleQuickAdd}
-                                disabled={product.stock === 0}
-                                className="inline-flex items-center gap-2 rounded-md bg-emerald-500 px-7 py-3.5 text-sm font-extrabold text-slate-950 shadow-lg shadow-emerald-950/40 transition-all hover:bg-emerald-400 disabled:opacity-50"
-                            >
-                                <ShoppingCart className="h-4 w-4" />
-                                Dodaj do koszyka
-                            </button>
+                            <HeroAddToCart product={product} />
                             <Link
                                 href={`/products/${product.id}`}
                                 className="inline-flex items-center gap-2 rounded-md border border-neutral-700 bg-neutral-900/60 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:border-emerald-500/60 hover:text-emerald-300"
@@ -128,7 +108,8 @@ export default function Hero({ product }: HeroProps) {
                                     alt={product.name}
                                     fill
                                     priority
-                                    sizes="(max-width: 1024px) 100vw, 50vw"
+                                    quality={75}
+                                    sizes="(max-width: 1024px) min(100vw - 2rem, 512px), 512px"
                                     className="object-contain p-6"
                                 />
                             )}

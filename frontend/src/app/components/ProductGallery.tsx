@@ -74,7 +74,8 @@ export default function ProductGallery({ product }: ProductDetailProps) {
                         alt={product.name}
                         fill
                         priority
-                        sizes="(max-width: 1024px) 100vw, 50vw"
+                        quality={75}
+                        sizes="(max-width: 1024px) calc(100vw - 2rem), 640px"
                         className="cursor-zoom-in object-contain p-6 transition-transform duration-500 hover:scale-105"
                     />
                 ) : (

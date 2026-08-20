@@ -17,10 +17,12 @@ export default function Navbar() {
         <nav className="bg-neutral-950 border-b border-neutral-850 text-white py-4 px-6 sm:px-12 flex items-center justify-between sticky top-0 z-50 backdrop-blur-md bg-opacity-90">
             {/* LOGO */}
             <Link href="/" className="flex items-center h-11 w-auto">
-                <Image src={"https://iyugrhskjjyegxppeqoj.supabase.co/storage/v1/object/public/product_images/Zrzut%20ekranu%202026-07-12%20165154.png"} alt={"logo"}
+                <Image src={"https://iyugrhskjjyegxppeqoj.supabase.co/storage/v1/object/public/product_images/Zrzut%20ekranu%202026-07-12%20165154.png"} alt={"TRAFO ENERGIA"}
                      className="h-full w-auto object-contain"
                        width={156}
                        height={67}
+                       priority
+                       quality={75}
                 />
             </Link>
 

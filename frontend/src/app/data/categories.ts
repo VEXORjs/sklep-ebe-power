@@ -42,7 +42,7 @@ export const CATEGORIES: CategoryDef[] = [
         description:
             "Transformatory jedno- i trójfazowe do zasilania układów sterowania, oświetlenia niskonapięciowego oraz maszyn przemysłowych. W ofercie znajdziesz klasyczne transformatory sieciowe EI, ciche jednostki toroidalne o wysokiej sprawności oraz autotransformatory z płynną regulacją napięcia do zastosowań laboratoryjnych.",
         match: ["Transformatory", "Transformator"],
-        image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=1200",
+        image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=70&w=800",
         keywords: [
             "transformator sieciowy",
             "transformator toroidalny",
@@ -101,7 +101,7 @@ export const CATEGORIES: CategoryDef[] = [
         description:
             "Stabilizowane zasilacze impulsowe DC oraz przetwornice 12 V/230 V z czystym przebiegiem sinusoidalnym. Sprawdzą się w automatyce, monitoringu, instalacjach fotowoltaicznych off-grid i zasilaniu awaryjnym urządzeń wrażliwych na jakość napięcia.",
         match: ["Zasilacze", "Zasilacz", "Przetwornice"],
-        image: "https://images.unsplash.com/photo-1555680202-c86f0e12f086?auto=format&fit=crop&q=80&w=1200",
+        image: "https://images.unsplash.com/photo-1555680202-c86f0e12f086?auto=format&fit=crop&q=70&w=800",
         keywords: [
             "zasilacz impulsowy",
             "zasilacz na szynę DIN",
@@ -160,7 +160,7 @@ export const CATEGORIES: CategoryDef[] = [
         description:
             "Rozdzielnice natynkowe i podtynkowe, obudowy hermetyczne oraz aparatura sterownicza: przekaźniki półprzewodnikowe SSR, styczniki i ograniczniki przepięć. Komplet elementów potrzebnych do zbudowania bezpiecznej i uporządkowanej tablicy elektrycznej.",
         match: ["Rozdzielnice i zabezpieczenia", "Rozdzielnice", "Przekaźniki"],
-        image: "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&q=80&w=1200",
+        image: "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&q=70&w=800",
         keywords: [
             "rozdzielnica modułowa",
             "rozdzielnica natynkowa",
@@ -219,7 +219,7 @@ export const CATEGORIES: CategoryDef[] = [
         description:
             "Aparatura zabezpieczająca instalację przed skutkami zwarć, przeciążeń i porażenia. Wyłączniki nadprądowe o charakterystykach B, C i D, wyłączniki różnicowoprądowe typu AC i A oraz klasyczne wkładki topikowe.",
         match: ["Bezpieczniki", "Bezpiecznik"],
-        image: "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&q=80&w=1200",
+        image: "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&q=70&w=800",
         keywords: [
             "wyłącznik nadprądowy",
             "bezpiecznik B16",
@@ -278,7 +278,7 @@ export const CATEGORIES: CategoryDef[] = [
         description:
             "Przewody miedziane do instalacji elektroenergetycznych sprzedawane na metry i w kompletnych bębnach. Wersje jedno- i wielożyłowe, bezhalogenowe, giętkie linki sterownicze oraz dedykowane kable solarne odporne na UV.",
         match: ["Kable", "Kabel", "Przewody"],
-        image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=1200",
+        image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=70&w=800",
         keywords: ["przewód YDY", "kabel miedziany 3x2.5", "przewód instalacyjny", "kabel solarny"],
         highlights: [
             {
@@ -332,7 +332,7 @@ export const CATEGORIES: CategoryDef[] = [
         description:
             "Przyrządy pomiarowe dla instalatorów i służb utrzymania ruchu: multimetry True RMS, cęgi prądowe AC/DC, mierniki rezystancji izolacji oraz liczniki energii na szynę DIN z komunikacją Modbus.",
         match: ["Liczniki i mierniki", "Mierniki", "Liczniki"],
-        image: "https://images.unsplash.com/photo-1581092162384-8987c1d64718?auto=format&fit=crop&q=80&w=1200",
+        image: "https://images.unsplash.com/photo-1581092162384-8987c1d64718?auto=format&fit=crop&q=70&w=800",
         keywords: ["multimetr True RMS", "cęgi prądowe", "licznik energii DIN", "miernik cyfrowy"],
         highlights: [
             {
@@ -386,7 +386,7 @@ export const CATEGORIES: CategoryDef[] = [
         description:
             "Agregaty prądotwórcze do zasilania awaryjnego domu, warsztatu i placu budowy. Modele inwertorowe z czystą sinusoidą bezpieczną dla elektroniki oraz jednostki budowlane o wysokiej mocy z rozruchem elektrycznym i układem AVR.",
         match: ["Agregaty", "Agregat", "Agregaty prądotwórcze"],
-        image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&q=80&w=1200",
+        image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&q=70&w=800",
         keywords: [
             "agregat prądotwórczy",
             "agregat inwertorowy",
@@ -445,7 +445,7 @@ export const CATEGORIES: CategoryDef[] = [
         description:
             "Naścienne stacje ładowania samochodów elektrycznych i hybryd plug-in. Wersje jedno- i trójfazowe z gniazdem lub kablem Typu 2, dynamicznym zarządzaniem mocą, aplikacją mobilną oraz wbudowanym zabezpieczeniem różnicowoprądowym DC 6 mA.",
         match: ["Stacje ładowania EV", "Stacje ładowania", "Wallbox", "Ładowarki EV"],
-        image: "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&q=80&w=1200",
+        image: "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&q=70&w=800",
         keywords: ["wallbox 22kW", "stacja ładowania EV", "ładowarka Typ 2", "ładowanie samochodu"],
         highlights: [
             {
@@ -499,7 +499,7 @@ export const CATEGORIES: CategoryDef[] = [
         description:
             "Wszystko, czego brakuje w koszyku tuż przed wyjazdem na budowę: złączki szybkozłączne, listwy zaciskowe, koryta i peszle, opaski, końcówki tulejkowe, oznaczniki oraz drobne narzędzia instalatorskie.",
         match: ["Akcesoria", "Osprzęt", "Akcesoria montażowe"],
-        image: "https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&q=80&w=1200",
+        image: "https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&q=70&w=800",
         keywords: ["złączki elektryczne", "końcówki tulejkowe", "peszel", "osprzęt instalacyjny"],
         highlights: [
             {
@@ -556,7 +556,7 @@ export function buildFallbackCategory(name: string): CategoryDef {
         tagline: "Sprawdź pełną ofertę w tej kategorii",
         description: `Produkty z kategorii ${name} dostępne w sklepie TRAFO ENERGIA. Wysyłka w 24 h, faktura VAT i wsparcie techniczne przed zakupem.`,
         match: [name],
-        image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=1200",
+        image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=70&w=800",
         keywords: [name.toLowerCase()],
         highlights: [
             {

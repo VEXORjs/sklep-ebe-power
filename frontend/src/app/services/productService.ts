@@ -4,6 +4,9 @@ import { getServerApiUrl } from '@/app/lib/api';
 
 const API_URL = getServerApiUrl();
 
+/** Katalog zmienia się rzadko — ISR zamiast force-dynamic obcina TTFB o setki ms. */
+export const CATALOG_REVALIDATE_SECONDS = 60;
+
 function normalizeProduct(raw: Partial<Product> & { id: number; name: string; price: number }): Product {
     return {
         id: Number(raw.id),
@@ -24,10 +27,12 @@ function normalizeProduct(raw: Partial<Product> & { id: number; name: string; pr
 }
 
 export async function getProducts(): Promise<Product[]> {
-    console.log("👉 Next.js pobiera produkty z adresu:", `${API_URL}/api/products`);
+    if (process.env.NODE_ENV !== "production") {
+        console.log("👉 Next.js pobiera produkty z adresu:", `${API_URL}/api/products`);
+    }
     try {
         const res = await fetch(`${API_URL}/api/products`, {
-            cache: 'no-store',
+            next: { revalidate: CATALOG_REVALIDATE_SECONDS },
             // Nie blokujemy renderowania strony, gdy backend jest niedostępny
             signal: AbortSignal.timeout(3000),
         });
@@ -57,7 +62,7 @@ export async function getProduct(id: string | number): Promise<Product | null> {
         const res = await fetch(`${API_URL}/api/products/${id}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
-            cache: "no-store",
+            next: { revalidate: CATALOG_REVALIDATE_SECONDS },
             signal: AbortSignal.timeout(3000),
         });
 

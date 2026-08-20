@@ -56,7 +56,8 @@ export default function CategoryGrid({ products, limit = 9 }: CategoryGridProps)
                                 src={category.image}
                                 alt={category.name}
                                 fill
-                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                quality={70}
+                                sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) calc(50vw - 2rem), 400px"
                                 className="object-cover transition-transform duration-500 group-hover:scale-110"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/10" />
