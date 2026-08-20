@@ -11,6 +11,11 @@ import { getPublicApiUrl } from "@/app/lib/api";
 const API_URL = getPublicApiUrl();
 const API_BASE_URL = `${API_URL}/api/cart`;
 
+/** Opisuje błędne żądanie tak, by sam log w konsoli mówił CO i GDZIE nie zadziałało. */
+function describeHttpError(action: string, res: Response, url: string): Error {
+    return new Error(`${action}: HTTP ${res.status} na ${url}`);
+}
+
 function getAuthHeaders(token?: string): HeadersInit | undefined {
     return token ? { Authorization: `Bearer ${token}` } : undefined;
 }
@@ -61,7 +66,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                     method: 'GET',
                     headers: getAuthHeaders(token),
                 });
-                if (!res.ok) throw new Error(`Backend zwrócił kod błędu: ${res.status} ${res.statusText}`);
+                if (!res.ok) throw describeHttpError('Błąd pobierania koszyka', res, `${API_BASE_URL}`);
                 const data: CartDto = await res.json();
                 const stored = localStorage.getItem(`first_startup_${userId}`);
                 setCart({ ...data, firstStartup: stored === "1" || data.firstStartup });
@@ -89,7 +94,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 headers: getAuthHeaders(token)
             });
             if (!res.ok) {
-                throw new Error('Błąd podczas czyszczenia koszyka');
+                throw describeHttpError('Błąd podczas czyszczenia koszyka', res, `${API_BASE_URL}/${id}/clear`);
             }
             const updatedCart: CartDto = await res.json();
             setCart(updatedCart);
@@ -111,7 +116,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                     const res = await fetch(`${API_BASE_URL}`, {
                         headers: getAuthHeaders(token),
                     });
-                    if (!res.ok) throw new Error(`Błąd: ${res.status}`);
+                    if (!res.ok) throw describeHttpError('Błąd pobierania koszyka', res, `${API_BASE_URL}`);
                     const data: CartDto = await res.json();
                     const stored = localStorage.getItem(`first_startup_${userId}`);
                     if (isMounted) setCart({ ...data, firstStartup: stored === "1" || data.firstStartup });
@@ -188,7 +193,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                     method: 'POST',
                     headers: getAuthHeaders(token)
                 });
-                if (!res.ok) throw new Error('Błąd podczas dodawania do koszyka');
+                if (!res.ok) throw describeHttpError('Błąd podczas dodawania do koszyka', res, `${API_BASE_URL}/${userId}/add?productId=${product.id}&quantity=${quantity}`);
                 const updatedCart: CartDto = await res.json();
                 setCart({ ...updatedCart, firstStartup: cart?.firstStartup ?? false });
             } catch (error) {
@@ -225,7 +230,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                     method: 'DELETE',
                     headers: getAuthHeaders(token)
                 });
-                if (!res.ok) throw new Error('Błąd podczas usuwania z koszyka');
+                if (!res.ok) throw describeHttpError('Błąd podczas usuwania z koszyka', res, `${API_BASE_URL}/${userId}/remove/${productId}`);
                 const updatedCart: CartDto = await res.json();
                 setCart({ ...updatedCart, firstStartup: cart?.firstStartup ?? false });
             } catch (error) {
@@ -266,7 +271,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 method: 'PATCH',
                 headers: getAuthHeaders(token)
             });
-            if (!res.ok) throw new Error('Błąd podczas aktualizacji ilości');
+            if (!res.ok) throw describeHttpError('Błąd podczas aktualizacji ilości', res, `${API_BASE_URL}/${userId}/item/${productId}?quantity=${quantity}`);
             const updatedCart: CartDto = await res.json();
             setCart({ ...updatedCart, firstStartup: cart?.firstStartup ?? false });
         } catch (error) {
