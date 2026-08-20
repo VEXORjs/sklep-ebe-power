@@ -12,7 +12,7 @@ export default function CartDrawer() {
 
     return (
         <div
-            className={`fixed inset-0 z-[100] ${isCartOpen ? "" : "pointer-events-none"}`}
+            className={`fixed inset-0 z-[9999] ${isCartOpen ? "" : "pointer-events-none"}`}
             aria-hidden={!isCartOpen}
         >
             {/* Tło */}
