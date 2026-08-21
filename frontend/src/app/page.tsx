@@ -7,20 +7,20 @@ import BrandMarquee from "@/app/components/BrandMarquee";
 import TrustBar from "@/app/components/FeatureBar";
 import type { Metadata } from "next";
 import { getSiteUrl } from "@/app/lib/site";
-import { allCategories } from "@/app/data/categories";
+import { allCategories, productsInCategory } from "@/app/data/categories";
 import Link from "next/link";
 
 export const metadata: Metadata = {
     title: {
-        absolute: "ebe power — Transformatory, zasilacze, rozdzielnice i osprzęt elektryczny | Sklep online",
+        absolute: "ebe power — Agregaty prądotwórcze PRAMAC | Sklep online",
     },
     description:
-        "Sklep internetowy z transformatorami, zasilaczami, rozdzielnicami, kablami i osprzętem elektrycznym. Darmowa dostawa od 500 zł, wysyłka w 24 h, gwarancja 24 miesięcy, faktura VAT. Bełchatów.",
+        "Sklep internetowy z agregatami prądotwórczymi PRAMAC: inwerterowymi, benzynowymi, diesla i gazowymi. Dostawa z Bełchatowa, faktura VAT i wsparcie techniczne.",
     alternates: { canonical: "/" },
     openGraph: {
-        title: "ebe power — Transformatory, zasilacze i osprzęt elektryczny | Sklep online",
+        title: "ebe power — Agregaty prądotwórcze PRAMAC | Sklep online",
         description:
-            "Transformatory, zasilacze, rozdzielnice, kable i osprzęt elektryczny. Darmowa dostawa od 500 zł, wysyłka w 24 h, gwarancja 24 mies.",
+            "Agregaty prądotwórcze PRAMAC do domu, warsztatu i na budowę. Modele inwerterowe, benzynowe, diesla i gazowe.",
         url: "/",
         siteName: "ebe power",
         locale: "pl_PL",
@@ -41,7 +41,9 @@ export default async function HomePage() {
         null;
 
     const site = getSiteUrl();
-    const categories = allCategories(products);
+    const categories = allCategories(products).filter(
+        (category) => productsInCategory(products, category).length > 0
+    );
 
     const itemListJsonLd = {
         "@context": "https://schema.org",
@@ -91,16 +93,14 @@ export default async function HomePage() {
             {/* SEO: Crawlowalna treść tekstowa z linkami do kategorii */}
             <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
                 <h2 className="mb-4 text-lg font-bold text-neutral-300">
-                    Sklep z osprzętem elektrycznym — ebe power
+                    Sklep z agregatami prądotwórczymi PRAMAC — ebe power
                 </h2>
                 <p className="mb-4 text-sm leading-relaxed text-neutral-500">
-                    ebe power (TRAFO ENERGIA) to sklep internetowy specjalizujący się w sprzedaży
-                    transformatorów sieciowych i toroidalnych, zasilaczy impulsowych na szynę DIN,
-                    przetwornic napięcia, rozdzielnic modułowych, bezpieczników, kabli i przewodów
-                    elektrycznych, mierników, agregatów prądotwórczych, stacji ładowania samochodów
-                    elektrycznych (wallbox EV) oraz akcesoriów instalatorskich. Wysyłamy z magazynu
-                    w Bełchatowie w ciągu 24 godzin, oferujemy darmową dostawę od 500 zł brutto,
-                    24-miesięczną gwarancję na cały asortyment oraz fakturę VAT do każdego zamówienia.
+                    ebe power (TRAFO ENERGIA) to sklep internetowy z agregatami prądotwórczymi PRAMAC:
+                    modelami inwerterowymi, benzynowymi, diesla i gazowymi. W katalogu znajdziesz
+                    urządzenia do zasilania awaryjnego domu, warsztatu, placu budowy i zastosowań
+                    terenowych. Wysyłamy z magazynu w Bełchatowie, zapewniamy wsparcie techniczne
+                    przed zakupem oraz fakturę VAT do każdego zamówienia.
                 </p>
                 <nav aria-label="Kategorie produktów">
                     <h3 className="mb-2 text-sm font-semibold text-neutral-400">Przeglądaj kategorie:</h3>

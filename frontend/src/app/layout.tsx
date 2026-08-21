@@ -23,11 +23,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
     metadataBase: new URL("https://ebe-power.pl"),
     title: {
-        default: "ebe power — Transformatory, zasilacze i osprzęt elektryczny | Sklep online",
+        default: "ebe power — Agregaty prądotwórcze PRAMAC | Sklep online",
         template: "%s | ebe power",
     },
     description:
-        "Sklep internetowy z transformatorami, zasilaczami, rozdzielnicami, kablami i osprzętem elektrycznym. Darmowa dostawa od 500 zł, wysyłka w 24 h, gwarancja 24 miesiące, faktura VAT.",
+        "Sklep internetowy z agregatami prądotwórczymi PRAMAC: inwerterowymi, benzynowymi, diesla i gazowymi. Faktura VAT i wsparcie techniczne.",
     keywords: [
         "transformatory",
         "zasilacze",
@@ -49,9 +49,9 @@ export const metadata: Metadata = {
         type: "website",
         locale: "pl_PL",
         siteName: "ebe power",
-        title: "ebe power — Transformatory, zasilacze i osprzęt elektryczny",
+        title: "ebe power — Agregaty prądotwórcze PRAMAC",
         description:
-            "Sklep internetowy z transformatorami, zasilaczami, rozdzielnicami i osprzętem elektrycznym. Darmowa dostawa od 500 zł, wysyłka w 24 h.",
+            "Sklep internetowy z agregatami prądotwórczymi PRAMAC do domu, warsztatu i na budowę. Faktura VAT i wsparcie techniczne.",
         url: "https://ebe-power.pl",
         images: [
             {
@@ -64,9 +64,9 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: "summary_large_image",
-        title: "ebe power — Transformatory, zasilacze i osprzęt elektryczny",
+        title: "ebe power — Agregaty prądotwórcze PRAMAC",
         description:
-            "Sklep internetowy z transformatorami, zasilaczami, rozdzielnicami i osprzętem. Darmowa dostawa od 500 zł.",
+            "Agregaty prądotwórcze PRAMAC: modele inwerterowe, benzynowe, diesla i gazowe.",
         images: [BRAND_LOGO_URL],
     },
     icons: {

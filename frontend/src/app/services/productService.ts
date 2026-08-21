@@ -1,5 +1,5 @@
 import { Product } from '../types/product';
-import { DEMO_PRODUCTS } from '../data/demoProducts';
+import { CATALOG_PRODUCTS } from '../data/catalogProducts';
 import { getServerApiUrl } from '@/app/lib/api';
 
 const API_URL = getServerApiUrl();
@@ -50,10 +50,10 @@ export async function getProducts(): Promise<Product[]> {
         throw new Error("Pusta lista produktów z serwera");
     } catch (error) {
         console.warn(
-            "⚠️ Backend niedostępny — strona używa danych demonstracyjnych (podgląd/development).",
+            "⚠️ Backend niedostępny — strona używa lokalnego katalogu produktów.",
             error
         );
-        return DEMO_PRODUCTS;
+        return CATALOG_PRODUCTS;
     }
 }
 
@@ -74,10 +74,10 @@ export async function getProduct(id: string | number): Promise<Product | null> {
         return normalizeProduct(data);
     } catch (error) {
         console.warn(
-            "⚠️ Backend niedostępny — podgląd produktu z danych demonstracyjnych.",
+            "⚠️ Backend niedostępny — podgląd produktu korzysta z lokalnego katalogu.",
             error
         );
-        return DEMO_PRODUCTS.find((p) => p.id === Number(id)) ?? null;
+        return CATALOG_PRODUCTS.find((p) => p.id === Number(id)) ?? null;
     }
 }
 

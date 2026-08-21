@@ -382,11 +382,11 @@ export const CATEGORIES: CategoryDef[] = [
     {
         slug: "agregaty",
         name: "Agregaty",
-        tagline: "Agregaty prądotwórcze inwertorowe i budowlane",
+        tagline: "Inwerterowe, benzynowe, diesla i gazowe",
         description:
-            "Agregaty prądotwórcze do zasilania awaryjnego domu, warsztatu i placu budowy. Modele inwertorowe z czystą sinusoidą bezpieczną dla elektroniki oraz jednostki budowlane o wysokiej mocy z rozruchem elektrycznym i układem AVR.",
+            "Agregaty prądotwórcze PRAMAC do zasilania awaryjnego domu, warsztatu i placu budowy. Katalog obejmuje ciche modele inwerterowe z czystym napięciem, jednostki benzynowe i diesla z AVR oraz automatyczne agregaty gazowe do pracy rezerwowej.",
         match: ["Agregaty", "Agregat", "Agregaty prądotwórcze"],
-        image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&q=70&w=800",
+        image: "/products/pramac-ga10000.webp",
         keywords: [
             "agregat prądotwórczy",
             "agregat inwertorowy",
