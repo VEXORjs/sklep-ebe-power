@@ -59,6 +59,13 @@ const PARAM_LABELS: Record<string, string> = {
     gwarancja: "Gwarancja",
     waga: "Waga",
     wymiary: "Wymiary",
+    silnik: "Silnik",
+    czestotliwosc: "Częstotliwość",
+    regulacja_napiecia: "Regulacja napięcia",
+    zbiornik_paliwa: "Zbiornik paliwa",
+    wspolczynnik_mocy: "Współczynnik mocy",
+    zastosowanie: "Zastosowanie",
+    wyposazenie: "Wyposażenie",
     poziom_halasu: "Poziom hałasu",
     pojemnosc_zbiornika: "Pojemność zbiornika",
     czas_pracy: "Czas pracy",
@@ -77,7 +84,7 @@ function prettifyKey(key: string): string {
 /**
  * Parametry produktu przychodzą w dwóch formatach:
  *  • z backendu (Spring/Hibernate) jako mapa `{ "moc": "40VA" }`,
- *  • z danych demonstracyjnych jako tekst `"moc: 40VA; napięcie: 230V"`.
+ *  • z lokalnego katalogu jako tekst `"moc: 40VA; napięcie: 230V"`.
  * Ta funkcja normalizuje oba przypadki do jednej listy.
  */
 export function parseParameters(raw: unknown): SpecEntry[] {

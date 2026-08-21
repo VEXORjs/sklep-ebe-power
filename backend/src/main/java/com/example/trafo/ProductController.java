@@ -59,6 +59,9 @@ public class ProductController {
                         .orElseThrow(() -> new RuntimeException("Produkt nie istnieje dla id: \" + id"));
                 existingProduct.setName(productDetails.getName());
                 existingProduct.setPrice(productDetails.getPrice());
+                existingProduct.setCategory(productDetails.getCategory());
+                existingProduct.setSubcategory(productDetails.getSubcategory());
+                existingProduct.setSku(productDetails.getSku());
                 existingProduct.setDescription(productDetails.getDescription());
                 existingProduct.setImages(productDetails.getImages());
 

@@ -11,6 +11,19 @@ export interface CategoryHighlight {
     text: string;
 }
 
+export type SubcategoryIcon = "gas" | "inverter" | "petrol" | "diesel";
+
+export interface CategorySubcategory {
+    /** Fragment adresu: /kategoria/{category}/{subcategory} */
+    slug: string;
+    name: string;
+    tagline: string;
+    description: string;
+    /** Wartości rozpoznawane przy klasyfikacji produktów z backendu. */
+    match: string[];
+    icon: SubcategoryIcon;
+}
+
 export interface CategoryDef {
     /** Fragment adresu: /kategoria/{slug} */
     slug: string;
@@ -32,6 +45,8 @@ export interface CategoryDef {
     /** Typowe zastosowania — chipy nawigacyjne */
     applications: string[];
     faq: CategoryFaq[];
+    /** Opcjonalny drugi poziom katalogu, np. dla agregatów. */
+    subcategories?: CategorySubcategory[];
 }
 
 export const CATEGORIES: CategoryDef[] = [
@@ -382,11 +397,49 @@ export const CATEGORIES: CategoryDef[] = [
     {
         slug: "agregaty",
         name: "Agregaty",
-        tagline: "Agregaty prądotwórcze inwertorowe i budowlane",
+        tagline: "Inwerterowe, benzynowe, diesla i gazowe",
         description:
-            "Agregaty prądotwórcze do zasilania awaryjnego domu, warsztatu i placu budowy. Modele inwertorowe z czystą sinusoidą bezpieczną dla elektroniki oraz jednostki budowlane o wysokiej mocy z rozruchem elektrycznym i układem AVR.",
+            "Agregaty prądotwórcze PRAMAC do zasilania awaryjnego domu, warsztatu i placu budowy. Katalog obejmuje ciche modele inwerterowe z czystym napięciem, jednostki benzynowe i diesla z AVR oraz automatyczne agregaty gazowe do pracy rezerwowej.",
         match: ["Agregaty", "Agregat", "Agregaty prądotwórcze"],
-        image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&q=70&w=800",
+        subcategories: [
+            {
+                slug: "gazowe",
+                name: "Agregaty gazowe",
+                tagline: "Automatyczne zasilanie awaryjne domu i obiektu",
+                description:
+                    "Stacjonarne agregaty na gaz ziemny lub LPG do automatycznego zasilania awaryjnego. Wyposażone w obudowę wyciszającą, AVR i możliwość współpracy z układem SZR.",
+                match: ["Agregaty gazowe", "Agregat gazowy", "Gazowe", "Gazowy"],
+                icon: "gas",
+            },
+            {
+                slug: "inwerterowe",
+                name: "Agregaty inwerterowe",
+                tagline: "Czyste napięcie dla elektroniki i domu",
+                description:
+                    "Kompaktowe i ciche modele z technologią inverter, trybem Economy oraz stabilnym napięciem bezpiecznym dla komputerów, kotłów i elektroniki.",
+                match: ["Agregaty inwerterowe", "Agregat inwerterowy", "Inwerterowe", "Inwerterowy", "Inverter"],
+                icon: "inverter",
+            },
+            {
+                slug: "benzynowe",
+                name: "Agregaty benzynowe",
+                tagline: "Przenośne źródło energii do pracy i rekreacji",
+                description:
+                    "Jednofazowe i trójfazowe agregaty benzynowe z rozruchem ręcznym lub elektrycznym, AVR i zestawem transportowym do pracy w terenie.",
+                match: ["Agregaty benzynowe", "Agregat benzynowy", "Benzynowe", "Benzynowy", "Petrol"],
+                icon: "petrol",
+            },
+            {
+                slug: "diesla",
+                name: "Agregaty diesla",
+                tagline: "Wysoka trwałość do ciężkiej pracy",
+                description:
+                    "Wysokoprężne agregaty do zastosowań budowlanych, warsztatowych i przemysłowych. Elektryczny rozruch, AVR i silnik Stage V zapewniają gotowość do intensywnej pracy.",
+                match: ["Agregaty diesla", "Agregat diesla", "Diesla", "Diesel"],
+                icon: "diesel",
+            },
+        ],
+        image: "/products/pramac-ga10000.webp",
         keywords: [
             "agregat prądotwórczy",
             "agregat inwertorowy",
@@ -581,6 +634,46 @@ export function buildFallbackCategory(name: string): CategoryDef {
 export function getCategoryBySlug(slug: string): CategoryDef | undefined {
     const wanted = slug.toLowerCase();
     return CATEGORIES.find((c) => c.slug === wanted);
+}
+
+/** Zwraca podkategorię produktu, jeżeli backend przekazał jej nazwę lub slug. */
+export function subcategoryOf(
+    product: Product,
+    category?: CategoryDef
+): CategorySubcategory | undefined {
+    const parent = category ?? categoryOf(product);
+    const raw = product.subcategory?.trim();
+    if (!parent?.subcategories || !raw) return undefined;
+
+    const normalized = normalizeText(raw);
+    return parent.subcategories.find(
+        (subcategory) =>
+            normalizeText(subcategory.slug) === normalized ||
+            normalizeText(subcategory.name) === normalized ||
+            subcategory.match.some((value) => normalizeText(value) === normalized)
+    );
+}
+
+/** Produkty pasujące do wybranej podkategorii (po polu subcategory, nazwie lub SKU). */
+export function productsInSubcategory(
+    products: Product[],
+    category: CategoryDef,
+    subcategory: CategorySubcategory
+): Product[] {
+    const categoryItems = productsInCategory(products, category);
+    const matches = subcategory.match.map(normalizeText);
+    const slug = normalizeText(subcategory.slug);
+
+    return categoryItems.filter((product) => {
+        const values = [product.subcategory, product.name, product.sku]
+            .filter((value): value is string => Boolean(value))
+            .map(normalizeText);
+
+        return values.some((value) =>
+            value === slug ||
+            matches.some((match) => value === match || value.includes(match))
+        );
+    });
 }
 
 /** Dopasowuje kategorię produktu do definicji z taksonomii. */

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ArrowRight, LayoutGrid, List, Search, SlidersHorizontal, X } from "lucide-react";
 import { Product } from "@/app/types/product";
 import ProductCard, { ProductCardVariant } from "@/app/components/ProductCard";
-import { CATEGORIES, allCategories } from "@/app/data/categories";
+import { CATEGORIES, allCategories, productsInCategory } from "@/app/data/categories";
 import { normalizeText, productsLabel, ratingOf, slugify } from "@/app/lib/product";
 
 interface ShopSectionProps {
@@ -90,7 +90,9 @@ export default function ShopSection({ products, initialVisible = 9 }: ShopSectio
     };
 
     const visible = expanded ? filtered.length : initialVisible;
-    const categoryCount = allCategories(products).length;
+    const categoryCount = allCategories(products).filter(
+        (category) => productsInCategory(products, category).length > 0
+    ).length;
 
     return (
         <section id="produkty" className="mx-auto w-full max-w-7xl scroll-mt-24 px-4 py-16 sm:px-6 lg:px-8">
@@ -104,7 +106,7 @@ export default function ShopSection({ products, initialVisible = 9 }: ShopSectio
                         Produkty
                     </h2>
                     <p className="mt-2 max-w-2xl text-sm text-neutral-400">
-                        Transformatory, zasilacze, rozdzielnice, kable i osprzęt — gotowe do wysyłki w 24 h.
+                        Agregaty PRAMAC do zasilania awaryjnego, pracy na budowie i zastosowań terenowych — gotowe do wysyłki.
                     </p>
                 </div>
                 <Link

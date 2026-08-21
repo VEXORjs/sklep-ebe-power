@@ -11,13 +11,13 @@ import { formatPLN, grossPrice, productsLabel } from "@/app/lib/product";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-    title: "Kategorie produktów — transformatory, zasilacze, rozdzielnice i więcej",
+    title: "Kategorie produktów — agregaty prądotwórcze PRAMAC",
     description:
-        "Pełna oferta sklepu ebe power (TRAFO ENERGIA) w podziale na kategorie: transformatory, zasilacze, rozdzielnice, bezpieczniki, kable, mierniki, agregaty prądotwórcze, stacje ładowania EV i akcesoria instalatorskie.",
+        "Pełna oferta sklepu ebe power (TRAFO ENERGIA) — agregaty prądotwórcze PRAMAC do domu, warsztatu, na budowę i do zastosowań terenowych.",
     alternates: { canonical: "/kategoria" },
     openGraph: {
         title: "Kategorie produktów | ebe power",
-        description: "Przeglądaj pełną ofertę w podziale na kategorie. Transformatory, zasilacze, rozdzielnice i więcej.",
+        description: "Przeglądaj kategorię agregatów prądotwórczych PRAMAC i dobierz model do zasilania awaryjnego lub pracy na budowie.",
         url: "/kategoria",
         type: "website",
     },
@@ -25,7 +25,9 @@ export const metadata: Metadata = {
 
 export default async function CategoriesPage() {
     const products = await getProducts();
-    const categories = allCategories(products);
+    const categories = allCategories(products).filter(
+        (category) => productsInCategory(products, category).length > 0
+    );
 
     const breadcrumbJsonLd = {
         "@context": "https://schema.org",

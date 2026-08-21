@@ -15,6 +15,7 @@ export default function CategoryGrid({ products, limit = 9 }: CategoryGridProps)
     // Najpierw kategorie, w których faktycznie mamy towar.
     const categories = allCategories(products)
         .map((category) => ({ category, items: productsInCategory(products, category) }))
+        .filter(({ items }) => items.length > 0)
         .sort((a, b) => b.items.length - a.items.length)
         .slice(0, limit);
 

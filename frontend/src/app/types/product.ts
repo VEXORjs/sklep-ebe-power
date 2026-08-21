@@ -8,11 +8,13 @@ export interface Product {
     videos?: string[];
     /**
      * Parametry techniczne. Backend (Hibernate) zwraca mapę `{ klucz: wartość }`,
-     * dane demonstracyjne używają zapisu tekstowego `"moc: 40VA; napięcie: 230V"`.
+     * lokalny katalog może używać zapisu tekstowego `"moc: 40VA; napięcie: 230V"`.
      * Do wyświetlania używaj `parseParameters()` z `@/app/lib/product`.
      */
     parameters: string | Record<string, string>;
     category?: string;
+    /** Drugi poziom katalogu, np. "Transformatory toroidalne". */
+    subcategory?: string;
     sku?: string;
     oldPrice?: number;
     badge?: string;

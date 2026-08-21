@@ -151,7 +151,7 @@ export default function Footer() {
             <div className="border-t border-neutral-800 bg-[#0d0e10] py-4">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs text-neutral-400 gap-2">
                     <p>© {new Date().getFullYear()} TRAFO ENERGIA (ebe-power.pl). Wszelkie prawa zastrzeżone.</p>
-                    <p>Transformatory, zasilacze i osprzęt elektryczny — sklep online</p>
+                    <p>Agregaty prądotwórcze PRAMAC — sklep online</p>
                 </div>
             </div>
         </footer>

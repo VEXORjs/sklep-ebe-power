@@ -23,8 +23,11 @@ public class Product {
     /** Cena przed promocją (opcjonalna) */
     private BigDecimal oldPrice;
 
-    /** Kategoria produktu (np. Transformatory, Zasilacze) */
+    /** Kategoria produktu (np. Agregaty, Transformatory) */
     private String category;
+
+    /** Podkategoria produktu (np. inwerterowe, gazowe) */
+    private String subcategory;
 
     /** Kod magazynowy SKU */
     private String sku;
@@ -61,6 +64,8 @@ public class Product {
     public void setOldPrice(BigDecimal oldPrice) { this.oldPrice = oldPrice; }
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
+    public String getSubcategory() { return subcategory; }
+    public void setSubcategory(String subcategory) { this.subcategory = subcategory; }
     public String getSku() { return sku; }
     public void setSku(String sku) { this.sku = sku; }
     public Long getStock() { return stock; }

@@ -13,6 +13,7 @@ import {
 } from "@/app/data/categories";
 import { formatPLN, grossPrice, ratingOf } from "@/app/lib/product";
 import CategoryCatalog from "./CategoryCatalog";
+import CategorySubcategoryGrid from "@/app/components/CategorySubcategoryGrid";
 
 export const revalidate = 60;
 
@@ -22,7 +23,9 @@ const loadProducts = cache(getProducts);
 /** Pre-render all known category pages at build time for SEO. */
 export async function generateStaticParams() {
     const products = await getProducts();
-    const categories = allCategories(products);
+    const categories = allCategories(products).filter(
+        (category) => productsInCategory(products, category).length > 0
+    );
     return categories.map((c) => ({ slug: c.slug }));
 }
 
@@ -218,6 +221,8 @@ export default async function CategoryPage({ params }: PageProps) {
                     )}
                 </div>
             </header>
+
+            <CategorySubcategoryGrid category={category} products={products} />
 
             {/* Wyróżniki */}
             <section className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
