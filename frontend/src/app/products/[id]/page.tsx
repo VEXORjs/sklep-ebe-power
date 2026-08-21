@@ -21,7 +21,6 @@ import { getProduct, getProducts } from "@/app/services/productService";
 import { categoryOf, categorySlugOf } from "@/app/data/categories";
 import {
     badgeOf,
-    catalogPdfOf,
     discountPercent,
     formatPLN,
     FREE_SHIPPING_THRESHOLD,
@@ -136,7 +135,6 @@ export default async function ProductPage({ params }: PageProps) {
     const tone = STOCK_TONE[stock.tone];
     const gross = grossPrice(product.price);
     const freeShipping = hasFreeShipping(product);
-    const catalogPdf = catalogPdfOf(product);
     const sold = soldCountOf(product);
     const reviewEntries = reviewEntriesOf(product);
 
@@ -409,7 +407,11 @@ export default async function ProductPage({ params }: PageProps) {
                         </div>
 
                         <div className="mt-4">
-                            <CatalogPdfButton href={catalogPdf} productName={product.name} />
+                            <CatalogPdfButton
+                                productId={product.id}
+                                productName={product.name}
+                                href={product.catalogPdf}
+                            />
                         </div>
 
                         <ul className="mt-6 space-y-2.5 rounded-xl border border-neutral-800 bg-[#111315] p-4 text-sm text-neutral-300">

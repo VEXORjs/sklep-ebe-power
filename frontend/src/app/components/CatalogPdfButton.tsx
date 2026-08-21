@@ -1,27 +1,34 @@
 import { FileDown } from "lucide-react";
+
 interface CatalogPdfButtonProps {
-    /** Bezpośredni URL publiczny pliku PDF (Supabase storage). */
-    href: string;
+    /** ID produktu — domyślny href to same-origin `/api/datasheet/{id}`. */
+    productId: number;
     /** Nazwa produktu — trafia do etykiety aria dla czytników. */
     productName: string;
+    /**
+     * Opcjonalny bezpośredni URL (np. własne `catalogPdf` z backendu).
+     * Gdy brak, przycisk idzie przez proxy `/api/datasheet/{id}` — atrybut
+     * `download` działa tylko same-origin, a cross-origin HEAD do Supabase
+     * wcześniej chował działające przyciski (CORS).
+     */
+    href?: string;
 }
+
 /**
  * Przycisk pobierania karty katalogowej (PDF).
  *
- * Linkuje bezpośrednio do pliku w storage Supabase
- * (`product_datasheets/products/{id}.pdf`) i pokazujemy go ZAWSZE.
- *
- * Wcześniej komponent weryfikował istnienie pliku z poziomu przeglądarki
- * (cross-origin HEAD do Supabase), ale Supabase nie odpowiada wiarygodnie na
- * takie żądania (CORS / status inny niż 200), przez co działające PDF-y były
- * uznawane za brakujące i przycisk się chował. Jeśli danego produktu nie ma
- * jeszcze PDF-a, kliknięcie prowadzi do komunikatu Supabase „nie znaleziono”.
+ * Pokazujemy go ZAWSZE — weryfikacja istnienia pliku z przeglądarki
+ * (cross-origin HEAD) była niewiarygodna i zostawiała UI na
+ * „Sprawdzam kartę katalogową…”. Brak pliku kończy się 404 z naszego
+ * proxy albo komunikatem Supabase, a nie znikającym przyciskiem.
  */
-export default function CatalogPdfButton({ href, productName }: CatalogPdfButtonProps) {
+export default function CatalogPdfButton({ productId, productName, href }: CatalogPdfButtonProps) {
+    const url = href?.trim() || `/api/datasheet/${productId}`;
+
     return (
         <a
-            href={href}
-            download
+            href={url}
+            download={`karta-katalogowa-${productId}.pdf`}
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`Pobierz kartę katalogową produktu ${productName} (PDF)`}
