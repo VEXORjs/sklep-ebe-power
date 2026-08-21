@@ -1,7 +1,7 @@
 import { Product } from '../types/product';
 import { CATALOG_PRODUCTS } from '../data/catalogProducts';
 import { getServerApiUrl } from '@/app/lib/api';
-import { supabaseProductImage } from '@/app/lib/supabase-assets';
+import { isLocalProductImage, supabaseProductImage } from '@/app/lib/supabase-assets';
 
 const API_URL = getServerApiUrl();
 
@@ -9,12 +9,15 @@ const API_URL = getServerApiUrl();
 export const CATALOG_REVALIDATE_SECONDS = 60;
 
 function normalizeProduct(raw: Partial<Product> & { id: number; name: string; price: number }): Product {
-    // Okładka (pierwsze zdjęcie) zawsze pochodzi ze storage Supabase wg ID
-    // produktu (product_images/products/{id}.jpg). Pozostałe zdjęcia z backendu
-    // dołączamy jako kolejne kadry w galerii, unikając duplikatu okładki.
+    // Okładka zawsze ze storage Supabase (`product_images/products/{id}.jpg`).
+    // Lokalne miniatury `/products/pramac-*` z seeda backendu są celowo
+    // odrzucane — słaba jakość, dublowały galerię obok zdjęcia z Supabase.
     const cover = supabaseProductImage(Number(raw.id));
     const explicitImages = Array.isArray(raw.images)
-        ? raw.images.filter((img): img is string => typeof img === "string" && img.trim() !== "")
+        ? raw.images.filter(
+              (img): img is string =>
+                  typeof img === "string" && img.trim() !== "" && !isLocalProductImage(img)
+          )
         : [];
 
     return {

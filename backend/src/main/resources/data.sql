@@ -42,19 +42,8 @@ INSERT INTO products (name, price, old_price, stock, description, category, subc
  'Trójfazowy agregat gazowy do automatycznego zasilania awaryjnego większych obiektów. Cicha obudowa aluminiowa, sterownik Digital Evolution, AVR, Wi-Fi Mobile Link oraz kompatybilność z przełącznikiem LTS tworzą kompletny system rezerwowy.',
  'Agregaty', 'gazowe', 'PRM-GA20000');
 
-INSERT INTO product_images (product_id, image_url) VALUES
-(1, '/products/pramac-ga10000.webp'),
-(2, '/products/pramac-ga13000.jpg'),
-(3, '/products/pramac-dx8500.webp'),
-(4, '/products/pramac-p3500i.jpg'),
-(5, '/products/pramac-p3000i.jpg'),
-(6, '/products/pramac-e4000.jpg'),
-(7, '/products/pramac-mes8000.jpg'),
-(8, '/products/pramac-wx6250-es.jpg'),
-(9, '/products/pramac-wx7000.jpg'),
-(10, '/products/pramac-pmi4500.webp'),
-(11, '/products/pramac-s12000.jpg'),
-(12, '/products/pramac-ga20000.png');
+-- Zdjęcia produktów są wyłącznie w Supabase (product_images/products/{id}.jpg).
+-- Nie seedujemy lokalnych miniatur /products/pramac-* — słaba jakość, dublowały galerię.
 
 INSERT INTO product_parameters (product_id, parameter_key, parameter_value) VALUES
 (1, 'moc_maksymalna', '10 000 VA'),

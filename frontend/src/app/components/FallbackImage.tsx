@@ -27,7 +27,7 @@ function normalizeSrcs(srcs: Array<string | undefined | null>): string[] {
  *
  * Okładka produktu jest liczona ze storage Supabase (`…/products/{id}.jpg`).
  * Gdy pliku jeszcze nie ma (404) albo optimizer go odrzuci, automatycznie
- * pokazujemy kolejne zdjęcie z katalogu (lokalny plik w `/public/products`).
+ * pokazujemy kolejny URL z listy (albo `fallback`).
  */
 export default function FallbackImage({ srcs, fallback = null, onError, alt, ...rest }: FallbackImageProps) {
     const candidates = normalizeSrcs(srcs);
