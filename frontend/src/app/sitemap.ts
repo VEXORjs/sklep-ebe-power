@@ -71,6 +71,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.85,
     }));
 
+    // Strony podkategorii — precyzyjne landing pages dla katalogu
+    const subcategoryRoutes: MetadataRoute.Sitemap = categories.flatMap((category) =>
+        (category.subcategories ?? []).map((subcategory) => ({
+            url: `${base}/kategoria/${category.slug}/${subcategory.slug}`,
+            lastModified: now,
+            changeFrequency: "daily" as const,
+            priority: 0.8,
+        }))
+    );
+
     // Strony produktów — średnio-wysoki priorytet
     const productRoutes: MetadataRoute.Sitemap = products.map((product) => ({
         url: `${base}/products/${product.id}`,
@@ -79,5 +89,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.8,
     }));
 
-    return [...staticRoutes, ...categoryRoutes, ...productRoutes];
+    return [...staticRoutes, ...categoryRoutes, ...subcategoryRoutes, ...productRoutes];
 }

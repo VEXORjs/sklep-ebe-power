@@ -19,6 +19,7 @@ function normalizeProduct(raw: Partial<Product> & { id: number; name: string; pr
         videos: Array.isArray(raw.videos) ? raw.videos : [],
         parameters: raw.parameters ?? {},
         category: raw.category,
+        subcategory: raw.subcategory,
         sku: raw.sku,
         badge: raw.badge,
         rating: raw.rating,

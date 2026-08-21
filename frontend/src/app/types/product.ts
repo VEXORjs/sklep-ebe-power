@@ -13,6 +13,8 @@ export interface Product {
      */
     parameters: string | Record<string, string>;
     category?: string;
+    /** Drugi poziom katalogu, np. "Transformatory toroidalne". */
+    subcategory?: string;
     sku?: string;
     oldPrice?: number;
     badge?: string;
