@@ -20,6 +20,7 @@ function normalizeProduct(raw: Partial<Product> & { id: number; name: string; pr
         parameters: raw.parameters ?? {},
         category: raw.category,
         sku: raw.sku,
+        datasheetUrl: raw.datasheetUrl,
         badge: raw.badge,
         rating: raw.rating,
         reviews: raw.reviews,

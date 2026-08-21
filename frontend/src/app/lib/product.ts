@@ -26,7 +26,18 @@ const PARAM_LABELS: Record<string, string> = {
     moc_znamionowa: "Moc znamionowa",
     moc_ciagla: "Moc ciągła",
     moc_szczytowa: "Moc szczytowa",
+    moc_maksymalna: "Moc maksymalna",
     moc_ladowania: "Moc ładowania",
+    producent: "Producent",
+    model: "Model",
+    silnik: "Silnik",
+    norma_emisji: "Norma emisji",
+    regulacja_napiecia: "Regulacja napięcia",
+    czestotliwosc: "Częstotliwość",
+    gniazda: "Gniazda",
+    obudowa: "Obudowa",
+    zuzycie_paliwa: "Zużycie paliwa",
+    wyposazenie: "Wyposażenie",
     napiecie: "Napięcie",
     napiecie_wejsciowe: "Napięcie wejściowe",
     napiecie_wyjsciowe: "Napięcie wyjściowe",
@@ -243,12 +254,12 @@ const REVIEW_AUTHORS = [
 ];
 
 const REVIEW_TEXTS = [
-    "Sprzęt zgodny z opisem, solidne wykonanie. Wysyłka wyszła tego samego dnia.",
-    "Dobrze dobrane parametry, bez niespodzianek przy montażu. Polecam dział techniczny.",
-    "Faktura VAT przyszła mailem, opakowanie solidne. Będę zamawiać osprzęt w komplecie.",
+    "Agregat zgodny z kartą katalogową, solidne wykonanie. Wysyłka wyszła tego samego dnia.",
+    "Dobrze dobrane parametry, bez niespodzianek przy pierwszym uruchomieniu. Polecam dział techniczny.",
+    "Faktura VAT przyszła mailem, opakowanie solidne. PDF z danymi technicznymi bardzo się przydał.",
     "Cichy, trzyma deklarowane napięcie pod obciążeniem. Dokładnie to, czego potrzebowałem.",
-    "Szybki kontakt przed zakupem pomógł dobrać właściwy model. Same plusy.",
-    "Montaż bez problemów, dokumentacja kompletna. Taka współpraca jak trzeba.",
+    "Szybki kontakt przed zakupem pomógł dobrać właściwy model PRAMAC. Same plusy.",
+    "Uruchomienie bez problemów, dokumentacja kompletna. Taka współpraca jak trzeba.",
 ];
 
 /**

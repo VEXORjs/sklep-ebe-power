@@ -1,14 +1,9 @@
 const brands = [
-    "ABB",
-    "Schneider Electric",
-    "Siemens",
-    "Legrand",
-    "Hager",
-    "Eaton",
-    "Phoenix Contact",
-    "ETI",
-    "Relpol",
-    "Noark",
+    "PRAMAC",
+    "Honda",
+    "Generac",
+    "Yanmar",
+    "Mecc Alte",
 ];
 
 export default function BrandMarquee() {

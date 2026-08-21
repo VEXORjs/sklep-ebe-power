@@ -5,6 +5,7 @@ import { Check, Star } from "lucide-react";
 
 import type { ReviewEntry, SpecEntry } from "@/app/lib/product";
 import { formatPLN, FREE_SHIPPING_THRESHOLD, SHIPPING_COST } from "@/app/lib/product";
+import DatasheetDownload from "@/app/components/DatasheetDownload";
 
 type TabId = "opis" | "spec" | "dostawa" | "opinie";
 
@@ -14,6 +15,8 @@ interface ProductInfoTabsProps {
     reviews: ReviewEntry[];
     reviewCount: number;
     rating: number;
+    datasheetUrl?: string;
+    datasheetName?: string;
 }
 
 const TABS: { id: TabId; label: string }[] = [
@@ -29,6 +32,8 @@ export default function ProductInfoTabs({
     reviews,
     reviewCount,
     rating,
+    datasheetUrl,
+    datasheetName,
 }: ProductInfoTabsProps) {
     const [tab, setTab] = useState<TabId>("opis");
 
@@ -63,7 +68,7 @@ export default function ProductInfoTabs({
                         </p>
                         <ul className="grid gap-2 sm:grid-cols-2">
                             {[
-                                "Karta katalogowa i deklaracja zgodności w paczce",
+                                "Karta katalogowa PDF do pobrania na tej stronie",
                                 "Wsparcie techniczne przed i po zakupie",
                                 "Faktura VAT 23% wystawiana automatycznie",
                                 "Gwarancja 24 miesiące, serwis we własnym warsztacie",
@@ -74,6 +79,11 @@ export default function ProductInfoTabs({
                                 </li>
                             ))}
                         </ul>
+                        {datasheetUrl && (
+                            <div className="pt-2">
+                                <DatasheetDownload href={datasheetUrl} fileName={datasheetName} />
+                            </div>
+                        )}
                     </div>
                 )}
 
@@ -86,7 +96,7 @@ export default function ProductInfoTabs({
                             </p>
                         ) : (
                             <div className="relative overflow-hidden rounded-lg border border-neutral-800">
-                                <div className={specs.length > 8 ? "max-h-80 overflow-hidden" : ""}>
+                                <div>
                                     <table className="min-w-full divide-y divide-neutral-800">
                                         <tbody className="divide-y divide-neutral-800">
                                             {specs.map((spec, index) => (
@@ -105,9 +115,11 @@ export default function ProductInfoTabs({
                                         </tbody>
                                     </table>
                                 </div>
-                                {specs.length > 8 && (
-                                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#141618] via-[#141618]/85 to-transparent" />
-                                )}
+                            </div>
+                        )}
+                        {datasheetUrl && (
+                            <div className="mt-4">
+                                <DatasheetDownload href={datasheetUrl} fileName={datasheetName} />
                             </div>
                         )}
                     </div>

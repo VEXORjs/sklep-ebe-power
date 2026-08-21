@@ -14,6 +14,8 @@ export interface Product {
     parameters: string | Record<string, string>;
     category?: string;
     sku?: string;
+    /** Ścieżka lub URL karty katalogowej PDF. */
+    datasheetUrl?: string;
     oldPrice?: number;
     badge?: string;
     rating?: number;

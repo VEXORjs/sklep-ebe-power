@@ -15,6 +15,7 @@ import {
 import ProductGallery from "@/app/components/ProductGallery";
 import ProductBuyBox from "@/app/components/ProductBuyBox";
 import ProductInfoTabs from "@/app/components/ProductInfoTabs";
+import DatasheetDownload from "@/app/components/DatasheetDownload";
 import ProductCard from "@/app/components/ProductCard";
 import { getProduct, getProducts } from "@/app/services/productService";
 import { categoryOf, categorySlugOf } from "@/app/data/categories";
@@ -156,7 +157,7 @@ export default async function ProductPage({ params }: PageProps) {
         sku,
         mpn: sku,
         image: product.images,
-        brand: { "@type": "Brand", name: "TRAFO ENERGIA" },
+        brand: { "@type": "Brand", name: "PRAMAC" },
         category: product.category,
         url: `${site}/products/${product.id}`,
         offers: {
@@ -405,6 +406,15 @@ export default async function ProductPage({ params }: PageProps) {
                             <ProductBuyBox product={product} />
                         </div>
 
+                        {product.datasheetUrl && (
+                            <div className="mt-3">
+                                <DatasheetDownload
+                                    href={product.datasheetUrl}
+                                    fileName={`${sku}-karta-katalogowa.pdf`}
+                                />
+                            </div>
+                        )}
+
                         <ul className="mt-6 space-y-2.5 rounded-xl border border-neutral-800 bg-[#111315] p-4 text-sm text-neutral-300">
                             <li className="flex items-start gap-3">
                                 <Truck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
@@ -434,7 +444,7 @@ export default async function ProductPage({ params }: PageProps) {
                             </li>
                             <li className="flex items-start gap-3">
                                 <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
-                                Karta katalogowa i deklaracja zgodności w każdej paczce
+                                Karta katalogowa PDF do pobrania na tej stronie
                             </li>
                         </ul>
 
@@ -460,6 +470,8 @@ export default async function ProductPage({ params }: PageProps) {
                         reviews={reviewEntries}
                         reviewCount={reviews}
                         rating={rating}
+                        datasheetUrl={product.datasheetUrl}
+                        datasheetName={`${sku}-karta-katalogowa.pdf`}
                     />
                 </div>
 

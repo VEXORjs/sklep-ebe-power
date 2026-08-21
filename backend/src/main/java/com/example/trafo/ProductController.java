@@ -61,6 +61,12 @@ public class ProductController {
                 existingProduct.setPrice(productDetails.getPrice());
                 existingProduct.setDescription(productDetails.getDescription());
                 existingProduct.setImages(productDetails.getImages());
+                existingProduct.setDatasheetUrl(productDetails.getDatasheetUrl());
+                existingProduct.setCategory(productDetails.getCategory());
+                existingProduct.setSku(productDetails.getSku());
+                existingProduct.setStock(productDetails.getStock());
+                existingProduct.setOldPrice(productDetails.getOldPrice());
+                existingProduct.setParameters(productDetails.getParameters());
 
                 Product savedProduct = productRepository.save(existingProduct);
                 return ResponseEntity.ok(savedProduct);

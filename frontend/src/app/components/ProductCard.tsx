@@ -363,6 +363,15 @@ export default function ProductCard({
                 >
                     Szczegóły
                 </Link>
+                {product.datasheetUrl && (
+                    <a
+                        href={product.datasheetUrl}
+                        download
+                        className="flex h-9 items-center justify-center rounded-md border border-emerald-500/40 px-3 text-xs font-semibold text-emerald-400 transition-colors hover:border-emerald-400 hover:text-emerald-300"
+                    >
+                        PDF
+                    </a>
+                )}
             </div>
         </div>
     );

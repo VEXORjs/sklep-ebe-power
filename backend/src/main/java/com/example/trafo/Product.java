@@ -29,6 +29,9 @@ public class Product {
     /** Kod magazynowy SKU */
     private String sku;
 
+    /** Ścieżka do karty katalogowej PDF (np. /datasheets/DX8500.pdf). */
+    private String datasheetUrl;
+
     @Column(columnDefinition = "TEXT")
     private String description;
 
@@ -63,6 +66,8 @@ public class Product {
     public void setCategory(String category) { this.category = category; }
     public String getSku() { return sku; }
     public void setSku(String sku) { this.sku = sku; }
+    public String getDatasheetUrl() { return datasheetUrl; }
+    public void setDatasheetUrl(String datasheetUrl) { this.datasheetUrl = datasheetUrl; }
     public Long getStock() { return stock; }
     public void setStock(Long stock) { this.stock = stock; }
     public String getDescription() { return description; }

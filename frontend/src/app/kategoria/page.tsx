@@ -11,13 +11,13 @@ import { formatPLN, grossPrice, productsLabel } from "@/app/lib/product";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-    title: "Kategorie produktów — transformatory, zasilacze, rozdzielnice i więcej",
+    title: "Kategorie — agregaty inwerterowe, benzynowe, diesla i gazowe PRAMAC",
     description:
-        "Pełna oferta sklepu ebe power (TRAFO ENERGIA) w podziale na kategorie: transformatory, zasilacze, rozdzielnice, bezpieczniki, kable, mierniki, agregaty prądotwórcze, stacje ładowania EV i akcesoria instalatorskie.",
+        "Oferta ebe power: agregaty inwerterowe, benzynowe, diesla i gazowe PRAMAC. Karty katalogowe PDF przy każdym modelu.",
     alternates: { canonical: "/kategoria" },
     openGraph: {
         title: "Kategorie produktów | ebe power",
-        description: "Przeglądaj pełną ofertę w podziale na kategorie. Transformatory, zasilacze, rozdzielnice i więcej.",
+        description: "Przeglądaj agregaty PRAMAC: inwerterowe, benzynowe, diesla i gazowe.",
         url: "/kategoria",
         type: "website",
     },

@@ -104,7 +104,7 @@ export default function ShopSection({ products, initialVisible = 9 }: ShopSectio
                         Produkty
                     </h2>
                     <p className="mt-2 max-w-2xl text-sm text-neutral-400">
-                        Transformatory, zasilacze, rozdzielnice, kable i osprzęt — gotowe do wysyłki w 24 h.
+                        Agregaty prądotwórcze PRAMAC — inwerterowe, benzynowe, diesla i gazowe. Karta katalogowa PDF przy każdym modelu.
                     </p>
                 </div>
                 <Link
