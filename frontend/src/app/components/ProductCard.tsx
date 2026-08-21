@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import FallbackImage from "@/app/components/FallbackImage";
 import {
     ArrowRight,
     Check,
@@ -130,8 +130,8 @@ export default function ProductCard({
     priority = false,
 }: ProductCardProps) {
     const [quantity, setQuantity] = useState(1);
-    const [imageFailed, setImageFailed] = useState(false);
     const { toggle, isWishlisted } = useWishlist();
+    const imageSrcs = product.images ?? [];
 
     const badge = badgeOf(product);
     const discount = discountPercent(product);
@@ -148,7 +148,6 @@ export default function ProductCard({
     const freeShipping = hasFreeShipping(product);
     const sold = soldCountOf(product);
     const href = `/products/${product.id}`;
-    const cover = product.images?.[0];
     const imageSizes = variant === "list" ? LIST_SIZES : GRID_SIZES;
 
     const media = (
@@ -160,26 +159,23 @@ export default function ProductCard({
             }`}
         >
             <Link href={href} aria-label={product.name} className="absolute inset-0 block p-6">
-                {cover && !imageFailed && (
-                    <Image
-                        src={cover}
-                        alt={product.name}
-                        fill
-                        priority={priority}
-                        quality={75}
-                        onError={() => setImageFailed(true)}
-                        sizes={imageSizes}
-                        className="object-contain p-4 transition-transform duration-500 group-hover:scale-105"
-                    />
-                )}
-                {(!cover || imageFailed) && (
-                    <span className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-neutral-100 text-neutral-400">
-                        <Package className="h-8 w-8" />
-                        <span className="px-4 text-center text-[11px] font-semibold uppercase tracking-wider">
-                            {product.category ?? "Zdjęcie wkrótce"}
+                <FallbackImage
+                    srcs={imageSrcs}
+                    alt={product.name}
+                    fill
+                    priority={priority}
+                    quality={75}
+                    sizes={imageSizes}
+                    className="object-contain p-4 transition-transform duration-500 group-hover:scale-105"
+                    fallback={
+                        <span className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-neutral-100 text-neutral-400">
+                            <Package className="h-8 w-8" />
+                            <span className="px-4 text-center text-[11px] font-semibold uppercase tracking-wider">
+                                {product.category ?? "Zdjęcie wkrótce"}
+                            </span>
                         </span>
-                    </span>
-                )}
+                    }
+                />
             </Link>
 
             {/* Etykiety */}

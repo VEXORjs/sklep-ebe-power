@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
+import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight, Package, Play, X } from "lucide-react";
 
+import FallbackImage from "@/app/components/FallbackImage";
 import { Product } from "@/app/types/product";
 
 interface ProductDetailProps {
@@ -11,14 +11,22 @@ interface ProductDetailProps {
 }
 
 export default function ProductGallery({ product }: ProductDetailProps) {
-    const images = product.images ?? [];
     const videos = product.videos ?? [];
     const [isOpen, setIsOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [activeTab, setActiveTab] = useState<"photos" | "videos">("photos");
+    const [failed, setFailed] = useState<Set<string>>(() => new Set());
 
-    const mediaCount = activeTab === "photos" ? images.length : videos.length;
+    const visibleImages = useMemo(
+        () => (product.images ?? []).filter((url) => !failed.has(url)),
+        [product.images, failed]
+    );
+
+    const photoIndex =
+        visibleImages.length === 0 ? 0 : Math.min(currentImageIndex, visibleImages.length - 1);
+    const mediaCount = activeTab === "photos" ? visibleImages.length : videos.length;
     const hasMedia = mediaCount > 0;
+    const cover = visibleImages[photoIndex];
 
     const handleNext = () => {
         if (!hasMedia) return;
@@ -47,6 +55,8 @@ export default function ProductGallery({ product }: ProductDetailProps) {
 
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
+        // handleNext/handlePrev zamykają aktualny mediaCount — celowo nie wrzucamy ich do deps.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen, currentImageIndex, activeTab, mediaCount]);
 
     const handleOpenLightbox = (index: number) => {
@@ -60,23 +70,31 @@ export default function ProductGallery({ product }: ProductDetailProps) {
         setCurrentImageIndex(0);
     };
 
-    const cover = images[currentImageIndex] ?? images[0];
+    const markFailed = (url: string) => {
+        setFailed((prev) => {
+            if (prev.has(url)) return prev;
+            const next = new Set(prev);
+            next.add(url);
+            return next;
+        });
+    };
 
     return (
         <div className="space-y-3">
             <div
                 className="relative aspect-[4/3] overflow-hidden rounded-xl border border-neutral-800 bg-white"
-                onClick={() => cover && handleOpenLightbox(currentImageIndex)}
+                onClick={() => cover && handleOpenLightbox(photoIndex)}
             >
                 {cover ? (
-                    <Image
-                        src={cover}
+                    <FallbackImage
+                        srcs={visibleImages.slice(photoIndex)}
                         alt={product.name}
                         fill
                         priority
                         quality={75}
                         sizes="(max-width: 1024px) calc(100vw - 2rem), 640px"
                         className="cursor-zoom-in object-contain p-6 transition-transform duration-500 hover:scale-105"
+                        onError={() => markFailed(cover)}
                     />
                 ) : (
                     <div className="flex h-full flex-col items-center justify-center gap-2 text-neutral-400">
@@ -87,7 +105,7 @@ export default function ProductGallery({ product }: ProductDetailProps) {
                     </div>
                 )}
 
-                {images.length > 1 && (
+                {visibleImages.length > 1 && (
                     <>
                         <button
                             type="button"
@@ -115,9 +133,9 @@ export default function ProductGallery({ product }: ProductDetailProps) {
                 )}
             </div>
 
-            {(images.length > 1 || videos.length > 0) && (
+            {(visibleImages.length > 1 || videos.length > 0) && (
                 <div className="flex gap-2 overflow-x-auto pb-1">
-                    {images.map((url, index) => (
+                    {visibleImages.map((url, index) => (
                         <button
                             key={url}
                             type="button"
@@ -127,12 +145,19 @@ export default function ProductGallery({ product }: ProductDetailProps) {
                             }}
                             aria-label={`Zdjęcie ${index + 1}`}
                             className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-md border bg-white ${
-                                activeTab === "photos" && currentImageIndex === index
+                                activeTab === "photos" && photoIndex === index
                                     ? "border-emerald-500"
                                     : "border-neutral-800 hover:border-neutral-600"
                             }`}
                         >
-                            <Image src={url} alt="" fill sizes="64px" className="object-contain p-1" />
+                            <FallbackImage
+                                srcs={[url]}
+                                alt=""
+                                fill
+                                sizes="64px"
+                                className="object-contain p-1"
+                                onError={() => markFailed(url)}
+                            />
                         </button>
                     ))}
                     {videos.map((url, index) => (
@@ -171,12 +196,13 @@ export default function ProductGallery({ product }: ProductDetailProps) {
                         </button>
 
                         {activeTab === "photos" ? (
-                            <Image
+                            <FallbackImage
                                 width={1200}
                                 height={900}
-                                src={images[currentImageIndex]}
-                                alt={`${product.name} — zdjęcie ${currentImageIndex + 1}`}
+                                srcs={visibleImages.slice(photoIndex)}
+                                alt={`${product.name} — zdjęcie ${photoIndex + 1}`}
                                 className="max-h-[70vh] w-auto rounded-lg object-contain"
+                                onError={() => cover && markFailed(cover)}
                             />
                         ) : (
                             <video
@@ -232,7 +258,7 @@ export default function ProductGallery({ product }: ProductDetailProps) {
                                 </div>
                             )}
                             <div className="rounded-full border border-neutral-800 bg-neutral-900/80 px-3 py-1 text-sm text-neutral-400">
-                                {currentImageIndex + 1} / {mediaCount}
+                                {(activeTab === "photos" ? photoIndex : currentImageIndex) + 1} / {mediaCount}
                             </div>
                         </div>
                     </div>

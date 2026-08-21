@@ -1,5 +1,5 @@
 import { Product } from "@/app/types/product";
-import Image from "next/image";
+import FallbackImage from "@/app/components/FallbackImage";
 import Link from "next/link";
 import { ArrowRight, BadgeCheck, Clock, ShieldCheck } from "lucide-react";
 import HeroAddToCart from "@/app/components/HeroAddToCart";
@@ -102,17 +102,15 @@ export default function Hero({ product }: HeroProps) {
                     <div className="relative mx-auto w-full max-w-lg">
                         <div className="absolute -inset-3 rounded-2xl bg-emerald-500/10 blur-2xl" />
                         <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-emerald-500/30 bg-white shadow-2xl shadow-black/60">
-                            {product.images && product.images.length > 0 && (
-                                <Image
-                                    src={product.images[0]}
-                                    alt={product.name}
-                                    fill
-                                    priority
-                                    quality={75}
-                                    sizes="(max-width: 1024px) min(100vw - 2rem, 512px), 512px"
-                                    className="object-contain p-6"
-                                />
-                            )}
+                            <FallbackImage
+                                srcs={product.images ?? []}
+                                alt={product.name}
+                                fill
+                                priority
+                                quality={75}
+                                sizes="(max-width: 1024px) min(100vw - 2rem, 512px), 512px"
+                                className="object-contain p-6"
+                            />
                         </div>
 
                         <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg border border-emerald-500/40 bg-neutral-950/95 px-5 py-3 shadow-xl shadow-black/60 backdrop-blur">
