@@ -25,6 +25,11 @@ export function supabaseProductImage(id: number): string {
     return `${SUPABASE_STORAGE_BASE}/${PRODUCT_IMAGES_BUCKET}/products/${id}.jpg`;
 }
 
+/** Lokalne, niskiej jakości miniatury z `/public/products` — nie pokazujemy ich w sklepie. */
+export function isLocalProductImage(url: string): boolean {
+    return /^\/products\//.test(url.trim());
+}
+
 /**
  * Publiczna karta katalogowa (PDF) produktu wg jego ID:
  * `…/product_datasheets/products/{id}.pdf`.

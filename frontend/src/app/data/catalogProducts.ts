@@ -5,10 +5,9 @@ import { supabaseProductImage } from "@/app/lib/supabase-assets";
  * Aktualny katalog agregatów PRAMAC.
  *
  * Dane techniczne zostały przepisane z kart katalogowych dostarczonych dla
- * produktów. Zdjęcia główne (okładka) pobierane są dynamicznie ze storage
- * Supabase wg ID produktu (`product_images/products/{id}.jpg`); dodatkowe
- * ujęcia z katalogu pozostają jako kolejne zdjęcia w galerii. Ceny są cenami
- * netto w PLN i mogą zostać zmienione z poziomu panelu admina.
+ * produktów. Jedynym zdjęciem jest okładka ze storage Supabase
+ * (`product_images/products/{id}.jpg`). Ceny są cenami netto w PLN
+ * i mogą zostać zmienione z poziomu panelu admina.
  */
 const RAW_CATALOG: Product[] = [
     {
@@ -18,7 +17,7 @@ const RAW_CATALOG: Product[] = [
         stock: 2,
         description:
             "Stacjonarny, automatyczny agregat gazowy do awaryjnego zasilania domu lub małego obiektu. Obudowa aluminiowa RhinoCoat tłumi hałas i chroni urządzenie przed warunkami atmosferycznymi. Model współpracuje z przełącznikiem zasilania awaryjnego LTS.",
-        images: ["/products/pramac-ga10000.webp"],
+        images: [],
         videos: [],
         parameters: {
             moc_maksymalna: "10 000 VA",
@@ -46,7 +45,7 @@ const RAW_CATALOG: Product[] = [
         stock: 2,
         description:
             "Jednofazowy agregat gazowy do automatycznego zasilania awaryjnego. Wyposażony w silnik Generac G-Force, elektroniczny regulator obrotów, sterownik Digital Evolution i łączność Wi‑Fi Mobile Link.",
-        images: ["/products/pramac-ga13000.jpg"],
+        images: [],
         videos: [],
         parameters: {
             moc_maksymalna: "13 000 VA",
@@ -74,7 +73,7 @@ const RAW_CATALOG: Product[] = [
         stock: 4,
         description:
             "Wytrzymały agregat wysokoprężny serii DX do pracy na budowie, w warsztacie i jako zasilanie rezerwowe. Wersja PRO+ oferuje napięcie trójfazowe i jednofazowe, elektryczny rozruch oraz stabilizację AVR.",
-        images: ["/products/pramac-dx8500.webp"],
+        images: [],
         videos: [],
         parameters: {
             moc_maksymalna: "8500 W",
@@ -100,7 +99,7 @@ const RAW_CATALOG: Product[] = [
         stock: 6,
         description:
             "Cichy agregat inwerterowy do zasilania elektroniki, kamperów i urządzeń podczas prac w terenie. Technologia inverter zapewnia stabilne napięcie, a tryb Economy ogranicza zużycie paliwa i hałas.",
-        images: ["/products/pramac-p3500i.jpg"],
+        images: [],
         videos: [],
         parameters: {
             moc_maksymalna: "3300 W",
@@ -128,7 +127,7 @@ const RAW_CATALOG: Product[] = [
         stock: 7,
         description:
             "Kompaktowy i lekki agregat inwerterowy do zasilania wrażliwej elektroniki. Posiada tryb Economy, zabezpieczenie niskiego poziomu oleju, gniazdo do pracy równoległej oraz dwa porty USB.",
-        images: ["/products/pramac-p3000i.jpg"],
+        images: [],
         videos: [],
         parameters: {
             moc_maksymalna: "2500 W",
@@ -157,7 +156,7 @@ const RAW_CATALOG: Product[] = [
         stock: 8,
         description:
             "Prosty, solidny agregat jednofazowy z ramą rurową do prac remontowych, oświetlenia i zastosowań profesjonalnych. Konstrukcja jest łatwa w obsłudze, transporcie i serwisowaniu.",
-        images: ["/products/pramac-e4000.jpg"],
+        images: [],
         videos: [],
         parameters: {
             moc_maksymalna: "3400 VA / 3100 W",
@@ -186,7 +185,7 @@ const RAW_CATALOG: Product[] = [
         stock: 4,
         description:
             "Profesjonalny agregat z silnikiem Honda, elektrycznym rozruchem i zestawem transportowym. Automatyczny regulator napięcia AVR, zabezpieczenie różnicowe oraz przygotowanie do zdalnego sterowania ułatwiają pracę w wymagających zastosowaniach.",
-        images: ["/products/pramac-mes8000.jpg"],
+        images: [],
         videos: [],
         parameters: {
             moc_maksymalna: "7,2 kVA / 6,4 kW",
@@ -212,7 +211,7 @@ const RAW_CATALOG: Product[] = [
         stock: 5,
         description:
             "Trójfazowy agregat benzynowy z AVR, elektrycznym i ręcznym rozruchem oraz zintegrowanym zestawem jezdnym. Duży zbiornik i cyfrowy multimetr sprawdzają się podczas długiej pracy na budowie.",
-        images: ["/products/pramac-wx6250-es.jpg"],
+        images: [],
         videos: [],
         parameters: {
             moc_maksymalna: "6100 W",
@@ -241,7 +240,7 @@ const RAW_CATALOG: Product[] = [
         stock: 5,
         description:
             "Jednofazowy agregat benzynowy do prac terenowych i awaryjnego zasilania. Wyposażony w AVR, elektryczny i ręczny rozruch, składane uchwyty, koła transportowe oraz wielofunkcyjny wyświetlacz.",
-        images: ["/products/pramac-wx7000.jpg"],
+        images: [],
         videos: [],
         parameters: {
             moc_maksymalna: "6100 W",
@@ -270,7 +269,7 @@ const RAW_CATALOG: Product[] = [
         stock: 5,
         description:
             "Wyciszony agregat inwerterowy do elektroniki, domu i zastosowań terenowych. Automatyczny tryb Economy dopasowuje obroty do obciążenia, a stabilne napięcie z falownika chroni czułe odbiorniki.",
-        images: ["/products/pramac-pmi4500.webp"],
+        images: [],
         videos: [],
         parameters: {
             moc_maksymalna: "4200 W",
@@ -299,7 +298,7 @@ const RAW_CATALOG: Product[] = [
         stock: 3,
         description:
             "Profesjonalny agregat serii S do intensywnej pracy. Wersja 400/230 V z AVR, złączem CONN i zabezpieczeniem różnicowym DPP oferuje moc trójfazową oraz możliwość zasilania odbiorników jednofazowych.",
-        images: ["/products/pramac-s12000.jpg"],
+        images: [],
         videos: [],
         parameters: {
             moc_maksymalna: "13,9 kVA / 11,1 kW",
@@ -326,7 +325,7 @@ const RAW_CATALOG: Product[] = [
         stock: 1,
         description:
             "Trójfazowy agregat gazowy do automatycznego zasilania awaryjnego większych obiektów. Cicha obudowa aluminiowa, sterownik Digital Evolution, AVR, Wi‑Fi Mobile Link oraz kompatybilność z przełącznikiem LTS tworzą kompletny system rezerwowy.",
-        images: ["/products/pramac-ga20000.png"],
+        images: [],
         videos: [],
         parameters: {
             moc_maksymalna: "20 000 VA LPG / 17 000 VA gaz ziemny",
@@ -350,14 +349,8 @@ const RAW_CATALOG: Product[] = [
     },
 ];
 
-/**
- * Katalog produktów z okładką wyliczaną ze storage Supabase po ID.
- *
- * Pierwszym zdjęciem każdego produktu jest `product_images/products/{id}.jpg`,
- * a lokalne ujęcia z `RAW_CATALOG` dołączamy jako kolejne zdjęcia w galerii
- * (dodatkowe kadry oraz fallback, gdy plik na Supabase jeszcze nie istnieje).
- */
+/** Katalog z okładką wyłącznie ze storage Supabase (`products/{id}.jpg`). */
 export const CATALOG_PRODUCTS: Product[] = RAW_CATALOG.map((product) => ({
     ...product,
-    images: [supabaseProductImage(product.id), ...product.images],
+    images: [supabaseProductImage(product.id)],
 }));

@@ -1,5 +1,6 @@
 import type { Product } from "@/app/types/product";
 import { normalizeText, slugify } from "@/app/lib/product";
+import { supabaseProductImage } from "@/app/lib/supabase-assets";
 
 export interface CategoryFaq {
     question: string;
@@ -439,7 +440,7 @@ export const CATEGORIES: CategoryDef[] = [
                 icon: "diesel",
             },
         ],
-        image: "/products/pramac-ga10000.webp",
+        image: supabaseProductImage(1),
         keywords: [
             "agregat prądotwórczy",
             "agregat inwertorowy",
