@@ -1,4 +1,5 @@
 import type { Product } from "@/app/types/product";
+import { supabaseCatalogPdf } from "@/app/lib/supabase-assets";
 
 /** Stawka VAT używana do przeliczania cen netto na brutto. */
 export const VAT_RATE = 0.23;
@@ -161,6 +162,15 @@ export function badgeOf(product: Product): string | null {
 
 export function skuOf(product: Product): string {
     return product.sku ?? `TRA-${String(product.id).padStart(4, "0")}`;
+}
+
+/**
+ * URL karty katalogowej (PDF) produktu. Jeśli produkt ma własne `catalogPdf`,
+ * używamy go; w przeciwnym razie wyliczamy adres po ID z bucketu Supabase
+ * (`product_datasheets/products/{id}.pdf`).
+ */
+export function catalogPdfOf(product: Product): string {
+    return product.catalogPdf?.trim() || supabaseCatalogPdf(product.id);
 }
 
 /** Procent rabatu względem ceny sprzed promocji (lub null, gdy brak promocji). */

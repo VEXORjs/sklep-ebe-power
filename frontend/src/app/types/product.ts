@@ -20,4 +20,9 @@ export interface Product {
     badge?: string;
     rating?: number;
     reviews?: number;
+    /**
+     * URL do karty katalogowej (PDF). Domyślnie wyliczany z ID produktu
+     * (`supabaseCatalogPdf`); tutaj można podać własny (np. inny bucket).
+     */
+    catalogPdf?: string;
 }
