@@ -50,6 +50,7 @@ ENV NEXTAUTH_URL=$NEXTAUTH_URL
 # Kopiujemy tylko niezbędne pliki statyczne i wygenerowany serwer standalone
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
 
 EXPOSE 3000
 ENV PORT=3000
