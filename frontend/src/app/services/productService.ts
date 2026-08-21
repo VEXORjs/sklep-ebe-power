@@ -1,6 +1,7 @@
 import { Product } from '../types/product';
 import { CATALOG_PRODUCTS } from '../data/catalogProducts';
 import { getServerApiUrl } from '@/app/lib/api';
+import { supabaseProductImage } from '@/app/lib/supabase-assets';
 
 const API_URL = getServerApiUrl();
 
@@ -8,6 +9,14 @@ const API_URL = getServerApiUrl();
 export const CATALOG_REVALIDATE_SECONDS = 60;
 
 function normalizeProduct(raw: Partial<Product> & { id: number; name: string; price: number }): Product {
+    // Okładka (pierwsze zdjęcie) zawsze pochodzi ze storage Supabase wg ID
+    // produktu (product_images/products/{id}.jpg). Pozostałe zdjęcia z backendu
+    // dołączamy jako kolejne kadry w galerii, unikając duplikatu okładki.
+    const cover = supabaseProductImage(Number(raw.id));
+    const explicitImages = Array.isArray(raw.images)
+        ? raw.images.filter((img): img is string => typeof img === "string" && img.trim() !== "")
+        : [];
+
     return {
         id: Number(raw.id),
         name: raw.name,
@@ -15,7 +24,7 @@ function normalizeProduct(raw: Partial<Product> & { id: number; name: string; pr
         oldPrice: raw.oldPrice != null ? Number(raw.oldPrice) : undefined,
         description: raw.description ?? "",
         stock: Number(raw.stock ?? 0),
-        images: Array.isArray(raw.images) ? raw.images : [],
+        images: [cover, ...explicitImages.filter((img) => img !== cover)],
         videos: Array.isArray(raw.videos) ? raw.videos : [],
         parameters: raw.parameters ?? {},
         category: raw.category,
@@ -24,6 +33,7 @@ function normalizeProduct(raw: Partial<Product> & { id: number; name: string; pr
         badge: raw.badge,
         rating: raw.rating,
         reviews: raw.reviews,
+        catalogPdf: raw.catalogPdf,
     };
 }
 

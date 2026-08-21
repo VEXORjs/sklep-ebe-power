@@ -1,14 +1,16 @@
 import { Product } from "@/app/types/product";
+import { supabaseProductImage } from "@/app/lib/supabase-assets";
 
 /**
  * Aktualny katalog agregatów PRAMAC.
  *
  * Dane techniczne zostały przepisane z kart katalogowych dostarczonych dla
- * produktów. Zdjęcia są lokalnymi plikami katalogu, a tam, gdzie karta
- * producenta udostępniała lepsze ujęcie, korzystamy z oficjalnego obrazu PRAMAC.
- * Ceny są cenami netto w PLN i mogą zostać zmienione z poziomu panelu admina.
+ * produktów. Zdjęcia główne (okładka) pobierane są dynamicznie ze storage
+ * Supabase wg ID produktu (`product_images/products/{id}.jpg`); dodatkowe
+ * ujęcia z katalogu pozostają jako kolejne zdjęcia w galerii. Ceny są cenami
+ * netto w PLN i mogą zostać zmienione z poziomu panelu admina.
  */
-export const CATALOG_PRODUCTS: Product[] = [
+const RAW_CATALOG: Product[] = [
     {
         id: 1,
         name: "Pramac GA10000 — agregat gazowy 10 kVA, 230 V",
@@ -347,3 +349,15 @@ export const CATALOG_PRODUCTS: Product[] = [
         badge: "Nowość",
     },
 ];
+
+/**
+ * Katalog produktów z okładką wyliczaną ze storage Supabase po ID.
+ *
+ * Pierwszym zdjęciem każdego produktu jest `product_images/products/{id}.jpg`,
+ * a lokalne ujęcia z `RAW_CATALOG` dołączamy jako kolejne zdjęcia w galerii
+ * (dodatkowe kadry oraz fallback, gdy plik na Supabase jeszcze nie istnieje).
+ */
+export const CATALOG_PRODUCTS: Product[] = RAW_CATALOG.map((product) => ({
+    ...product,
+    images: [supabaseProductImage(product.id), ...product.images],
+}));

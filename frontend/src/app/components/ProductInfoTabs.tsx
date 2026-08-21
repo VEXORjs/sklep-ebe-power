@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from "react";
-import { Check, Star } from "lucide-react";
+import { Check, ChevronDown, Star } from "lucide-react";
 
 import type { ReviewEntry, SpecEntry } from "@/app/lib/product";
 import { formatPLN, FREE_SHIPPING_THRESHOLD, SHIPPING_COST } from "@/app/lib/product";
@@ -31,6 +31,7 @@ export default function ProductInfoTabs({
     rating,
 }: ProductInfoTabsProps) {
     const [tab, setTab] = useState<TabId>("opis");
+    const [specExpanded, setSpecExpanded] = useState(false);
 
     return (
         <section className="overflow-hidden rounded-xl border border-neutral-800 bg-[#141618]">
@@ -85,28 +86,53 @@ export default function ProductInfoTabs({
                                 Specyfikacja tego modelu jest dostępna na zapytanie u doradcy.
                             </p>
                         ) : (
-                            <div className="relative overflow-hidden rounded-lg border border-neutral-800">
-                                <div className={specs.length > 8 ? "max-h-80 overflow-hidden" : ""}>
-                                    <table className="min-w-full divide-y divide-neutral-800">
-                                        <tbody className="divide-y divide-neutral-800">
-                                            {specs.map((spec, index) => (
-                                                <tr
-                                                    key={`${spec.label}-${spec.value}`}
-                                                    className={index % 2 === 0 ? "bg-[#101214]" : "bg-[#16181a]"}
-                                                >
-                                                    <th className="w-1/3 px-5 py-3 text-left text-sm font-medium text-neutral-400">
-                                                        {spec.label}
-                                                    </th>
-                                                    <td className="px-5 py-3 text-sm font-semibold text-neutral-100">
-                                                        {spec.value}
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
+                            <div>
+                                <div className="relative overflow-hidden rounded-lg border border-neutral-800">
+                                    <div
+                                        className={
+                                            specs.length > 8 && !specExpanded
+                                                ? "max-h-80 overflow-hidden"
+                                                : ""
+                                        }
+                                    >
+                                        <table className="min-w-full divide-y divide-neutral-800">
+                                            <tbody className="divide-y divide-neutral-800">
+                                                {specs.map((spec, index) => (
+                                                    <tr
+                                                        key={`${spec.label}-${spec.value}`}
+                                                        className={index % 2 === 0 ? "bg-[#101214]" : "bg-[#16181a]"}
+                                                    >
+                                                        <th className="w-1/3 px-5 py-3 text-left text-sm font-medium text-neutral-400">
+                                                            {spec.label}
+                                                        </th>
+                                                        <td className="px-5 py-3 text-sm font-semibold text-neutral-100">
+                                                            {spec.value}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    {specs.length > 8 && !specExpanded && (
+                                        <div className="spec-table-fade pointer-events-none absolute inset-x-0 bottom-0 h-20" />
+                                    )}
                                 </div>
                                 {specs.length > 8 && (
-                                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#141618] via-[#141618]/85 to-transparent" />
+                                    <button
+                                        type="button"
+                                        onClick={() => setSpecExpanded((value) => !value)}
+                                        aria-expanded={specExpanded}
+                                        className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold text-emerald-400 transition-colors hover:text-emerald-300"
+                                    >
+                                        <ChevronDown
+                                            className={`h-4 w-4 transition-transform duration-200 ${
+                                                specExpanded ? "rotate-180" : ""
+                                            }`}
+                                        />
+                                        {specExpanded
+                                            ? "Pokaż mniej"
+                                            : `Pokaż wszystkie parametry (${specs.length})`}
+                                    </button>
                                 )}
                             </div>
                         )}

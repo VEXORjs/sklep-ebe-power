@@ -172,6 +172,24 @@ html.light [class*="from-[#0d0f10]"] {
   --tw-gradient-from: #f1f5f9 !important;
 }
 
+/* Fade przy zwiniętej tabeli specyfikacji produktu (działa w obu motywach) */
+.spec-table-fade {
+  background: linear-gradient(
+    to top,
+    #141618 0%,
+    rgba(20, 22, 24, 0.82) 55%,
+    transparent 100%
+  );
+}
+html.light .spec-table-fade {
+  background: linear-gradient(
+    to top,
+    #ffffff 0%,
+    rgba(255, 255, 255, 0.82) 55%,
+    transparent 100%
+  );
+}
+
 /* Hero / gradienty — rozjaśnij subtelnie */
 html.light .from-black\/95 {
   --tw-gradient-from: rgba(255, 255, 255, 0.9) !important;
