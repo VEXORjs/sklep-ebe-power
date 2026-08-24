@@ -18,19 +18,22 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        try {
-            const stored = localStorage.getItem('theme') as Theme | null;
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const initial: Theme = stored ?? (prefersDark ? 'dark' : 'light');
-            // Szanujemy zapisany wybór, inaczej systemową preferencję
-            setThemeState(initial);
-            document.documentElement.classList.remove('light', 'dark');
-            document.documentElement.classList.add(initial);
-            (document.documentElement as HTMLElement).style.colorScheme = initial;
-        } catch {
-            // ignore
+        const usetheme = async () => {
+            try {
+                const stored = localStorage.getItem('theme') as Theme | null;
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const initial: Theme = stored ?? (prefersDark ? 'dark' : 'light');
+                // Szanujemy zapisany wybór, inaczej systemową preferencję
+                setThemeState(initial);
+                document.documentElement.classList.remove('light', 'dark');
+                document.documentElement.classList.add(initial);
+                (document.documentElement as HTMLElement).style.colorScheme = initial;
+            } catch {
+                // ignore
+            }
+            setMounted(true);
         }
-        setMounted(true);
+     void usetheme();
     }, []);
 
     useEffect(() => {
