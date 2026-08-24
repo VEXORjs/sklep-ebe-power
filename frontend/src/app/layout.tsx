@@ -1,5 +1,6 @@
 // app/layout.tsx
 import type { Metadata, Viewport } from "next";
+import Script from 'next/script';
 import { CartProvider } from '@/app/context/CartContext';
 import { ThemeProvider } from '@/app/context/ThemeContext';
 import AuthProvider from "@/app/components/AuthProvider";
@@ -9,7 +10,8 @@ import Footer from "@/app/components/Footer";
 import TopBar from "@/app/components/TopBar";
 import CartDrawer from "@/app/components/CartDrawer";
 
-const BRAND_LOGO_URL = "https://iyugrhskjjyegxppeqoj.supabase.co/storage/v1/object/public/product_images/Zrzut%20ekranu%202026-07-12%20165154.png";
+
+const BRAND_LOGO_URL = "https://iyugrhskjjyegxppeqoj.supabase.co/storage/v1/object/public/product_images/EBE_Power_1_upscaled.jpeg";
 
 export const viewport: Viewport = {
     width: "device-width",
@@ -159,7 +161,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
             />
-            <script
+            <Script
+                id="theme-script"
+                strategy="beforeInteractive"
                 dangerouslySetInnerHTML={{
                     __html: `(function(){try{var s=localStorage.getItem('theme');var m=window.matchMedia('(prefers-color-scheme: dark)').matches;var t=s|| (m?'dark':'light');document.documentElement.classList.add(t);document.documentElement.style.colorScheme=t;}catch(e){document.documentElement.classList.add('dark');}})();`,
                 }}

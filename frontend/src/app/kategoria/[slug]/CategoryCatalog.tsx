@@ -33,42 +33,53 @@ const GENERATOR_OPTIONS: Record<GeneratorFilter, string[]> = {
     rozruch: ["Ręczny", "Elektryczny", "Ręczny i elektryczny"],
 };
 
-const normalize = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+// Funkcja normalizująca tekst (usuwa polskie znaki, małe litery)
+const normalize = (value: string) =>
+    (value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+// Zrzuca całą wiedzę o produkcie do jednego stringa (żeby filtry łapały wszystko)
 const parameterText = (product: Product) => {
-    const parameters = product.parameters;
-    return normalize(typeof parameters === "string" ? parameters : Object.entries(parameters ?? {}).flat().join(" "));
+    const paramsStr = typeof product.parameters === "string"
+        ? product.parameters
+        : JSON.stringify(product.parameters || {});
+    return normalize(`${product.name} ${product.description || ""} ${paramsStr}`);
 };
 
+// Szuka wartości mocy (np. 3.5 kW, 4 kVA) i konwertuje do uniwersalnych kW
 function powerInKw(product: Product): number | null {
-    const parameters = product.parameters;
-    const text = typeof parameters === "string"
-        ? parameters
-        : Object.entries(parameters ?? {})
-            .filter(([key]) => /moc_(znamionowa|maksymalna|ciagla)/i.test(key))
-            .map(([, value]) => value)
-            .join(" ");
-    const match = text.replace(",", ".").match(/(\d+(?:\.\d+)?)\s*(kva|kw|va|w)\b/i);
+    const text = parameterText(product).replace(/,/g, ".");
+    const match = text.match(/(\d+(?:\.\d+)?)\s*(kva|kw|va|w)\b/i);
     if (!match) return null;
+
     const value = Number(match[1]);
-    const unit = match[2].toLowerCase();
-    return unit === "w" || unit === "va" ? value / 1000 : value;
+    const unit = match[2];
+    return (unit === "w" || unit === "va") ? value / 1000 : value;
 }
 
+// Logika sprawdzania, czy produkt pasuje do checkboxa
 function matchesGeneratorOption(product: Product, group: GeneratorFilter, option: string) {
-    const text = `${normalize(product.name)} ${parameterText(product)}`;
+    const text = parameterText(product);
+
     if (group === "producent") return text.includes(normalize(option));
+
     if (group === "fazy") {
-        if (option === "Jednofazowy") return /jednofaz|liczba_faz.?[^]*?\b1\b|\b230\s*v/.test(text) && !/dual|400\s*\/\s*230/.test(text);
-        if (option === "Trójfazowy") return /trojfaz|liczba_faz.?[^]*?\b3\b|\b400\s*v/.test(text) && !/dual|400\s*\/\s*230/.test(text);
+        if (option === "Jednofazowy") return /jednofaz|1-faz|230\s*v/.test(text) && !/dual|400\s*\/\s*230/.test(text);
+        if (option === "Trójfazowy") return /trojfaz|3-faz|400\s*v/.test(text) && !/dual|400\s*\/\s*230/.test(text);
         return /dual|400\s*\/\s*230|230\s*\/\s*400/.test(text);
     }
+
     if (group === "paliwo") {
-        if (option === "Diesel") return /diesel|olej napedowy/.test(text);
-        if (option === "LPG / NG") return /lpg|gaz ziemny|\bng\b|gaz plynny/.test(text);
+        if (option === "Diesel") return /diesel|olej napedowy|on\b/.test(text);
+        if (option === "LPG / NG") return /lpg|gaz ziemny|gaz plynny|ng\b/.test(text);
         return text.includes("benzyna");
     }
-    if (option === "Ręczny i elektryczny") return /reczny.*elektryczny|elektryczny.*reczny/.test(text);
-    return text.includes(normalize(option));
+
+    if (group === "rozruch") {
+        if (option === "Ręczny i elektryczny") return /reczny.*elektryczny|elektryczny.*reczny/.test(text);
+        return text.includes(normalize(option));
+    }
+
+    return false;
 }
 
 export default function CategoryCatalog({ products, categoryName }: CategoryCatalogProps) {
@@ -77,13 +88,15 @@ export default function CategoryCatalog({ products, categoryName }: CategoryCata
     const [onlyAvailable, setOnlyAvailable] = useState(false);
     const [onlyPromo, setOnlyPromo] = useState(false);
     const [view, setView] = useState<ProductCardVariant>("grid");
+
     const [generatorFilters, setGeneratorFilters] = useState<GeneratorFilters>({
         producent: [], fazy: [], paliwo: [], rozruch: [],
     });
-    // Pola są zatwierdzane przyciskiem, aby klient mógł wygodnie wpisać cały zakres.
     const [powerDraft, setPowerDraft] = useState({ min: "", max: "" });
     const [powerRange, setPowerRange] = useState<{ min: number | null; max: number | null }>({ min: null, max: null });
-    const isGeneratorCategory = normalize(categoryName).includes("agregat");
+
+    // Złapie zarówno "Agregaty", "Generator", jak i podobne słowa w nazwie kategorii
+    const isGeneratorCategory = /agregat|generator/.test(normalize(categoryName));
 
     const priceBounds = useMemo(() => {
         if (products.length === 0) return { min: 0, max: 0 };
@@ -109,13 +122,17 @@ export default function CategoryCatalog({ products, categoryName }: CategoryCata
             const matchesStock = !onlyAvailable || p.stock > 0;
             const matchesPromo = !onlyPromo || p.oldPrice != null || p.badge === "Promocja";
             const matchesPrice = grossPrice(p.price) <= effectiveMax + 0.01;
+
+            // Checkboxy Agregatów
             const matchesGeneratorFilters = !isGeneratorCategory || (Object.keys(generatorFilters) as GeneratorFilter[]).every((group) =>
                 generatorFilters[group].length === 0 || generatorFilters[group].some((option) => matchesGeneratorOption(p, group, option))
             );
+
+            // Zakres mocy
             const power = powerInKw(p);
-            // Brak deklaracji mocy nie wyklucza produktu, dopóki zakres nie jest użyty.
             const matchesPower = !isGeneratorCategory || (powerRange.min === null && powerRange.max === null) ||
                 (power !== null && (powerRange.min === null || power >= powerRange.min) && (powerRange.max === null || power <= powerRange.max));
+
             return matchesQuery && matchesStock && matchesPromo && matchesPrice && matchesGeneratorFilters && matchesPower;
         });
 
@@ -167,205 +184,252 @@ export default function CategoryCatalog({ products, categoryName }: CategoryCata
     };
 
     return (
-        <section id="produkty" className="scroll-mt-24">
-            {/* Pasek narzędzi */}
-            <div className="mb-6 rounded-xl border border-neutral-800 bg-[#141618] p-4">
-                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                    <div className="relative w-full lg:max-w-sm">
-                        <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+        <section id="produkty" className="scroll-mt-24 mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            <div className="flex flex-col lg:flex-row gap-8">
+
+                {/*
+                  =======================================================
+                  LEWA KOLUMNA: FILTRY (Sidebar)
+                  =======================================================
+                */}
+                <aside className="w-full lg:w-[280px] shrink-0 space-y-6 rounded-xl border border-neutral-800 bg-[#151719] p-5 h-fit sticky top-24">
+                    <div className="flex items-center justify-between mb-2">
+                        <h2 className="text-base font-extrabold text-white">Filtruj wyniki</h2>
+                        {hasFilters && (
+                            <button
+                                onClick={clearFilters}
+                                className="text-[11px] font-semibold text-neutral-500 hover:text-emerald-400 uppercase tracking-wider transition-colors"
+                            >
+                                Wyczyść
+                            </button>
+                        )}
+                    </div>
+
+                    {/* Szukaj */}
+                    <div className="relative">
+                        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
                         <input
                             type="search"
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
-                            placeholder={`Szukaj w kategorii ${categoryName}...`}
-                            aria-label={`Szukaj w kategorii ${categoryName}`}
-                            className="w-full rounded-md border border-neutral-800 bg-[#0f1113] py-3 pl-11 pr-10 text-sm text-white outline-none transition-colors placeholder:text-neutral-500 focus:border-emerald-500/60"
+                            placeholder="Szukaj modelu..."
+                            className="w-full rounded-md border border-neutral-700 bg-[#0f1113] py-2.5 pl-10 pr-9 text-sm text-white outline-none transition-colors placeholder:text-neutral-500 focus:border-emerald-500/60"
                         />
                         {query && (
                             <button
-                                type="button"
                                 onClick={() => setQuery("")}
-                                aria-label="Wyczyść wyszukiwanie"
-                                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-neutral-500 hover:text-white"
+                                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-neutral-500 hover:text-white"
                             >
                                 <X className="h-4 w-4" />
                             </button>
                         )}
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-3">
-                        <button
-                            type="button"
-                            onClick={() => setOnlyAvailable((v) => !v)}
-                            aria-pressed={onlyAvailable}
-                            className={`rounded-full border px-4 py-2 text-xs font-semibold transition-colors ${
-                                onlyAvailable
-                                    ? "border-emerald-500 bg-emerald-500 text-slate-950"
-                                    : "border-neutral-800 bg-[#0f1113] text-neutral-300 hover:border-emerald-500/60"
-                            }`}
-                        >
-                            Tylko dostępne
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setOnlyPromo((v) => !v)}
-                            aria-pressed={onlyPromo}
-                            className={`rounded-full border px-4 py-2 text-xs font-semibold transition-colors ${
-                                onlyPromo
-                                    ? "border-emerald-500 bg-emerald-500 text-slate-950"
-                                    : "border-neutral-800 bg-[#0f1113] text-neutral-300 hover:border-emerald-500/60"
-                            }`}
-                        >
-                            Promocje
-                        </button>
-
-                        <div className="flex items-center gap-2">
-                            <SlidersHorizontal className="h-4 w-4 shrink-0 text-neutral-500" />
-                            <select
-                                value={sort}
-                                onChange={(e) => setSort(e.target.value as SortKey)}
-                                aria-label="Sortowanie produktów"
-                                className="rounded-md border border-neutral-800 bg-[#0f1113] px-3 py-2.5 text-sm text-white outline-none transition-colors focus:border-emerald-500/60"
-                            >
-                                {(Object.keys(SORT_LABELS) as SortKey[]).map((key) => (
-                                    <option key={key} value={key}>
-                                        {SORT_LABELS[key]}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="flex items-center rounded-md border border-neutral-800 bg-[#0f1113] p-1">
-                            <button
-                                type="button"
-                                onClick={() => setView("grid")}
-                                aria-label="Widok siatki"
-                                aria-pressed={view === "grid"}
-                                className={`rounded p-1.5 transition-colors ${
-                                    view === "grid" ? "bg-neutral-800 text-white" : "text-neutral-500 hover:text-white"
-                                }`}
-                            >
-                                <LayoutGrid className="h-4 w-4" />
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setView("list")}
-                                aria-label="Widok listy"
-                                aria-pressed={view === "list"}
-                                className={`rounded p-1.5 transition-colors ${
-                                    view === "list" ? "bg-neutral-800 text-white" : "text-neutral-500 hover:text-white"
-                                }`}
-                            >
-                                <List className="h-4 w-4" />
-                            </button>
-                        </div>
+                    {/* Dostępność i Promocje */}
+                    <div className="space-y-3 border-t border-neutral-800 pt-5">
+                        <label className="flex cursor-pointer items-center gap-3 group">
+                            <div className="relative flex items-center justify-center">
+                                <input
+                                    type="checkbox"
+                                    checked={onlyAvailable}
+                                    onChange={() => setOnlyAvailable(!onlyAvailable)}
+                                    className="peer appearance-none h-4 w-4 rounded border border-neutral-600 bg-[#0f1113] checked:border-emerald-500 checked:bg-emerald-500 transition-all cursor-pointer"
+                                />
+                                <svg className="absolute w-3 h-3 text-neutral-950 opacity-0 peer-checked:opacity-100 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                            <span className="text-sm text-neutral-400 group-hover:text-neutral-200 transition-colors">Tylko dostępne</span>
+                        </label>
+                        <label className="flex cursor-pointer items-center gap-3 group">
+                            <div className="relative flex items-center justify-center">
+                                <input
+                                    type="checkbox"
+                                    checked={onlyPromo}
+                                    onChange={() => setOnlyPromo(!onlyPromo)}
+                                    className="peer appearance-none h-4 w-4 rounded border border-neutral-600 bg-[#0f1113] checked:border-emerald-500 checked:bg-emerald-500 transition-all cursor-pointer"
+                                />
+                                <svg className="absolute w-3 h-3 text-neutral-950 opacity-0 peer-checked:opacity-100 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+                            <span className="text-sm text-neutral-400 group-hover:text-neutral-200 transition-colors">Tylko w promocji</span>
+                        </label>
                     </div>
-                </div>
 
-                {isGeneratorCategory && (
-                    <fieldset className="mt-4 border-t border-neutral-800 pt-4">
-                        <legend className="text-sm font-bold text-white">Parametry agregatu mobilnego</legend>
-                        <div className="mt-3 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                    {/* Filtry agregatów */}
+                    {isGeneratorCategory && (
+                        <>
                             {(Object.keys(GENERATOR_OPTIONS) as GeneratorFilter[]).map((group) => (
-                                <div key={group}>
-                                    <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-neutral-500">
+                                <div key={group} className="border-t border-neutral-800 pt-5">
+                                    <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-white">
                                         {{ producent: "Producent", fazy: "Liczba faz", paliwo: "Paliwo", rozruch: "Typ rozruchu" }[group]}
-                                    </p>
-                                    <div className="space-y-1.5">
+                                    </h3>
+                                    <div className="space-y-2.5">
                                         {GENERATOR_OPTIONS[group].map((option) => (
-                                            <label key={option} className="flex cursor-pointer items-center gap-2 text-xs text-neutral-300">
-                                                <input type="checkbox" checked={generatorFilters[group].includes(option)} onChange={() => toggleGeneratorFilter(group, option)} className="h-3.5 w-3.5 rounded border-neutral-600 bg-[#0f1113] accent-emerald-500" />
-                                                {option}
+                                            <label key={option} className="flex cursor-pointer items-center gap-3 group">
+                                                <div className="relative flex items-center justify-center">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={generatorFilters[group].includes(option)}
+                                                        onChange={() => toggleGeneratorFilter(group, option)}
+                                                        className="peer appearance-none h-4 w-4 rounded border border-neutral-600 bg-[#0f1113] checked:border-emerald-500 checked:bg-emerald-500 transition-all cursor-pointer"
+                                                    />
+                                                    <svg className="absolute w-3 h-3 text-neutral-950 opacity-0 peer-checked:opacity-100 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                                    </svg>
+                                                </div>
+                                                <span className="text-sm text-neutral-400 group-hover:text-neutral-200 transition-colors">{option}</span>
                                             </label>
                                         ))}
                                     </div>
                                 </div>
                             ))}
-                        </div>
-                        <div className="mt-5 flex flex-wrap items-end gap-3 border-t border-neutral-800 pt-4">
-                            <div>
-                                <label htmlFor="moc-od" className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-neutral-500">Moc od (kW / kVA)</label>
-                                <input id="moc-od" inputMode="decimal" value={powerDraft.min} onChange={(e) => setPowerDraft((v) => ({ ...v, min: e.target.value }))} placeholder="np. 3" className="w-32 rounded-md border border-neutral-800 bg-[#0f1113] px-3 py-2 text-sm text-white outline-none focus:border-emerald-500/60" />
-                            </div>
-                            <div>
-                                <label htmlFor="moc-do" className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-neutral-500">Moc do (kW / kVA)</label>
-                                <input id="moc-do" inputMode="decimal" value={powerDraft.max} onChange={(e) => setPowerDraft((v) => ({ ...v, max: e.target.value }))} placeholder="np. 10" className="w-32 rounded-md border border-neutral-800 bg-[#0f1113] px-3 py-2 text-sm text-white outline-none focus:border-emerald-500/60" />
-                            </div>
-                            <button type="button" onClick={applyPowerRange} className="rounded-md bg-emerald-500 px-4 py-2 text-xs font-bold text-slate-950 transition-colors hover:bg-emerald-400">Zatwierdź zakres</button>
-                        </div>
-                    </fieldset>
-                )}
 
-                {/* Filtr ceny */}
-                {priceBounds.max > priceBounds.min && (
-                    <div className="mt-4 flex flex-col gap-2 border-t border-neutral-800 pt-4 sm:flex-row sm:items-center sm:gap-5">
-                        <label htmlFor="cena-max" className="text-xs font-semibold text-neutral-400">
-                            Cena maksymalna
-                        </label>
-                        <input
-                            id="cena-max"
-                            type="range"
-                            min={priceBounds.min}
-                            max={priceBounds.max}
-                            step={1}
-                            value={effectiveMax}
-                            onChange={(e) => setMaxPrice(Number(e.target.value))}
-                            className="h-1 w-full max-w-xs cursor-pointer appearance-none rounded-full bg-neutral-800 accent-emerald-500"
-                        />
-                        <span className="text-xs font-bold text-white">do {formatPLN(effectiveMax)}</span>
-                        <span className="text-[11px] text-neutral-500">
-                            zakres: {formatPLN(priceBounds.min)} – {formatPLN(priceBounds.max)}
-                        </span>
+                            {/* Moc */}
+                            <div className="border-t border-neutral-800 pt-5">
+                                <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-white">Zakres mocy (kW / kVA)</h3>
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        inputMode="decimal"
+                                        value={powerDraft.min}
+                                        onChange={(e) => setPowerDraft((v) => ({ ...v, min: e.target.value }))}
+                                        placeholder="Od"
+                                        className="w-full rounded-md border border-neutral-700 bg-[#0f1113] px-3 py-1.5 text-sm text-white outline-none focus:border-emerald-500/60 placeholder:text-neutral-600 transition-colors"
+                                    />
+                                    <span className="text-neutral-500">-</span>
+                                    <input
+                                        inputMode="decimal"
+                                        value={powerDraft.max}
+                                        onChange={(e) => setPowerDraft((v) => ({ ...v, max: e.target.value }))}
+                                        placeholder="Do"
+                                        className="w-full rounded-md border border-neutral-700 bg-[#0f1113] px-3 py-1.5 text-sm text-white outline-none focus:border-emerald-500/60 placeholder:text-neutral-600 transition-colors"
+                                    />
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={applyPowerRange}
+                                    className="w-full mt-3 rounded-md bg-neutral-800 hover:bg-emerald-600 border border-neutral-700 hover:border-emerald-500 px-4 py-2 text-xs font-bold uppercase tracking-wider text-white transition-all"
+                                >
+                                    Zastosuj moc
+                                </button>
+                            </div>
+                        </>
+                    )}
+
+                    {/* Cena */}
+                    {priceBounds.max > priceBounds.min && (
+                        <div className="border-t border-neutral-800 pt-5 flex flex-col gap-2">
+                            <div className="flex items-center justify-between mb-1">
+                                <h3 className="text-xs font-bold uppercase tracking-wider text-white">Maks. Cena</h3>
+                                <span className="text-xs font-bold text-emerald-400">{formatPLN(effectiveMax)}</span>
+                            </div>
+                            <input
+                                type="range"
+                                min={priceBounds.min}
+                                max={priceBounds.max}
+                                step={1}
+                                value={effectiveMax}
+                                onChange={(e) => setMaxPrice(Number(e.target.value))}
+                                className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-neutral-800 accent-emerald-500"
+                            />
+                            <span className="text-[10px] text-neutral-500 mt-1">
+                                zakres: {formatPLN(priceBounds.min)} – {formatPLN(priceBounds.max)}
+                            </span>
+                        </div>
+                    )}
+                </aside>
+
+
+                {/*
+                  =======================================================
+                  PRAWA KOLUMNA: WYNIKI I SORTOWANIE
+                  =======================================================
+                */}
+                <div className="flex-1">
+                    {/* Górny pasek */}
+                    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-xl border border-neutral-800 bg-[#151719] p-2.5 px-4">
+                        <p className="text-sm text-neutral-400 font-medium">
+                            Znaleziono: <span className="font-bold text-white">{filtered.length}</span>{" "}
+                            {productsLabel(filtered.length)}
+                        </p>
+
+                        <div className="flex flex-wrap items-center gap-3">
+                            <div className="flex items-center gap-2">
+                                <SlidersHorizontal className="h-4 w-4 shrink-0 text-neutral-500" />
+                                <select
+                                    value={sort}
+                                    onChange={(e) => setSort(e.target.value as SortKey)}
+                                    aria-label="Sortowanie produktów"
+                                    className="rounded-md border-none bg-transparent py-1 text-sm text-white outline-none focus:ring-0 cursor-pointer"
+                                >
+                                    {(Object.keys(SORT_LABELS) as SortKey[]).map((key) => (
+                                        <option key={key} value={key} className="bg-[#151719]">
+                                            {SORT_LABELS[key]}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="h-5 w-px bg-neutral-800 hidden sm:block"></div>
+
+                            <div className="flex items-center rounded-md border border-neutral-800 bg-[#0f1113] p-1">
+                                <button
+                                    type="button"
+                                    onClick={() => setView("grid")}
+                                    aria-label="Widok siatki"
+                                    aria-pressed={view === "grid"}
+                                    className={`rounded p-1.5 transition-colors ${
+                                        view === "grid" ? "bg-neutral-800 text-white" : "text-neutral-500 hover:text-white"
+                                    }`}
+                                >
+                                    <LayoutGrid className="h-4 w-4" />
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setView("list")}
+                                    aria-label="Widok listy"
+                                    aria-pressed={view === "list"}
+                                    className={`rounded p-1.5 transition-colors ${
+                                        view === "list" ? "bg-neutral-800 text-white" : "text-neutral-500 hover:text-white"
+                                    }`}
+                                >
+                                    <List className="h-4 w-4" />
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                )}
-            </div>
 
-            {/* Wyniki */}
-            <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-                <p className="text-xs text-neutral-500">
-                    Znaleziono: <span className="font-bold text-white">{filtered.length}</span>{" "}
-                    {productsLabel(filtered.length)}
-                    {products.length !== filtered.length && ` z ${products.length}`}
-                </p>
-                {hasFilters && (
-                    <button
-                        type="button"
-                        onClick={clearFilters}
-                        className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400 transition-colors hover:text-emerald-300"
-                    >
-                        <X className="h-3.5 w-3.5" />
-                        Wyczyść filtry
-                    </button>
-                )}
+                    {/* Siatka produktów */}
+                    {filtered.length === 0 ? (
+                        <div className="rounded-xl border border-dashed border-neutral-800 py-20 text-center">
+                            <p className="text-base font-semibold text-white">Brak produktów spełniających kryteria</p>
+                            <p className="mt-2 text-sm text-neutral-500 max-w-md mx-auto">
+                                Zmień filtry albo napisz do nas — sprowadzamy również towar na specjalne zamówienie.
+                            </p>
+                            <button
+                                type="button"
+                                onClick={clearFilters}
+                                className="mt-6 rounded-md bg-emerald-500 px-6 py-2.5 text-sm font-bold text-slate-950 transition-colors hover:bg-emerald-400"
+                            >
+                                Wyczyść filtry
+                            </button>
+                        </div>
+                    ) : view === "grid" ? (
+                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                            {filtered.map((product, index) => (
+                                <ProductCard key={product.id} product={product} priority={index < 3} />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="flex flex-col gap-5">
+                            {filtered.map((product, index) => (
+                                <ProductCard key={product.id} product={product} variant="list" priority={index < 2} />
+                            ))}
+                        </div>
+                    )}
+                </div>
             </div>
-
-            {filtered.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-neutral-800 py-16 text-center">
-                    <p className="text-sm font-semibold text-white">Brak produktów spełniających kryteria</p>
-                    <p className="mt-1 text-xs text-neutral-500">
-                        Zmień filtry albo napisz do nas — sprowadzamy towar na zamówienie.
-                    </p>
-                    <button
-                        type="button"
-                        onClick={clearFilters}
-                        className="mt-5 rounded-md bg-emerald-500 px-5 py-2.5 text-sm font-bold text-slate-950 transition-colors hover:bg-emerald-400"
-                    >
-                        Wyczyść filtry
-                    </button>
-                </div>
-            ) : view === "grid" ? (
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                    {filtered.map((product, index) => (
-                        <ProductCard key={product.id} product={product} priority={index < 3} />
-                    ))}
-                </div>
-            ) : (
-                <div className="flex flex-col gap-5">
-                    {filtered.map((product, index) => (
-                        <ProductCard key={product.id} product={product} variant="list" priority={index < 2} />
-                    ))}
-                </div>
-            )}
         </section>
     );
 }

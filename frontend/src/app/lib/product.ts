@@ -71,6 +71,26 @@ const PARAM_LABELS: Record<string, string> = {
     pojemnosc_zbiornika: "Pojemność zbiornika",
     czas_pracy: "Czas pracy",
     liczba_faz: "Liczba faz",
+    // --- AGREGATY: OGÓLNE ---
+    producent: "Producent",
+    paliwo: "Paliwo",
+    moc_maksymalna: "Moc maksymalna",
+    typ_rozruchu: "Typ rozruchu",
+
+    // --- AGREGATY: SILNIK ---
+    producent_silnika: "Producent silnika",
+    model_silnika: "Model silnika",
+    pojemnosc_silnika: "Pojemność",
+    obroty_rpm: "Obroty (RPM)",
+    liczba_cylindrow: "Liczba cylindrów",
+    system_chlodzenia: "System chłodzenia",
+    norma_emisji_spalin: "Norma emisji spalin",
+    zuzycie_paliwa: "Zużycie paliwa",
+
+    // --- AGREGATY: PRĄDNICA ---
+    typ_pradnicy: "Typ prądnicy",
+    dokladnosc_regulacji: "Dokładność regulacji napięcia",
+    producent_pradnicy: "Producent prądnicy",
 };
 
 function prettifyKey(key: string): string {
