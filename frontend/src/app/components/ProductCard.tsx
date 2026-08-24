@@ -154,8 +154,8 @@ export default function ProductCard({
         <div
             className={`relative shrink-0 overflow-hidden bg-white ${
                 variant === "list"
-                    ? "aspect-[4/3] w-full sm:h-full sm:w-56 sm:aspect-auto"
-                    : "aspect-[4/3] w-full"
+                    ? "aspect-[16/10] w-full sm:h-full sm:w-56 sm:aspect-auto"
+                    : "aspect-[16/10] w-full"
             }`}
         >
             <Link href={href} aria-label={product.name} className="absolute inset-0 block p-6">

@@ -31,6 +31,13 @@ body {
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
+/* Natywne <button> mają domyślnie kursor strzałki — nadajemy im "rączkę".
+   Wyłączone przyciski pozostają bez zmiany (cursor: default / not-allowed). */
+button:not(:disabled),
+[role="button"]:not(:disabled) {
+  cursor: pointer;
+}
+
 /* Pasek marek — przewijana karuzela */
 @keyframes marquee {
   from {
