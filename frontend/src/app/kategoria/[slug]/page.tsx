@@ -285,17 +285,17 @@ export default async function CategoryPage({ params }: PageProps) {
                                 Poradnik zakupowy
                             </span>
                             <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-white">
-                                Jak dobrać: {category.name.toLowerCase()}
+                                Jak dobrać: {category.name.toLowerCase()}?
                             </h2>
                             <p className="mt-3 text-sm leading-relaxed text-neutral-400">
                                 Pięć rzeczy, które nasi doradcy sprawdzają, zanim polecą konkretny model.
                                 Masz wątpliwości? Zadzwoń — pomożemy dobrać sprzęt do Twojej instalacji.
                             </p>
                             <a
-                                href="tel:+48123456789"
+                                href="tel:+48888883232"
                                 className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-emerald-400 transition-colors hover:text-emerald-300"
                             >
-                                +48 123 456 789
+                                +48 888 883 232
                                 <ArrowRight className="h-4 w-4" />
                             </a>
                         </div>
