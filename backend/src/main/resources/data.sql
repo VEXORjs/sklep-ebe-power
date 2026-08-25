@@ -5,10 +5,10 @@ TRUNCATE TABLE product_images RESTART IDENTITY CASCADE;
 TRUNCATE TABLE products RESTART IDENTITY CASCADE;
 
 INSERT INTO products (name, price, old_price, stock, description, category, subcategory, sku) VALUES
-('Pramac GA10000 — agregat gazowy 10 kVA, 230 V', 34500.00, NULL, 2,
+('Pramac GA10000 — agregat gazowy 10 kVA, 230 V', 21031.71, NULL, 2,
  'Stacjonarny, automatyczny agregat gazowy do awaryjnego zasilania domu lub małego obiektu. Obudowa aluminiowa RhinoCoat tłumi hałas i chroni urządzenie przed warunkami atmosferycznymi. Model współpracuje z przełącznikiem zasilania awaryjnego LTS.',
  'Agregaty', 'gazowe', 'PRM-GA10000'),
-('Pramac GA13000 — agregat gazowy 13 kVA, 230 V', 38900.00, NULL, 2,
+('Pramac GA13000 — agregat gazowy 13 kVA, 230 V', 21828.46, NULL, 2,
  'Jednofazowy agregat gazowy do automatycznego zasilania awaryjnego. Wyposażony w silnik Generac G-Force, elektroniczny regulator obrotów, sterownik Digital Evolution i łączność Wi-Fi Mobile Link.',
  'Agregaty', 'gazowe', 'PRM-GA13000'),
 ('Pramac DX8500 PRO+ — agregat diesla 8,5 kW, 400/230 V', 7169.92, NULL, 4,
