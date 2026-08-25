@@ -11,6 +11,7 @@ import {
     type CategorySubcategory,
 } from "@/app/data/categories";
 import CategoryCatalog from "../CategoryCatalog";
+import ProducerParamLink from "@/app/components/ProducerParamLink";
 
 export const revalidate = 60;
 
@@ -78,9 +79,12 @@ export default async function SubcategoryPage({ params }: PageProps) {
                             Kategorie
                         </Link>
                         <ChevronRight className="h-3.5 w-3.5" />
-                        <Link href={`/kategoria/${category.slug}`} className="transition-colors hover:text-emerald-400">
+                        <ProducerParamLink
+                            href={`/kategoria/${category.slug}`}
+                            className="transition-colors hover:text-emerald-400"
+                        >
                             {category.name}
-                        </Link>
+                        </ProducerParamLink>
                         <ChevronRight className="h-3.5 w-3.5" />
                         <span className="font-semibold text-neutral-300">{subcategory.name}</span>
                     </nav>
@@ -95,13 +99,13 @@ export default async function SubcategoryPage({ params }: PageProps) {
                     <p className="mt-4 max-w-3xl text-sm leading-relaxed text-neutral-400">
                         {subcategory.description}
                     </p>
-                    <Link
+                    <ProducerParamLink
                         href={`/kategoria/${category.slug}#podkategorie`}
                         className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-emerald-400 transition-colors hover:text-emerald-300"
                     >
                         <ArrowLeft className="h-4 w-4" />
                         Wszystkie podkategorie
-                    </Link>
+                    </ProducerParamLink>
                 </div>
             </header>
 

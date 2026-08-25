@@ -1,11 +1,13 @@
 'use client';
 
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { LayoutGrid, List, Search, SlidersHorizontal, X } from "lucide-react";
 
 import { Product } from "@/app/types/product";
 import ProductCard, { ProductCardVariant } from "@/app/components/ProductCard";
 import { formatPLN, grossPrice, productsLabel, ratingOf } from "@/app/lib/product";
+import { PRODUCER_LABELS, producerFromValue } from "@/app/components/ProducerParamLink";
 
 interface CategoryCatalogProps {
     products: Product[];
@@ -82,16 +84,28 @@ function matchesGeneratorOption(product: Product, group: GeneratorFilter, option
     return false;
 }
 
-export default function CategoryCatalog({ products, categoryName }: CategoryCatalogProps) {
+function CategoryCatalogInner({ products, categoryName }: CategoryCatalogProps) {
     const [query, setQuery] = useState("");
     const [sort, setSort] = useState<SortKey>("popularnosc");
     const [onlyAvailable, setOnlyAvailable] = useState(false);
     const [onlyPromo, setOnlyPromo] = useState(false);
     const [view, setView] = useState<ProductCardVariant>("grid");
 
-    const [generatorFilters, setGeneratorFilters] = useState<GeneratorFilters>({
-        producent: [], fazy: [], paliwo: [], rozruch: [],
-    });
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
+    const router = useRouter();
+
+    // Producent wybrany przy wejściu w kategorię z siatki marek na stronie
+    // głównej (?producent=pramac|cgm) — zaznaczamy go w checkboxach.
+    // Sam stan katalogu jest kluczowany marką (patrz CategoryCatalog), więc
+    // przy zmianie marki w adresie katalog startuje od czystych filtrów z
+    // odpowiednim zaznaczonym producentem.
+    const producerParam = producerFromValue(searchParams.get("producent"));
+    const producerOption = producerParam ? PRODUCER_LABELS[producerParam] : null;
+
+    const [generatorFilters, setGeneratorFilters] = useState<GeneratorFilters>(() => ({
+        producent: producerOption ? [producerOption] : [], fazy: [], paliwo: [], rozruch: [],
+    }));
     const [powerDraft, setPowerDraft] = useState({ min: "", max: "" });
     const [powerRange, setPowerRange] = useState<{ min: number | null; max: number | null }>({ min: null, max: null });
 
@@ -164,6 +178,15 @@ export default function CategoryCatalog({ products, categoryName }: CategoryCata
         setGeneratorFilters({ producent: [], fazy: [], paliwo: [], rozruch: [] });
         setPowerDraft({ min: "", max: "" });
         setPowerRange({ min: null, max: null });
+
+        // Usuwamy producenta też z adresu, żeby po odświeżeniu strony
+        // filtr nie wrócił sam.
+        if (searchParams.has("producent")) {
+            const params = new URLSearchParams(searchParams.toString());
+            params.delete("producent");
+            const qs = params.toString();
+            router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+        }
     };
 
     const toggleGeneratorFilter = (group: GeneratorFilter, option: string) => {
@@ -431,5 +454,36 @@ export default function CategoryCatalog({ products, categoryName }: CategoryCata
                 </div>
             </div>
         </section>
+    );
+}
+
+function CatalogFallback() {
+    return (
+        <section id="produkty" className="scroll-mt-24 mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            <div className="flex min-h-72 flex-col items-center justify-center gap-3 rounded-xl border border-neutral-800 bg-[#151719] text-center">
+                <span className="h-6 w-6 animate-spin rounded-full border-2 border-neutral-700 border-t-emerald-500" />
+                <p className="text-sm text-neutral-500">Ładowanie katalogu…</p>
+            </div>
+        </section>
+    );
+}
+
+function CategoryCatalogSuspender({ products, categoryName }: CategoryCatalogProps) {
+    const searchParams = useSearchParams();
+    const producer = producerFromValue(searchParams.get("producent"));
+
+    // klucz = marka z adresu: zmiana marki (przejście m.in. z siatki marek na
+    // stronie głównej) uruchamia katalog od nowa z zaznaczonym odpowiednim
+    // producentem, bez dodatkowej synchronizacji stanu w efekcie.
+    return <CategoryCatalogInner key={producer ?? "bez-marki"} products={products} categoryName={categoryName} />;
+}
+
+export default function CategoryCatalog(props: CategoryCatalogProps) {
+    // useSearchParams() na statycznie generowanych stronach (generateStaticParams)
+    // musi być wewnątrz granicy <Suspense> — inaczej Next.js blokuje build.
+    return (
+        <Suspense fallback={<CatalogFallback />}>
+            <CategoryCatalogSuspender {...props} />
+        </Suspense>
     );
 }

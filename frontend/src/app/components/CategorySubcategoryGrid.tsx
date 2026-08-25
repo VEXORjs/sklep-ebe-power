@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { Cpu, Fuel, Gauge, ShieldCheck, type LucideIcon } from "lucide-react";
+import ProducerParamLink from "./ProducerParamLink";
 
 import {
     productsInSubcategory,
@@ -35,7 +35,7 @@ function SubcategoryCard({
     const count = productsInSubcategory(products, category, subcategory).length;
 
     return (
-        <Link
+        <ProducerParamLink
             href={`/kategoria/${category.slug}/${subcategory.slug}`}
             className="group flex min-h-44 flex-col rounded-xl border border-neutral-800 bg-[#141618] p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/60 hover:bg-[#181b1d] hover:shadow-lg hover:shadow-emerald-950/20"
         >
@@ -50,7 +50,7 @@ function SubcategoryCard({
             <span className="mt-auto pt-4 text-[11px] font-bold text-neutral-500 transition-colors group-hover:text-emerald-300">
                 {count > 0 ? `${count} ${productsLabel(count)}` : "Sprawdź ofertę →"}
             </span>
-        </Link>
+        </ProducerParamLink>
     );
 }
 
