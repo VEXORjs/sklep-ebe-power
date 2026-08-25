@@ -45,7 +45,7 @@ export default function Hero({ product }: HeroProps) {
                             )}
                         </div>
 
-                        <h1 className="text-3xl font-extrabold leading-tight tracking-tight text-white sm:text-4xl xl:text-5xl">
+                        <h1 className="text-3xl font-extrabold leading-tight tracking-tight text-white sm:text-4xl xl:text-5xl 2xl:text-6xl">
                             {product.name}
                         </h1>
 
@@ -55,7 +55,7 @@ export default function Hero({ product }: HeroProps) {
 
                         {/* Cena */}
                         <div className="flex flex-wrap items-end gap-x-4 gap-y-2">
-                            <span className="text-4xl font-extrabold text-emerald-400 sm:text-5xl">
+                            <span className="text-4xl font-extrabold text-emerald-400 sm:text-5xl xl:text-6xl">
                                 {(product.price * 1.23).toFixed(2).replace(".", ",")} zł
                             </span>
                             {product.oldPrice ? (
@@ -99,7 +99,7 @@ export default function Hero({ product }: HeroProps) {
                     </div>
 
                     {/* Prawa kolumna — zdjęcie produktu */}
-                    <div className="relative mx-auto w-full max-w-lg">
+                    <div className="relative mx-auto w-full max-w-lg xl:max-w-xl">
                         <div className="absolute -inset-3 rounded-2xl bg-emerald-500/10 blur-2xl" />
                         <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-emerald-500/30 bg-white shadow-2xl shadow-black/60">
                             <FallbackImage

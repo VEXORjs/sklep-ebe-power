@@ -273,7 +273,7 @@ export default async function ProductPage({ params }: PageProps) {
                     <span className="font-semibold text-neutral-300">{product.name}</span>
                 </nav>
 
-                <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-14">
+                <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-14 xl:gap-20">
                     <ProductGallery product={product} />
 
                     <div>

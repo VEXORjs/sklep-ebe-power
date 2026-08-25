@@ -25,7 +25,7 @@ export default function CartDrawer() {
 
             {/* Panel boczny */}
             <aside
-                className={`absolute right-0 top-0 flex h-full w-full max-w-md flex-col border-l border-neutral-800 bg-neutral-950 shadow-2xl transition-transform duration-300 ${
+                className={`absolute right-0 top-0 flex h-full w-full max-w-md lg:max-w-lg flex-col border-l border-neutral-800 bg-neutral-950 shadow-2xl transition-transform duration-300 ${
                     isCartOpen ? "translate-x-0" : "translate-x-full"
                 }`}
             >

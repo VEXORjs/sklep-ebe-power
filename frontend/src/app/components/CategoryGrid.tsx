@@ -109,7 +109,7 @@ export default function CategoryGrid({ products, limit = 6 }: CategoryGridProps)
                         <p className="text-xs text-neutral-400">Włoska niezawodność i solidne rozwiązania</p>
                     </div>
 
-                    <div className="flex flex-wrap justify-center gap-4 [&>a]:w-full [&>a]:sm:w-[calc(50%-0.5rem)]">
+                    <div className="flex flex-wrap justify-center gap-4 [&>a]:w-full [&>a]:sm:w-[calc(50%-0.5rem)] [&>a]:xl:w-[calc(33.333%-0.75rem)]">
                         {cgmCategories.length > 0 ? (
                             cgmCategories.map(renderCategoryCard)
                         ) : (
@@ -127,7 +127,7 @@ export default function CategoryGrid({ products, limit = 6 }: CategoryGridProps)
                         <p className="text-xs text-neutral-400">Światowy lider w branży zasilania awaryjnego</p>
                     </div>
 
-                    <div className="flex flex-wrap justify-center gap-4 [&>a]:w-full [&>a]:sm:w-[calc(50%-0.5rem)]">
+                    <div className="flex flex-wrap justify-center gap-4 [&>a]:w-full [&>a]:sm:w-[calc(50%-0.5rem)] [&>a]:xl:w-[calc(33.333%-0.75rem)]">
                         {pramacCategories.length > 0 ? (
                             pramacCategories.map(renderCategoryCard)
                         ) : (
