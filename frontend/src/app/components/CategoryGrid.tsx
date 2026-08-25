@@ -2,8 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { Product } from "@/app/types/product";
-import { allCategories, productsInCategory } from "@/app/data/categories";
+import { allCategories, productsInCategory, type CategoryDef } from "@/app/data/categories";
 import { formatPLN, grossPrice, productsLabel } from "@/app/lib/product";
+import type { BrandParam } from "./ProducerParamLink";
 
 interface CategoryGridProps {
     products: Product[];
@@ -34,14 +35,16 @@ export default function CategoryGrid({ products, limit = 6 }: CategoryGridProps)
     const cgmCategories = getCategories(cgmProducts);
     const pramacCategories = getCategories(pramacProducts);
 
-    // Komponent pomocniczy renderujący pojedynczy kafelek kategorii
-    const renderCategoryCard = ({ category, items }: { category: any; items: Product[] }) => {
+    // Komponent pomocniczy renderujący pojedynczy kafelek kategorii.
+    // Marka jest przekazywana w adresie (?producent=pramac|cgm), żeby strona
+    // kategorii sama zaznaczyła odpowiedni filtr producenta.
+    const renderCategoryCard = ({ category, items, producer }: { category: CategoryDef; items: Product[]; producer: BrandParam }) => {
         const cheapest = items.length > 0 ? Math.min(...items.map((p) => grossPrice(p.price))) : null;
 
         return (
             <Link
                 key={category.slug}
-                href={`/kategoria/${category.slug}`}
+                href={`/kategoria/${category.slug}?producent=${producer}`}
                 className="group relative h-48 overflow-hidden rounded-lg border border-neutral-800 transition-all duration-300 hover:border-emerald-500/60 hover:shadow-lg hover:shadow-emerald-950/30"
             >
                 <Image
@@ -111,7 +114,7 @@ export default function CategoryGrid({ products, limit = 6 }: CategoryGridProps)
 
                     <div className="flex flex-wrap justify-center gap-4 [&>a]:w-full [&>a]:sm:w-[calc(50%-0.5rem)] [&>a]:xl:w-[calc(33.333%-0.75rem)]">
                         {cgmCategories.length > 0 ? (
-                            cgmCategories.map(renderCategoryCard)
+                            cgmCategories.map((item) => renderCategoryCard({ ...item, producer: "cgm" }))
                         ) : (
                             <p className="w-full py-10 text-center text-sm text-neutral-500">
                                 Brak kategorii dla marki CGM.
@@ -129,7 +132,7 @@ export default function CategoryGrid({ products, limit = 6 }: CategoryGridProps)
 
                     <div className="flex flex-wrap justify-center gap-4 [&>a]:w-full [&>a]:sm:w-[calc(50%-0.5rem)] [&>a]:xl:w-[calc(33.333%-0.75rem)]">
                         {pramacCategories.length > 0 ? (
-                            pramacCategories.map(renderCategoryCard)
+                            pramacCategories.map((item) => renderCategoryCard({ ...item, producer: "pramac" }))
                         ) : (
                             <p className="w-full py-10 text-center text-sm text-neutral-500">
                                 Brak kategorii dla marki Pramac.
