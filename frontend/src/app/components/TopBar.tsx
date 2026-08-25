@@ -11,7 +11,7 @@ export default function TopBar() {
                         className="flex items-center gap-1.5 transition-colors hover:text-emerald-400"
                     >
                         <Phone className="h-3 w-3 text-emerald-500" />
-                        <span className="hidden sm:inline">+48 88888 32 32</span>
+                        <span className="hidden sm:inline">+48 888 883 232</span>
                         <span className="sm:hidden">Zadzwoń</span>
                     </Link>
                     <Link

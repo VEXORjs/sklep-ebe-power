@@ -82,7 +82,7 @@ export const metadata: Metadata = {
         // other: { "msvalidate.01": "TWÓJ_KOD_BING" },
     },
     category: "electronics",
-    creator: "TRAFO ENERGIA",
+    creator: "EBE POWER",
     publisher: "ebe power",
 };
 

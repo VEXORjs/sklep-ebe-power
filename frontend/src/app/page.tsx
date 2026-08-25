@@ -91,15 +91,15 @@ export default async function HomePage() {
             <TrustBar />
 
             {/* SEO: Crawlowalna treść tekstowa z linkami do kategorii */}
-            <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+            <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8 lg:py-8 sm:py-6">
                 <h2 className="mb-4 text-lg font-bold text-neutral-300">
-                    Sklep z agregatami prądotwórczymi PRAMAC — ebe power
+                    Sklep z agregatami prądotwórczymi — EBE POWER
                 </h2>
                 <p className="mb-4 text-sm leading-relaxed text-neutral-500">
-                    ebe power (TRAFO ENERGIA) to sklep internetowy z agregatami prądotwórczymi PRAMAC:
+                    EBE POWER to sklep internetowy z agregatami prądotwórczymi:
                     modelami inwerterowymi, benzynowymi, diesla i gazowymi. W katalogu znajdziesz
                     urządzenia do zasilania awaryjnego domu, warsztatu, placu budowy i zastosowań
-                    terenowych. Wysyłamy z magazynu w Bełchatowie, zapewniamy wsparcie techniczne
+                    terenowych. Zapewniamy wsparcie techniczne
                     przed zakupem oraz fakturę VAT do każdego zamówienia.
                 </p>
                 <nav aria-label="Kategorie produktów">
