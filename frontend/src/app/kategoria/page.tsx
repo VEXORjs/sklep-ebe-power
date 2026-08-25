@@ -102,7 +102,7 @@ export default async function CategoriesPage() {
             </header>
 
             <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {categories.map((category) => {
                         const items = productsInCategory(products, category);
                         const cheapest =

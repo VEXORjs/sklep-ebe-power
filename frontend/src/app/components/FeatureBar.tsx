@@ -27,7 +27,7 @@ const features = [
 export default function TrustBar() {
     return (
         <section className="w-full border-b border-neutral-800 bg-[#0d0f10] py-6">
-            <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 sm:px-6 md:grid-cols-4 lg:px-8">
+            <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 sm:px-6 md:grid-cols-4 lg:gap-8 lg:px-8 xl:gap-12">
                 {features.map((item) => (
                     <div
                         key={item.title}
@@ -37,10 +37,10 @@ export default function TrustBar() {
                             <item.icon className="h-5 w-5 stroke-[1.5]" />
                         </div>
                         <div>
-                            <p className="text-xs font-bold tracking-wide text-white sm:text-sm">
+                            <p className="text-xs font-bold tracking-wide text-white sm:text-sm xl:text-base">
                                 {item.title}
                             </p>
-                            <p className="text-[10px] text-neutral-500 sm:text-xs">{item.subtitle}</p>
+                            <p className="text-[10px] text-neutral-500 sm:text-xs xl:text-sm">{item.subtitle}</p>
                         </div>
                     </div>
                 ))}
