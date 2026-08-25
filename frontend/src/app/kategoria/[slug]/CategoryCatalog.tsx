@@ -439,7 +439,7 @@ function CategoryCatalogInner({ products, categoryName }: CategoryCatalogProps) 
                             </button>
                         </div>
                     ) : view === "grid" ? (
-                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-2">
                             {filtered.map((product, index) => (
                                 <ProductCard key={product.id} product={product} priority={index < 3} />
                             ))}
