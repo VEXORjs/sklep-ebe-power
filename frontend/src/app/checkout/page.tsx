@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { Lock, ShieldCheck, Truck } from 'lucide-react';
-
 import { useCart } from '@/app/context/CartContext';
 import FormWrapper from '@/app/checkout/FormWrapper';
 import {
