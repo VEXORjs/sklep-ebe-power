@@ -31,8 +31,8 @@ import java.util.Map;
 public class PaymentController {
 
     private static final BigDecimal VAT_MULTIPLIER = new BigDecimal("1.23");
-    private static final BigDecimal FREE_SHIPPING_THRESHOLD = new BigDecimal("500.00");
-    private static final BigDecimal SHIPPING_COST = new BigDecimal("16.99");
+//    private static final BigDecimal FREE_SHIPPING_THRESHOLD = new BigDecimal("500.00");
+//    private static final BigDecimal SHIPPING_COST = new BigDecimal("16.99");
     public static final BigDecimal FIRST_STARTUP_FEE = new BigDecimal("1000.00");
 
     @Value("${stripe.webhook.secret:}")
@@ -116,8 +116,8 @@ public class PaymentController {
             }
 
             BigDecimal gross = netTotal.multiply(VAT_MULTIPLIER).setScale(2, RoundingMode.HALF_UP);
-            BigDecimal shipping = gross.compareTo(FREE_SHIPPING_THRESHOLD) >= 0 ? BigDecimal.ZERO : SHIPPING_COST;
-            BigDecimal payable = gross.add(shipping).setScale(2, RoundingMode.HALF_UP);
+//            BigDecimal shipping = gross.compareTo(FREE_SHIPPING_THRESHOLD) >= 0 ? BigDecimal.ZERO : SHIPPING_COST;
+            BigDecimal payable = gross.setScale(2, RoundingMode.HALF_UP);
             long amountInGrosze = payable.movePointRight(2).setScale(0, RoundingMode.HALF_UP).longValue();
 
             if (amountInGrosze < 200) {

@@ -58,7 +58,7 @@ export default function CheckoutPage() {
                     <p className="text-xs font-bold uppercase tracking-wider text-emerald-400">Kasa</p>
                     <h1 className="mt-1 text-3xl font-extrabold tracking-tight">Podsumowanie i płatność</h1>
                     <p className="mt-2 max-w-2xl text-sm text-neutral-400">
-                        Kwota pobierana przez Stripe jest brutto (VAT 23%) i zawiera koszt dostawy.
+                        Kwota pobierana przez Stripe jest brutto (VAT 23%). <strong>Dostawa jest w pełni darmowa!</strong>
                         {/*jeśli zamówienie nie przekracza {formatPLN(FREE_SHIPPING_THRESHOLD)}.*/}
                     </p>
                 </div>

@@ -39,14 +39,13 @@ public class OrderService {
         Order order = orderRepository.findByStripePaymentIntentId(stripePaymentIntentId)
                 .orElseThrow(() -> new RuntimeException("Zamówienie dla PaymentIntent " + stripePaymentIntentId + " nie istnieje!"));
 
-        if (OrderStatus.PAID.equals(order.getStatus())) {
+        if (OrderStatus.PAID.equals(order.getStatus()) || OrderStatus.PAID_OUT_OF_STOCK.equals(order.getStatus())) {
             System.out.println("⚠️ Zamówienie " + order.getId() + " było już oznaczone jako opłacone.");
             return;
         }
 
-        order.setStatus(OrderStatus.PAID);
-        orderRepository.save(order);
-        System.out.println("💾 Status zamówienia " + order.getId() + " zmieniony na PAID.");
+        boolean requiresIntervention = false;
+        StringBuilder stockIssues = new StringBuilder();
 
         if (order.getItems() != null) {
             for (OrderItem item : order.getItems()) {
@@ -54,21 +53,50 @@ public class OrderService {
                 if (product == null) {
                     continue;
                 }
+
                 int purchasedQuantity = item.getQuantity();
                 Long currentStock = product.getStock() == null ? 0L : product.getStock();
+
                 if (currentStock < purchasedQuantity) {
-                    throw new RuntimeException("Brak wystarczającej ilości produktu " + product.getName() + " w magazynie!");
+                    // Oznaczamy zamówienie do ręcznej obsługi
+                    requiresIntervention = true;
+                    stockIssues.append("- ").append(product.getName())
+                            .append(" (Zamówiono: ").append(purchasedQuantity)
+                            .append(", Na stanie: ").append(currentStock).append(")\n");
+
+                    // Zbijamy stock do 0, aby zdjąć produkt ze strony i zapobiec dalszej sprzedaży
+                    product.setStock(0L);
+                    System.out.println("🚨 Krytyczny brak w magazynie dla: " + product.getName());
+                } else {
+                    product.setStock(currentStock - purchasedQuantity);
+                    System.out.println("📦 Zmniejszono stock dla: " + product.getName() + " o " + purchasedQuantity + " szt.");
                 }
-                product.setStock(currentStock - purchasedQuantity);
                 productRepository.save(product);
-                System.out.println("📦 Zmniejszono stock dla: " + product.getName() + " o " + purchasedQuantity + " szt.");
             }
         }
 
+        // Aktualizacja statusu zależnie od stanu magazynu
+        if (requiresIntervention) {
+            order.setStatus(OrderStatus.PAID_OUT_OF_STOCK);
+            System.out.println("💾 Status zamówienia " + order.getId() + " zmieniony na PAID_OUT_OF_STOCK.");
+        } else {
+            order.setStatus(OrderStatus.PAID);
+            System.out.println("💾 Status zamówienia " + order.getId() + " zmieniony na PAID.");
+        }
+
+        orderRepository.save(order);
+
+        // Wysyłanie maili
         try {
             emailService.sendOrderConfirmation(order.getCustomerEmail(), order.getId(), order.getAmount());
+
+            if (requiresIntervention) {
+                emailService.sendAdminStockWarningNotification(order, stockIssues.toString());
+            } else {
+                emailService.sendAdminOrderNotification(order);
+            }
         } catch (Exception e) {
-            System.out.println("⚠️ Nie udało się wysłać e-maila potwierdzającego: " + e.getMessage());
+            System.out.println("⚠️ Nie udało się wysłać e-maila: " + e.getMessage());
         }
     }
 }

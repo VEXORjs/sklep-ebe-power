@@ -10,6 +10,6 @@ export interface CartItemDto {
 export interface CartDto {
     userId: string;
     items: CartItemDto[];
-    cartTotal: number;
+        cartTotal: number;
     firstStartup?: boolean;
 }

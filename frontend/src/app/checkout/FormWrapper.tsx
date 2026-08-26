@@ -7,6 +7,7 @@ import Loading from '@/app/completion/loading';
 import StripeContainer from '@/app/checkout/StripeContainer';
 import { useCart } from '@/app/context/CartContext';
 import { getPublicApiUrl } from '@/app/lib/api';
+import Link from "next/link";
 
 export default function FormWrapper() {
     const [clientSecret, setClientSecret] = useState<string>('');
@@ -19,45 +20,49 @@ export default function FormWrapper() {
     const API_URL = getPublicApiUrl();
 
     useEffect(() => {
-        if (loading || status === 'loading') return;
+        const cartempty = async () => {
+            if (loading || status === 'loading') return;
 
-        if (!cart || !cart.items || cart.items.length === 0) {
-            setIsCartEmpty(true);
-            return;
-        }
+            if (!cart || !cart.items || cart.items.length === 0) {
+                setIsCartEmpty(true);
+                return;
+            }
 
-        if (hasFetched.current) return;
-        hasFetched.current = true;
+            if (hasFetched.current) return;
+            hasFetched.current = true;
 
-        const payload = {
-            userId: session?.user?.id || null,
-            customerEmail: session?.user?.email || null,
-            firstStartup: Boolean(cart.firstStartup),
-            items: cart.items.map((item) => ({
-                productId: item.productId,
-                quantity: item.quantity,
-            })),
-        };
+            const payload = {
+                userId: session?.user?.id || null,
+                customerEmail: session?.user?.email || null,
+                firstStartup: Boolean(cart.firstStartup),
+                items: cart.items.map((item) => ({
+                    productId: item.productId,
+                    quantity: item.quantity,
+                })),
+            };
 
-        fetch(`${API_URL}/api/payment/create-payment-intent`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-        })
-            .then(async (res) => {
-                const data = await res.json().catch(() => ({}));
-                if (!res.ok) {
-                    throw new Error(data.error || `Backend zwrócił błąd (${res.status})`);
-                }
-                if (!data.clientSecret) {
-                    throw new Error(data.error || 'Brak clientSecret z serwera płatności');
-                }
-                setClientSecret(data.clientSecret);
+            fetch(`${API_URL}/api/payment/create-payment-intent`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
             })
-            .catch((err: Error) => {
-                console.error('Błąd backendu płatności:', err);
-                setError(err.message || 'Nie udało się zainicjować płatności');
-            });
+                .then(async (res) => {
+                    const data = await res.json().catch(() => ({}));
+                    if (!res.ok) {
+                        throw new Error(data.error || `Backend zwrócił błąd (${res.status})`);
+                    }
+                    if (!data.clientSecret) {
+                        throw new Error(data.error || 'Brak clientSecret z serwera płatności');
+                    }
+                    setClientSecret(data.clientSecret);
+                })
+                .catch((err: Error) => {
+                    console.error('Błąd backendu płatności:', err);
+                    setError(err.message || 'Nie udało się zainicjować płatności');
+                });
+        }
+        void cartempty();
+
     }, [cart, loading, status, session, API_URL, retryToken]);
 
     if (isCartEmpty) {
@@ -67,12 +72,12 @@ export default function FormWrapper() {
                 <p className="text-sm text-neutral-400">
                     Dodaj produkty do koszyka, aby sfinalizować bezpieczną płatność.
                 </p>
-                <a
+                <Link
                     href="/"
                     className="inline-block rounded bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700"
                 >
                     Wróć do sklepu
-                </a>
+                </Link>
             </div>
         );
     }
