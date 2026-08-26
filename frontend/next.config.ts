@@ -39,10 +39,27 @@ const nextConfig: NextConfig = {
         ],
     },
     async headers() {
+        const cspHeader = `
+            default-src 'self';
+            script-src 'self' 'unsafe-eval' 'unsafe-inline' https://js.stripe.com https://m.stripe.network;
+            style-src 'self' 'unsafe-inline';
+            img-src 'self' blob: data: https://*.supabase.co https://images.unsplash.com https://unsplash.com;
+            font-src 'self' data:;
+            object-src 'none';
+            base-uri 'self';
+            form-action 'self';
+            frame-src 'self' https://js.stripe.com https://hooks.stripe.com;
+            connect-src 'self' https://api.stripe.com https://m.stripe.network https://*.supabase.co;
+        `.replace(/\s{2,}/g, ' ').trim();
+
         return [
             {
                 source: "/(.*)",
                 headers: [
+                    {
+                        key: "Content-Security-Policy",
+                        value: cspHeader,
+                    },
                     {
                         key: "X-Content-Type-Options",
                         value: "nosniff",
