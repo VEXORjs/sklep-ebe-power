@@ -106,7 +106,7 @@ export default function ShopSection({ products, initialVisible = 9 }: ShopSectio
                         Produkty
                     </h2>
                     <p className="mt-2 max-w-2xl text-sm text-neutral-400">
-                        Agregaty PRAMAC do zasilania awaryjnego, pracy na budowie i zastosowań terenowych — gotowe do wysyłki.
+                        Agregaty prądotwórcze do zasilania awaryjnego, pracy na budowie i zastosowań terenowych — gotowe do wysyłki.
                     </p>
                 </div>
                 <Link
