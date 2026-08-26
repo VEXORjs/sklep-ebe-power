@@ -9,7 +9,7 @@ import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import TopBar from "@/app/components/TopBar";
 import CartDrawer from "@/app/components/CartDrawer";
-
+import ProductionAlert from "@/app/components/ProductionAlert";
 
 const BRAND_LOGO_URL = "https://iyugrhskjjyegxppeqoj.supabase.co/storage/v1/object/public/product_images/EBE_Power_1_upscaled.jpeg";
 
@@ -180,6 +180,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         Przejdź do treści
                     </a>
                     <TopBar/>
+                    <ProductionAlert/>
                     <Navbar/>
                     <div id="main-content">
                         {children}
