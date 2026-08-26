@@ -8,9 +8,9 @@ import FormWrapper from '@/app/checkout/FormWrapper';
 import {
     formatPLN,
     FIRST_STARTUP_FEE,
-    FREE_SHIPPING_THRESHOLD,
+    // FREE_SHIPPING_THRESHOLD,
     grossPrice,
-    shippingCostFor,
+    // shippingCostFor,
     vatOf,
 } from '@/app/lib/product';
 
@@ -48,8 +48,8 @@ export default function CheckoutPage() {
     const net = cart.cartTotal + (startup ? FIRST_STARTUP_FEE : 0);
     const vat = vatOf(net);
     const gross = grossPrice(net);
-    const shipping = shippingCostFor(gross);
-    const payable = gross + shipping;
+    // const shipping = shippingCostFor(gross);
+    // const payable = gross + shipping;
 
     return (
         <div className="min-h-screen bg-black text-white">
@@ -58,8 +58,8 @@ export default function CheckoutPage() {
                     <p className="text-xs font-bold uppercase tracking-wider text-emerald-400">Kasa</p>
                     <h1 className="mt-1 text-3xl font-extrabold tracking-tight">Podsumowanie i płatność</h1>
                     <p className="mt-2 max-w-2xl text-sm text-neutral-400">
-                        Kwota pobierana przez Stripe jest brutto (VAT 23%) i zawiera koszt dostawy,
-                        jeśli zamówienie nie przekracza {formatPLN(FREE_SHIPPING_THRESHOLD)}.
+                        Kwota pobierana przez Stripe jest brutto (VAT 23%) i zawiera koszt dostawy.
+                        {/*jeśli zamówienie nie przekracza {formatPLN(FREE_SHIPPING_THRESHOLD)}.*/}
                     </p>
                 </div>
 
@@ -103,15 +103,15 @@ export default function CheckoutPage() {
                                     <dt>VAT 23%</dt>
                                     <dd className="text-white">{formatPLN(vat)}</dd>
                                 </div>
-                                <div className="flex justify-between text-neutral-400">
-                                    <dt>Dostawa</dt>
-                                    <dd className={shipping === 0 ? "font-bold text-emerald-400" : "text-white"}>
-                                        {shipping === 0 ? "Darmowa" : formatPLN(shipping)}
-                                    </dd>
-                                </div>
+                                {/*<div className="flex justify-between text-neutral-400">*/}
+                                {/*    <dt>Dostawa</dt>*/}
+                                {/*    <dd className={shipping === 0 ? "font-bold text-emerald-400" : "text-white"}>*/}
+                                {/*        {shipping === 0 ? "Darmowa" : formatPLN(shipping)}*/}
+                                {/*    </dd>*/}
+                                {/*</div>*/}
                                 <div className="flex justify-between border-t border-neutral-800 pt-3 text-base font-extrabold">
                                     <dt>Do zapłaty</dt>
-                                    <dd className="text-emerald-400">{formatPLN(payable)}</dd>
+                                    <dd className="text-emerald-400">{formatPLN(gross)}</dd>
                                 </div>
                             </dl>
                         </div>
