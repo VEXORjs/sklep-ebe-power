@@ -100,6 +100,7 @@ public class EmailService {
         }
         catch (Exception e){
             System.out.println("Blad wysylania alerty magazynowego" + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
