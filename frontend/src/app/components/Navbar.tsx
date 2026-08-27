@@ -119,12 +119,12 @@ export default function Navbar() {
                     <Link href="/#produkty" className="text-sm font-medium text-neutral-300 transition-colors hover:text-emerald-400">
                         Oferta
                     </Link>
-                    <Link href="/wynajem" className="text-sm font-medium text-neutral-300 transition-colors hover:text-emerald-400">
+                    {/* <Link href="/wynajem" className="text-sm font-medium text-neutral-300 transition-colors hover:text-emerald-400">
                         Wynajem
                     </Link>
                     <Link href="/serwis" className="text-sm font-medium text-neutral-300 transition-colors hover:text-emerald-400">
                         Serwis
-                    </Link>
+                    </Link> */}
                 </div>
 
                 {/* PRAWA STRONA (Motyw, Koszyk, Logowanie, Hamburger) */}
