@@ -2,7 +2,6 @@ package com.example.trafo;
 
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Event;
-import com.stripe.model.EventDataObjectDeserializer;
 import com.stripe.model.PaymentIntent;
 import com.stripe.net.Webhook;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,11 +42,12 @@ public class StripeWebhookController {
 
         // 2. Obsługa konkretnego zdarzenia sukcesu płatności
         if ("payment_intent.succeeded".equals(event.getType())) {
-            EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
+            // Wersjo-odporna deserializacja: standardowa ścieżka + fallback
+            // PaymentIntent.retrieve (patrz StripeEventUtils — bez tego eventy
+            // z nowszej wersji API, np. 2026-06-24.dahlia, były po cichu pomijane).
+            PaymentIntent paymentIntent = StripeEventUtils.extractPaymentIntent(event, payload);
 
-            if (dataObjectDeserializer.getObject().isPresent()) {
-                PaymentIntent paymentIntent = (PaymentIntent) dataObjectDeserializer.getObject().get();
-
+            if (paymentIntent != null) {
                 System.out.println("✅ Otrzymano potwierdzenie płatności dla ID: " + paymentIntent.getId());
                 System.out.println("💰 Kwota: " + paymentIntent.getAmount() + " " + paymentIntent.getCurrency());
 
@@ -57,7 +57,12 @@ public class StripeWebhookController {
                } catch (Exception e){
                    System.out.println("❌ Błąd przetwarzania zamówienia w bazie: " + e.getMessage());
                }
+            } else {
+                System.out.println("🛑 [Stripe] Event " + event.getId()
+                        + " (payment_intent.succeeded) bez danych PaymentIntent — pomijam.");
             }
+        } else {
+            System.out.println("ℹ️ [Stripe] Ignoruję zdarzenie typu: " + event.getType() + " (id: " + event.getId() + ")");
         }
 
         // Zawsze zwracamy 200 OK do Stripe, żeby potwierdzić odebranie paczki danych
