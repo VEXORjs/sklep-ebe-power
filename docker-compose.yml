@@ -34,6 +34,10 @@ services:
       - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
       - MAIL_PASSWORD=${MAIL_PASSWORD}
       - MAIL_USERNAME=${MAIL_USERNAME}
+      # Adres nadawcy musi być TĄ SAMA skrzynką co MAIL_USERNAME (seohost odrzuca inne)
+      - MAIL_FROM=${MAIL_FROM:-kontakt@ebe-power.pl}
+      # Opcjonalnie: token do diagnostycznego POST /api/payment/mail-test?token=...
+      - MAIL_TEST_TOKEN=${MAIL_TEST_TOKEN:-}
     depends_on:
       - postgres-db
     networks:
