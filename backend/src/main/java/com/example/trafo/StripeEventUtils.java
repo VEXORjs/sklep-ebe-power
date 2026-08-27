@@ -1,36 +1,3 @@
-import com.stripe.exception.SignatureVerificationException;
-import com.stripe.exception.StripeException;
-import com.stripe.model.Event;
-import com.stripe.model.EventDataObjectDeserializer;
-import com.stripe.model.PaymentIntent;
-import com.stripe.param.PaymentIntentCreateParams;
-import com.stripe.net.Webhook;
-        System.out.println("📬 Odebrano webhook od Stripe. Typ zdarzenia: " + eventType);
-
-        if ("payment_intent.succeeded".equals(eventType)) {
-            EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
-            if (dataObjectDeserializer.getObject().isPresent()) {
-                PaymentIntent paymentIntent = (PaymentIntent) dataObjectDeserializer.getObject().get();
-            // Wersjo-odporna deserializacja: standardowa ścieżka + fallback
-            // PaymentIntent.retrieve (patrz StripeEventUtils — bez tego eventy
-            // z nowszą wersją API, np. 2026-06-24.dahlia, były po cichu pomijane).
-            PaymentIntent paymentIntent = StripeEventUtils.extractPaymentIntent(event, payload);
-            if (paymentIntent != null) {
-                String stripeId = paymentIntent.getId();
-                System.out.println("💰 Płatność zakończona sukcesem dla ID: " + stripeId);
-                try {
-                    System.out.println("❌ Błąd przetwarzania zamówienia: " + e.getMessage());
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Order processing failed");
-                }
-            } else {
-                System.out.println("🛑 [Stripe] Event " + event.getId()
-                        + " (payment_intent.succeeded) bez danych PaymentIntent — pomijam.");
-            }
-        } else {
-            System.out.println("ℹ️ Ignoruję zdarzenie typu: " + eventType);
-
-backend/src/main/java/com/example/trafo/StripeEventUtils.java+64
-
 package com.example.trafo;
 
 import com.stripe.model.Event;
