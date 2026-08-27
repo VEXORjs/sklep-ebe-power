@@ -94,8 +94,12 @@ public class EmailService {
                         "ID zamówienia: " + order.getId() + "\n" +
                         "Kwota całkowita: " + order.getAmount() + " PLN\n"
         );
-
-        mailSender.send(message);
-        System.out.println("🚨 Alert magazynowy wysłany do admina dla zamówienia #" + order.getId());
+        try {
+            mailSender.send(message);
+            System.out.println("Alert magazynowy wysłany do admina dla zamówienia #" + order.getId());
+        }
+        catch (Exception e){
+            System.out.println("Blad wysylania alerty magazynowego" + e.getMessage());
+        }
     }
 }
