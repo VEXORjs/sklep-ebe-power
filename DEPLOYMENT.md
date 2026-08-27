@@ -177,3 +177,75 @@ na `frontend`.
 - DNS: `ebe-power.pl` (bez www) wskazuje na infrastrukturę Google
   (usługa Cloud Run), natomiast `www.ebe-power.pl` wskazuje na inny hosting.
   Warto ujednolicić rekord `www`, żeby cały ruch trafiał do sklepu Next.js.
+
+## Poczta nie wychodzi (potwierdzenia płatności)
+
+Objaw: po opłaceniu zamówienia klient nie dostaje potwierdzenia,
+a kopia nie przychodzi na `kontakt@ebe-power.pl`.
+
+Najczęstsze przyczyny (w tej kolejności sprawdzać):
+
+1. **Brak `MAIL_USERNAME` / `MAIL_PASSWORD` na usłudze Cloud Run.**
+   W `application.properties` mają puste defaulty — aplikacja wstaje,
+   ale każda wysyłka pada na autoryzacji SMTP (błąd 535).
+
+   ```bash
+   gcloud run services describe trafo --region europe-west1 --project trafo-500415 \
+     --format 'value(spec.template.spec.containers[0].env)'
+   ```
+
+2. **Login SMTP ≠ adres nadawcy.** Serwery seohost odrzucają wysyłkę
+   „w cudzym imieniu": `MAIL_FROM` (domyślnie `kontakt@ebe-power.pl`)
+   musi być **tą samą skrzynką**, którą logujesz się przez SMTP.
+
+3. **Błędy były ciche.** Wysyłka działa asynchronicznie (`@Async`), więc
+   wyjątki nie trafiały do logów w czytelnej formie. Po tej poprawce
+   każda wysyłka loguje się w logach usługi z prefiksem `[Mail]`
+   (pełny stacktrace przy błędzie), a przy starcie wypisywana jest
+   efektywna konfiguracja SMTP (bez hasła) z ostrzeżeniami 1–2.
+
+Ustawienie/naprawa zmiennych:
+
+```bash
+gcloud run services update trafo --region europe-west1 --project trafo-500415 \
+  --update-env-vars MAIL_USERNAME='kontakt@ebe-power.pl' \
+  --update-env-vars MAIL_PASSWORD='<hasło skrzynki>' \
+  --update-env-vars MAIL_FROM='kontakt@ebe-power.pl'
+```
+
+Test na żywo (bez składania zamówienia) — endpoint diagnostyczny,
+włączany zmienną `MAIL_TEST_TOKEN`:
+
+```bash
+gcloud run services update trafo --region europe-west1 --project trafo-500415 \
+  --update-env-vars MAIL_TEST_TOKEN='<losowy-ciag>'
+
+curl -X POST "https://trafo-1078992546635.europe-west1.run.app/api/payment/mail-test?token=<losowy-ciag>"
+# lub na inny adres:
+curl -X POST "https://trafo-1078992546635.europe-west1.run.app/api/payment/mail-test?token=<losowy-ciag>&to=twoj@mejl.pl"
+```
+
+Endpoint zwraca `✅ ...` albo **dokładną** przyczynę błędu
+(np. `535 authentication failed`, `sender rejected`, timeout).
+
+Logi poczty po zamówieniu:
+
+```bash
+gcloud beta run services logs read trafo --region europe-west1 \
+  --project trafo-500415 --limit 100 | grep '\[Mail\]'
+```
+
+### Dodatkowo naprawione przy okazji
+
+- **Klienci-goście nie dostawali potwierdzeń w ogóle**: e-mail wpisany
+  w oknie płatności Stripe (Link Authentication Element) nie trafia do
+  backendu przy tworzeniu PaymentIntent, więc zamówienie gościa miało
+  placeholder `gosc@domain.com`, który wysyłka celowo pomija. Backend
+  odzyskuje teraz prawdziwy adres z PaymentIntent / powiązanego charge'a
+  (`receipt_email`, `billing_details.email`) i zapisuje go na zamówieniu
+  przed wysłaniem potwierdzenia.
+- **Timeouty SMTP**: JavaMail domyślnie ma timeout = ∞ — przy
+  nieosiągalnym serwerze wątek wisiał w ciszy. Teraz: połączenie 10 s,
+  odczyt/zapis 15 s.
+- `MAIL_HOST` / `MAIL_PORT` pozwalają nadpisać serwer SMTP bez rebuildu
+  obrazu (domyślnie `h76.seohost.pl:465`).

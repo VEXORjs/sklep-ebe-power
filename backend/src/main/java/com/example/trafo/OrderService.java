@@ -1,5 +1,7 @@
 package com.example.trafo;
 
+import com.stripe.model.Charge;
+import com.stripe.model.PaymentIntent;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,11 +36,81 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    // Preferowany wariant dla webhooków Stripe: poza id przekazuje cały
+    // PaymentIntent, dzięki czemu można odzyskać PRAWDZIWY adres e-mail klienta
+    // (np. gość, który wpisał maila dopiero w oknie płatności Stripe).
+    @Transactional
+    public void processSuccessfulPayment(PaymentIntent paymentIntent) {
+        Order order = orderRepository.findByStripePaymentIntentId(paymentIntent.getId())
+                .orElseThrow(() -> new RuntimeException("Zamówienie dla PaymentIntent " + paymentIntent.getId() + " nie istnieje!"));
+
+        recoverCustomerEmail(order, paymentIntent);
+        markPaidAndNotify(order);
+    }
+
+    // Wariant po samym id (zachowany dla zgodności ze starym przepływem).
     @Transactional
     public void processSuccessfulPayment(String stripePaymentIntentId) {
         Order order = orderRepository.findByStripePaymentIntentId(stripePaymentIntentId)
                 .orElseThrow(() -> new RuntimeException("Zamówienie dla PaymentIntent " + stripePaymentIntentId + " nie istnieje!"));
 
+        markPaidAndNotify(order);
+    }
+
+            // Gość nie podaje maila przy tworzeniu PaymentIntent (frontend wysyła null),
+        // więc zamówienie dostaje placeholder gosc@domain.com / klient_<id>@domain.com,
+        // a EmailService celowo pomija takie adresy. E-mail wpisany przez klienta w
+    // Stripe (Link Authentication Element) ląduje na PaymentIntencie / charge'u —
+    // odzyskujemy go stamtąd i zapisujemy na zamówieniu przed wysłaniem potwierdzenia.
+    private void recoverCustomerEmail(Order order, PaymentIntent paymentIntent) {
+        String current = order.getCustomerEmail();
+        if (isRealEmail(current)) {
+            return; // normalny adres — nic do zrobienia
+        }
+
+        String realEmail = null;
+
+        // 1) receipt_email na PaymentIntencie (bywa ustawione, gdy e-mail był znany wcześniej)
+        try {
+            if (isRealEmail(paymentIntent.getReceiptEmail())) {
+                realEmail = paymentIntent.getReceiptEmail().trim();
+            }
+        } catch (Exception ignored) {
+        }
+
+        // 2) E-mail wpisany w oknie płatności Stripe → billing_details/receipt_email powiązanego charge'a
+        String latestChargeId = paymentIntent.getLatestCharge();
+        if (realEmail == null && latestChargeId != null && !latestChargeId.isBlank()) {
+            try {
+                Charge charge = Charge.retrieve(latestChargeId);
+                if (charge != null) {
+                    if (isRealEmail(charge.getReceiptEmail())) {
+                        realEmail = charge.getReceiptEmail().trim();
+                    } else if (charge.getBillingDetails() != null
+                            && isRealEmail(charge.getBillingDetails().getEmail())) {
+                        realEmail = charge.getBillingDetails().getEmail().trim();
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("⚠️ [Mail] Nie udało się pobrać danych karty/obciążenia ze Stripe: " + e.getMessage());
+            }
+        }
+
+        if (realEmail != null) {
+            order.setCustomerEmail(realEmail);
+            System.out.println("📧 [Mail] Odzyskano adres klienta ze Stripe: " + realEmail
+                    + " (poprzednio: " + current + ").");
+        } else {
+            System.out.println("⚠️ [Mail] Brak prawdziwego adresu klienta dla zamówienia #" + order.getId()
+                    + " — potwierdzenie do klienta zostanie pominięte (kopia dla obsługi wyjdzie normalnie).");
+        }
+    }
+
+    private boolean isRealEmail(String email) {
+        return email != null && email.contains("@") && !email.trim().endsWith("@domain.com");
+    }
+
+    private void markPaidAndNotify(Order order) {
         if (OrderStatus.PAID.equals(order.getStatus()) || OrderStatus.PAID_OUT_OF_STOCK.equals(order.getStatus())) {
             System.out.println("⚠️ Zamówienie " + order.getId() + " było już oznaczone jako opłacone.");
             return;
@@ -86,17 +158,15 @@ public class OrderService {
 
         orderRepository.save(order);
 
-        // Wysyłanie maili
-        try {
-            emailService.sendOrderConfirmation(order.getCustomerEmail(), order.getId(), order.getAmount());
+        // Wysyłanie maili. UWAGA: metody EmailService są @Async — wykonują się w
+        // osobnym wątku, więc try/catch tutaj i tak by NIC nie złapał. Błędy
+        // wysyłki są łapane i logowane (z pełnym stacktrace'em) wewnątrz EmailService.
+        emailService.sendOrderConfirmation(order.getCustomerEmail(), order.getId(), order.getAmount());
 
-            if (requiresIntervention) {
-                emailService.sendAdminStockWarningNotification(order, stockIssues.toString());
-            } else {
-                emailService.sendAdminOrderNotification(order);
-            }
-        } catch (Exception e) {
-            System.out.println("⚠️ Nie udało się wysłać e-maila: " + e.getMessage());
+        if (requiresIntervention) {
+            emailService.sendAdminStockWarningNotification(order, stockIssues.toString());
+        } else {
+            emailService.sendAdminOrderNotification(order);
         }
     }
 }

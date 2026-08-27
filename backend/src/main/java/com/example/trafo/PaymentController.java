@@ -38,14 +38,22 @@ public class PaymentController {
     @Value("${stripe.webhook.secret:}")
     private String webhookSecret;
 
+    // Token chroniący endpoint diagnostyczny /api/payment/mail-test.
+    // Pusty (domyślnie) = endpoint wyłączony. Ustaw MAIL_TEST_TOKEN, aby włączyć.
+    @Value("${shop.mail.test-token:}")
+    private String mailTestToken;
+
     private final OrderService orderService;
     private final CartService cartService;
     private final ProductRepository productRepository;
+    private final EmailService emailService;
 
-    public PaymentController(OrderService orderService, CartService cartService, ProductRepository productRepository) {
+    public PaymentController(OrderService orderService, CartService cartService,
+                             ProductRepository productRepository, EmailService emailService) {
         this.orderService = orderService;
         this.cartService = cartService;
         this.productRepository = productRepository;
+        this.emailService = emailService;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -220,7 +228,9 @@ public class PaymentController {
                 String stripeId = paymentIntent.getId();
                 System.out.println("💰 Płatność zakończona sukcesem dla ID: " + stripeId);
                 try {
-                    orderService.processSuccessfulPayment(stripeId);
+                    // Przekazujemy CAŁY PaymentIntent (nie samo id) — OrderService
+                    // odzyska z niego prawdziwy e-mail klienta-gościa przed wysłaniem potwierdzenia.
+                    orderService.processSuccessfulPayment(paymentIntent);
                 } catch (Exception e) {
                     System.out.println("❌ Błąd przetwarzania zamówienia: " + e.getMessage());
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Order processing failed");
@@ -230,5 +240,36 @@ public class PaymentController {
             System.out.println("ℹ️ Ignoruję zdarzenie typu: " + eventType);
         }
         return ResponseEntity.ok("Webhook obsluzony prawidlowo");
+    }
+
+    // Endpoint diagnostyczny: sprawdza na żywo, czy SMTP działa, i zwraca DOKŁADNĄ
+    // przyczynę ewentualnego błędu (np. 535 błędne hasło, 550 odrzucony nadawca,
+    // timeout). Wyłączony, dopóki nie ustawisz zmiennej MAIL_TEST_TOKEN.
+    //
+    //   curl -X POST "https://<backend>/api/payment/mail-test?token=TWOJ_TOKEN"
+    //   curl -X POST "https://<backend>/api/payment/mail-test?token=TWOJ_TOKEN&to=inny@adres.pl"
+    @PostMapping("/mail-test")
+    public ResponseEntity<String> mailTest(
+            @RequestParam(value = "to", required = false) String to,
+            @RequestParam(value = "token", required = false) String token) {
+
+        if (mailTestToken == null || mailTestToken.isBlank()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Endpoint wyłączony. Ustaw zmienną środowiskową MAIL_TEST_TOKEN, aby go włączyć.");
+        }
+        if (token == null || !token.equals(mailTestToken)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Nieprawidłowy token.");
+        }
+
+        String recipient = (to == null || to.isBlank()) ? "kontakt@ebe-power.pl" : to.trim();
+        try {
+            emailService.sendTestEmail(recipient);
+            return ResponseEntity.ok("✅ Testowy e-mail został wysłany na: " + recipient);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("❌ Wysyłka nie powiodła się — przyczyna: " + e.getClass().getSimpleName()
+                            + ": " + e.getMessage());
+        }
     }
 }

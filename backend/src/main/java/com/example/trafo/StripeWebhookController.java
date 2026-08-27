@@ -52,7 +52,8 @@ public class StripeWebhookController {
                 System.out.println("💰 Kwota: " + paymentIntent.getAmount() + " " + paymentIntent.getCurrency());
 
                try {
-                   orderService.processSuccessfulPayment(paymentIntent.getId());
+                   // Cały PaymentIntent — OrderService odzyska z niego e-mail klienta-gościa.
+                   orderService.processSuccessfulPayment(paymentIntent);
                } catch (Exception e){
                    System.out.println("❌ Błąd przetwarzania zamówienia w bazie: " + e.getMessage());
                }
