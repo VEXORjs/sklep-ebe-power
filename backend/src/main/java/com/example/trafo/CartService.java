@@ -20,7 +20,7 @@ public class CartService {
 
     // 🔍 Pobieranie koszyka użytkownika (lub tworzenie nowego, jeśli jeszcze go nie ma)
     public Cart getOrCreateCart(String userId) {
-        return cartRepository.findByUserId(userId)
+        return cartRepository.findFirstByUserIdOrderByIdDesc(userId)
                 .orElseGet(() -> cartRepository.save(new Cart(userId)));
     }
 
@@ -79,7 +79,7 @@ public class CartService {
 
     @Transactional
     public Cart clearCartByUserId(String userId) {
-        return cartRepository.findByUserId(userId).map(cart -> {
+        return cartRepository.findFirstByUserIdOrderByIdDesc(userId).map(cart -> {
             cart.getItems().clear();
             System.out.println("🛒 Koszyk użytkownika " + userId + " został opróżniony po udanej płatności.");
             return cartRepository.save(cart);
