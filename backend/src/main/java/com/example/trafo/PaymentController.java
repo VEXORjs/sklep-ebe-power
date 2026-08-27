@@ -120,7 +120,7 @@ public class PaymentController {
             BigDecimal payable = gross.setScale(2, RoundingMode.HALF_UP);
             long amountInGrosze = payable.movePointRight(2).setScale(0, RoundingMode.HALF_UP).longValue();
 
-            if (amountInGrosze < 200) {
+            if (amountInGrosze < 10) {
                 return ResponseEntity.badRequest().body(Map.of("error", "Kwota zamówienia jest zbyt niska do płatności Stripe"));
             }
 
