@@ -12,7 +12,6 @@ export default function ThemeToggle({ className = '' }: { className?: string }) 
             <button
                 aria-label="Przełącz motyw"
                 className={`inline-flex h-9 w-9 items-center justify-center rounded-md border border-neutral-800 bg-neutral-900 text-neutral-400 ${className}`}
-                disabled
             >
                 <Sun className="h-4 w-4" />
             </button>
