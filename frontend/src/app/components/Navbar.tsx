@@ -181,7 +181,7 @@ export default function Navbar() {
                         <span className="text-xl leading-none">🛒</span>
                         <span className="text-sm font-medium hidden md:inline">Koszyk</span>
                         {itemsCount > 0 && (
-                            <span className="absolute -top-0.5 -right-0.5 bg-emerald-500 text-slate-950 text-xs font-extrabold rounded-full h-5 w-5 flex items-center justify-center">
+                            <span className="absolute -top-0.5 -right-0.5 bg-emerald-500 text-slate-950 text-xs font-extrabold rounded-full h-4 w-4 flex items-center justify-center">
                                 {itemsCount}
                             </span>
                         )}
