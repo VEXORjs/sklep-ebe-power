@@ -4,7 +4,7 @@ import LegalPageShell, { LegalSection } from "@/app/components/LegalPageShell";
 export const metadata: Metadata = {
     title: "Polityka prywatności — RODO",
     description:
-        "Polityka prywatności sklepu ebe power (TRAFO ENERGIA) — jakie dane zbieramy, w jakim celu i jakie masz prawa na podstawie RODO.",
+        "Polityka prywatności sklepu ebe power — jakie dane zbieramy, w jakim celu i jakie masz prawa na podstawie RODO.",
     alternates: { canonical: "/polityka-prywatnosci" },
     openGraph: {
         title: "Polityka prywatności | ebe power",

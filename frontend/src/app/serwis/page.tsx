@@ -5,7 +5,7 @@ import ExperienceStats from "@/app/components/ExperienceCard";
 export const metadata: Metadata = {
     title: "Serwis i konserwacja transformatorów — diagnostyka, pomiary, przeglądy",
     description:
-        "Profesjonalny serwis transformatorów i stacji transformatorowych. Diagnostyka, pomiary elektryczne, przeglądy okresowe, naprawy i konserwacja. TRAFO ENERGIA — Bełchatów.",
+        "Profesjonalny serwis transformatorów i stacji transformatorowych. Diagnostyka, pomiary elektryczne, przeglądy okresowe, naprawy i konserwacja. ebe power — Bełchatów.",
     alternates: { canonical: "/serwis" },
     keywords: [
         "serwis transformatorów",
@@ -32,7 +32,7 @@ export default function ServicePage() {
             "Kompleksowe usługi diagnostyki, pomiarów oraz przeglądów technicznych urządzeń elektroenergetycznych i stacji transformatorowych.",
         provider: {
             "@type": "Organization",
-            name: "ebe power — TRAFO ENERGIA",
+            name: "ebe power",
             url: "https://sklep.ebe-power.pl",
         },
         areaServed: {

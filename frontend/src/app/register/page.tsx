@@ -61,13 +61,13 @@ export default function RegisterPage() {
     return (
         <AuthShell
             eyebrow="Nowy klient"
-            headline="Załóż konto w TRAFO ENERGIA"
+            headline="Załóż konto w ebe power"
             description="Jedno konto — faktury VAT, historia zamówień i szybsza kasa przy kolejnych zakupach."
         >
             <div className="space-y-6">
                 <div>
                     <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-400">
-                        TRAFO ENERGIA
+                        EBE POWER
                     </p>
                     <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-white">
                         Rejestracja

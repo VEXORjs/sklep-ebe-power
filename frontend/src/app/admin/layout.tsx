@@ -44,7 +44,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               T
             </div>
             <div>
-              <div className="font-bold tracking-tight">Trafo Admin</div>
+              <div className="font-bold tracking-tight">ebe power Admin</div>
               <div className="text-[11px] text-slate-400 uppercase tracking-widest">Panel zarządzania</div>
             </div>
           </div>
@@ -94,7 +94,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="rounded-xl bg-slate-900 p-3 border border-slate-800">
             <div className="text-xs text-slate-400">Zalogowany jako</div>
             <div className="text-sm font-medium truncate">Administrator</div>
-            <div className="mt-2 text-[11px] text-slate-500">v2.0 • Trafo Energia</div>
+            <div className="mt-2 text-[11px] text-slate-500">v2.0 • ebe power</div>
           </div>
         </div>
       </aside>
@@ -109,14 +109,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           >
             ☰
           </button>
-          <div className="font-semibold">Trafo Admin</div>
+          <div className="font-semibold">ebe power Admin</div>
           <div className="w-9" />
         </header>
 
         <main className="flex-1 p-4 lg:p-8 max-w-[1600px] w-full mx-auto">{children}</main>
 
         <footer className="px-8 py-4 text-center text-xs text-slate-400 border-t border-slate-200 bg-white">
-          © {new Date().getFullYear()} Trafo Energia • Panel administracyjny • Wszystkie operacje są logowane
+          © {new Date().getFullYear()} ebe power • Panel administracyjny • Wszystkie operacje są logowane
         </footer>
       </div>
     </div>

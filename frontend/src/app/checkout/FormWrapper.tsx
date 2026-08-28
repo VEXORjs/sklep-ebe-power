@@ -106,5 +106,5 @@ export default function FormWrapper() {
         return <Loading message="Generowanie bezpiecznej sesji płatności..." />;
     }
 
-    return <StripeContainer clientSecret={clientSecret} />;
+    return <StripeContainer clientSecret={clientSecret} defaultEmail={session?.user?.email ?? null} />;
 }

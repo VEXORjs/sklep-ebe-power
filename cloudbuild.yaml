@@ -1,9 +1,9 @@
 # Cloud Build — frontend Next.js (usługa Cloud Run `frontend`).
 #
 # TEN PLIK buduje wyłącznie ./frontend i wdraża obraz na usługę `frontend`.
-# Backend Spring Boot ma osobny plik: backend/cloudbuild.yaml (usługa `trafo`).
+# Backend Spring Boot ma osobny plik: backend/cloudbuild.yaml (usługa `ebe-power`).
 # Trigger o nazwie "backend" NIE MOŻE wskazywać tutaj — wcześniej nadpisywał
-# usługę `trafo` obrazem sklepu Next.js (HTML zamiast JSON API).
+# usługę `ebe-power` obrazem sklepu Next.js (HTML zamiast JSON API).
 #
 # Substitutions są definiowane w ustawieniach triggera Cloud Build
 # (można je nadpisać per trigger, bez edytowania tego pliku).
@@ -14,11 +14,11 @@
 #   _REGION        — region Cloud Run.
 #
 # Nazwa usługi Cloud Run jest zahardkodowana jako `frontend` (nie substytucja),
-# żeby trigger z _SERVICE_NAME=trafo nie mógł wrzucić tego obrazu na backend.
+# żeby trigger z _SERVICE_NAME=ebe-power nie mógł wrzucić tego obrazu na backend.
 #
 # API_URL (wewnętrzny adres backendu Spring Boot) jest ustawione BEZPOŚREDNIO
 # w usłudze Cloud Run (sekcja „Zmienne i sekrety"), np.
-# https://trafo-....europe-west1.run.app. Nie ustawiamy go tutaj, żeby
+# https://ebe-power-....europe-west1.run.app. Nie ustawiamy go tutaj, żeby
 # `gcloud run deploy` go nie nadpisywał. Proxy /api/backend czyta je w runtime.
 substitutions:
   _APP_URL: 'https://sklep.ebe-power.pl'
@@ -77,7 +77,7 @@ steps:
   #    tej samej rewizji — ostatnia wygrywa. Wtedy można usunąć ten krok.
   #
   #    Usługa jest literałem `frontend` (nie $_SERVICE_NAME) — pomyłkowa
-  #    substytucja triggera nie może nadpisać backendu (`trafo`).
+  #    substytucja triggera nie może nadpisać backendu (`ebe-power`).
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args:

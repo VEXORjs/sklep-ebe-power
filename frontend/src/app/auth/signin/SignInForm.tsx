@@ -107,7 +107,7 @@ export default function SignInForm() {
         <div className="space-y-6">
             <div>
                 <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-400">
-                    TRAFO ENERGIA
+                    EBE POWER
                 </p>
                 <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-white">
                     {fromCheckout ? "Zaloguj się, aby dokończyć zakup" : "Zaloguj się"}

@@ -210,7 +210,7 @@ export function buildFallbackCategory(name: string): CategoryDef {
         slug: slugify(name),
         name,
         tagline: "Sprawdź pełną ofertę w tej kategorii",
-        description: `Produkty z kategorii ${name} dostępne w sklepie TRAFO ENERGIA. Wysyłka w 24 h, faktura VAT i wsparcie techniczne przed zakupem.`,
+        description: `Produkty z kategorii ${name} dostępne w sklepie ebe power. Wysyłka w 24 h, faktura VAT i wsparcie techniczne przed zakupem.`,
         match: [name],
         image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=70&w=800",
         keywords: [name.toLowerCase()],
