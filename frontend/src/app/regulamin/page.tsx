@@ -20,12 +20,12 @@ export default function RegulaminPage() {
         <LegalPageShell
             eyebrow="Informacje"
             title="Regulamin sklepu"
-            updated="19 sierpnia 2026"
+            updated="28 sierpnia 2026"
         >
             <LegalSection title="1. Postanowienia ogólne">
                 <p>
-                    Sklep internetowy TRAFO ENERGIA, dostępny pod adresem strony
-                    głównej serwisu, prowadzony jest przez TRAFO ENERGIA z siedzibą
+                    Sklep internetowy EBE POWER, dostępny pod adresem strony
+                    głównej serwisu, prowadzony jest przez EBE POWER z siedzibą
                     w Bełchatowie. Regulamin określa zasady zawierania umów
                     sprzedaży za pośrednictwem sklepu, zasady świadczenia usług
                     drogą elektroniczną oraz prawa i obowiązki Kupujących i
@@ -43,8 +43,8 @@ export default function RegulaminPage() {
                 <p>
                     Zamówienia można składać przez całą dobę, siedem dni w
                     tygodniu. Warunkiem złożenia zamówienia jest podanie
-                    prawdziwych danych adresowych oraz kontaktowych (adres e-mail,
-                    numer telefonu), umożliwiających realizację dostawy i
+                    prawdziwych danych adresowych oraz kontaktowych (adres e-mail),
+                    umożliwiających realizację dostawy i
                     potwierdzenie zamówienia.
                 </p>
                 <p>
@@ -66,7 +66,7 @@ export default function RegulaminPage() {
 
             <LegalSection title="4. Dostawa">
                 <p>
-                    Zamówienia wysyłamy z magazynu w Bełchatowie. Standardowy czas
+                    Zamówienia wysyłamy z magazynu. Standardowy czas
                     realizacji to 24 godziny od zaksięgowania płatności. Szczegóły
                     dotyczące kosztów i sposobów dostawy znajdują się na stronie{" "}
                     <Link href="/dostawa" className="text-emerald-400 hover:text-emerald-300 transition-colors">Dostawa i płatności</Link>.
