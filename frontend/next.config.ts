@@ -117,6 +117,33 @@ const nextConfig: NextConfig = {
                 destination: "/products/:id",
                 permanent: true,
             },
+            // Stara taksonomia agregatów (jedna kategoria + podkategorie)
+            // → nowy podział na 4 kategorie po rodzaju napędu
+            {
+                source: "/kategoria/agregaty",
+                destination: "/kategoria",
+                permanent: true,
+            },
+            {
+                source: "/kategoria/agregaty/inwerterowe",
+                destination: "/kategoria/inwerterowe",
+                permanent: true,
+            },
+            {
+                source: "/kategoria/agregaty/gazowe",
+                destination: "/kategoria/gazowe",
+                permanent: true,
+            },
+            {
+                source: "/kategoria/agregaty/benzynowe",
+                destination: "/kategoria/benzynowe",
+                permanent: true,
+            },
+            {
+                source: "/kategoria/agregaty/diesla",
+                destination: "/kategoria/diesla",
+                permanent: true,
+            },
         ];
     },
 };

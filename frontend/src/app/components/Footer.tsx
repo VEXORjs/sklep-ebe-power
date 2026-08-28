@@ -30,8 +30,23 @@ export default function Footer() {
                             </h4>
                             <ul className="space-y-2 text-xs">
                                 <li>
-                                    <Link href="/kategoria/agregaty" className="hover:text-emerald-400 transition-colors">
-                                        Agregaty prądotwórcze
+                                    <Link href="/kategoria/inwerterowe" className="hover:text-emerald-400 transition-colors">
+                                        Agregaty inwerterowe
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/kategoria/gazowe" className="hover:text-emerald-400 transition-colors">
+                                        Agregaty gazowe
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/kategoria/benzynowe" className="hover:text-emerald-400 transition-colors">
+                                        Agregaty benzynowe
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/kategoria/diesla" className="hover:text-emerald-400 transition-colors">
+                                        Agregaty diesla
                                     </Link>
                                 </li>
                                 <li>

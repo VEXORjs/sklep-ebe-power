@@ -8,8 +8,23 @@ import { useCart } from '@/app/context/CartContext';
 import Image from "next/image";
 import { currentPathCallbackUrl } from '@/app/lib/auth-redirect';
 import ThemeToggle from '@/app/components/ThemeToggle';
-import { CATEGORIES } from '@/app/data/categories';
+import { CATEGORIES, type CategoryDef } from '@/app/data/categories';
 import { ChevronDown, Menu, X } from 'lucide-react';
+
+/** Kategorie pogrupowane po etykiecie `group` — do menu nawigacji. */
+const CATEGORY_GROUPS: { label: string; categories: CategoryDef[] }[] = CATEGORIES.reduce(
+    (groups, category) => {
+        const label = category.group ?? 'Inne kategorie';
+        const existing = groups.find((group) => group.label === label);
+        if (existing) {
+            existing.categories.push(category);
+        } else {
+            groups.push({ label, categories: [category] });
+        }
+        return groups;
+    },
+    [] as { label: string; categories: CategoryDef[] }[]
+);
 
 export default function Navbar() {
     const { data: session } = useSession();
@@ -80,26 +95,52 @@ export default function Navbar() {
                         </button>
 
                         {isDropdownOpen && (
-                            <div className="absolute left-0 top-full pt-1 w-72 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+                            <div className="absolute left-0 top-full pt-1 w-[26rem] z-50 animate-in fade-in slide-in-from-top-1 duration-150">
                                 <div className="rounded-xl border border-neutral-800 bg-[#101214] p-2 shadow-2xl">
-                                    <div className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-neutral-500 border-b border-neutral-800/60 mb-1">
-                                        Wybierz kategorię
-                                    </div>
-                                    <div className="max-h-[380px] overflow-y-auto space-y-0.5">
-                                        {CATEGORIES.map((category) => (
-                                            <Link
-                                                key={category.slug}
-                                                href={`/kategoria/${category.slug}`}
-                                                onClick={() => setIsDropdownOpen(false)}
-                                                className="group flex flex-col px-3 py-2 rounded-lg text-sm transition-colors hover:bg-neutral-800/70"
+                                    <div className="max-h-[min(72vh,540px)] overflow-y-auto">
+                                        {CATEGORY_GROUPS.map((group, groupIndex) => (
+                                            <div
+                                                key={group.label}
+                                                className={
+                                                    groupIndex > 0
+                                                        ? 'mt-2 border-t border-neutral-800/60 pt-2'
+                                                        : ''
+                                                }
                                             >
-                                                <span className="font-semibold text-neutral-200 group-hover:text-emerald-400 transition-colors">
-                                                    {category.name}
-                                                </span>
-                                                <span className="text-xs text-neutral-500 line-clamp-1">
-                                                    {category.tagline}
-                                                </span>
-                                            </Link>
+                                                <div className="px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-neutral-500">
+                                                    {group.label}
+                                                </div>
+                                                {group.categories.map((category) => (
+                                                    <div key={category.slug}>
+                                                        <Link
+                                                            href={`/kategoria/${category.slug}`}
+                                                            onClick={() => setIsDropdownOpen(false)}
+                                                            className="group flex flex-col px-3 py-2 rounded-lg text-sm transition-colors hover:bg-neutral-800/70"
+                                                        >
+                                                            <span className="font-semibold text-neutral-200 group-hover:text-emerald-400 transition-colors">
+                                                                {category.name}
+                                                            </span>
+                                                            <span className="text-xs text-neutral-500 line-clamp-1">
+                                                                {category.tagline}
+                                                            </span>
+                                                        </Link>
+                                                        {category.subcategories && category.subcategories.length > 0 && (
+                                                            <div className="flex flex-wrap gap-1.5 px-3 pb-2">
+                                                                {category.subcategories.map((subcategory) => (
+                                                                    <Link
+                                                                        key={subcategory.slug}
+                                                                        href={`/kategoria/${category.slug}/${subcategory.slug}`}
+                                                                        onClick={() => setIsDropdownOpen(false)}
+                                                                        className="rounded-full border border-neutral-800 bg-black/30 px-2.5 py-1 text-[11px] font-semibold text-neutral-400 transition-colors hover:border-emerald-500/60 hover:text-emerald-300"
+                                                                    >
+                                                                        {subcategory.shortName ?? subcategory.name}
+                                                                    </Link>
+                                                                ))}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
                                         ))}
                                     </div>
                                     <div className="mt-1 pt-1 border-t border-neutral-800/60">
@@ -215,13 +256,27 @@ export default function Navbar() {
                                         Wszystkie kategorie →
                                     </Link>
                                     {CATEGORIES.map((c) => (
-                                        <Link
-                                            key={c.slug}
-                                            href={`/kategoria/${c.slug}`}
-                                            className="block py-1.5 text-sm text-neutral-400 hover:text-white transition-colors"
-                                        >
-                                            {c.name}
-                                        </Link>
+                                        <div key={c.slug}>
+                                            <Link
+                                                href={`/kategoria/${c.slug}`}
+                                                className="block py-1.5 text-sm text-neutral-400 hover:text-white transition-colors"
+                                            >
+                                                {c.name}
+                                            </Link>
+                                            {c.subcategories && c.subcategories.length > 0 && (
+                                                <div className="ml-3 mb-1 space-y-0.5 border-l border-neutral-800 pl-3">
+                                                    {c.subcategories.map((subcategory) => (
+                                                        <Link
+                                                            key={subcategory.slug}
+                                                            href={`/kategoria/${c.slug}/${subcategory.slug}`}
+                                                            className="block py-1 text-xs text-neutral-500 hover:text-emerald-400 transition-colors"
+                                                        >
+                                                            {subcategory.shortName ?? subcategory.name}
+                                                        </Link>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
                                     ))}
                                 </div>
                             )}
