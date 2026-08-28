@@ -151,6 +151,64 @@ function dual(): CategorySubcategory {
     };
 }
 
+export const AKCESORIES: CategoryDef[] = [
+    {
+        slug: "akcesoria",
+        name: "Akcesoria",
+        group: "Inne kategorie",
+        tagline: "Osprzęt montażowy, złączki i narzędzia instalatora",
+        description:
+            "Wszystko, czego brakuje w koszyku tuż przed wyjazdem na budowę: złączki szybkozłączne, listwy zaciskowe, koryta i peszle, opaski, końcówki tulejkowe, oznaczniki oraz drobne narzędzia instalatorskie.",
+        match: ["Akcesoria", "Osprzęt", "Akcesoria montażowe"],
+        image: "https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&q=70&w=800",
+        keywords: ["złączki elektryczne", "końcówki tulejkowe", "peszel", "osprzęt instalacyjny"],
+        highlights: [
+            {
+                title: "Sprawdzone marki",
+                text: "Osprzęt renomowanych producentów z pełną dokumentacją i atestami.",
+            },
+            {
+                title: "Opakowania zbiorcze",
+                text: "Zestawy warsztatowe i opakowania hurtowe w wyraźnie niższej cenie jednostkowej.",
+            },
+            {
+                title: "Kompletacja zamówień",
+                text: "Zbierz drobnicę w jednej przesyłce razem z transformatorem lub rozdzielnicą.",
+            },
+        ],
+        buyingGuide: [
+            "Do połączeń w puszkach używaj złączek szybkozłącznych — są szybsze i pewniejsze niż skręcanie żył.",
+            "Linki zawsze zarabiaj końcówką tulejkową, inaczej zacisk poluzuje się po kilku cyklach termicznych.",
+            "Peszel karbowany dobierz o średnicy zapewniającej 40 % wolnej przestrzeni na przyszłe przewody.",
+            "Opisane oznaczniki żył skracają czas późniejszego serwisu nawet o połowę.",
+            "Trzymaj w aucie zestaw najpopularniejszych rozmiarów — brak jednej złączki potrafi zatrzymać całą robotę.",
+        ],
+        applications: [
+            "Prace instalacyjne",
+            "Montaż rozdzielnic",
+            "Serwis awaryjny",
+            "Wyposażenie warsztatu",
+        ],
+        faq: [
+            {
+                question: "Czy wysyłacie drobnicę razem z dużym zamówieniem?",
+                answer:
+                    "Tak, kompletujemy całe zamówienie w jednej przesyłce. Jeśli część produktów ma dłuższy termin, możemy podzielić wysyłkę bez dodatkowych kosztów.",
+            },
+            {
+                question: "Czy złączki są dopuszczone do instalacji stałych?",
+                answer:
+                    "Oferowane przez nas złączki spełniają normę PN-EN 60998 i są dopuszczone do połączeń w puszkach instalacyjnych oraz rozdzielnicach.",
+            },
+            {
+                question: "Czy dostępne są opakowania zbiorcze?",
+                answer:
+                    "Większość drobnicy oferujemy zarówno w opakowaniach detalicznych, jak i w kartonach zbiorczych z rabatem ilościowym.",
+            },
+        ],
+    },
+];
+
 export const CATEGORIES: CategoryDef[] = [
     {
         slug: "inwerterowe",
@@ -431,61 +489,6 @@ export const CATEGORIES: CategoryDef[] = [
             },
         ],
     },
-    {
-        slug: "akcesoria",
-        name: "Akcesoria",
-        group: "Inne kategorie",
-        tagline: "Osprzęt montażowy, złączki i narzędzia instalatora",
-        description:
-            "Wszystko, czego brakuje w koszyku tuż przed wyjazdem na budowę: złączki szybkozłączne, listwy zaciskowe, koryta i peszle, opaski, końcówki tulejkowe, oznaczniki oraz drobne narzędzia instalatorskie.",
-        match: ["Akcesoria", "Osprzęt", "Akcesoria montażowe"],
-        image: "https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&q=70&w=800",
-        keywords: ["złączki elektryczne", "końcówki tulejkowe", "peszel", "osprzęt instalacyjny"],
-        highlights: [
-            {
-                title: "Sprawdzone marki",
-                text: "Osprzęt renomowanych producentów z pełną dokumentacją i atestami.",
-            },
-            {
-                title: "Opakowania zbiorcze",
-                text: "Zestawy warsztatowe i opakowania hurtowe w wyraźnie niższej cenie jednostkowej.",
-            },
-            {
-                title: "Kompletacja zamówień",
-                text: "Zbierz drobnicę w jednej przesyłce razem z transformatorem lub rozdzielnicą.",
-            },
-        ],
-        buyingGuide: [
-            "Do połączeń w puszkach używaj złączek szybkozłącznych — są szybsze i pewniejsze niż skręcanie żył.",
-            "Linki zawsze zarabiaj końcówką tulejkową, inaczej zacisk poluzuje się po kilku cyklach termicznych.",
-            "Peszel karbowany dobierz o średnicy zapewniającej 40 % wolnej przestrzeni na przyszłe przewody.",
-            "Opisane oznaczniki żył skracają czas późniejszego serwisu nawet o połowę.",
-            "Trzymaj w aucie zestaw najpopularniejszych rozmiarów — brak jednej złączki potrafi zatrzymać całą robotę.",
-        ],
-        applications: [
-            "Prace instalacyjne",
-            "Montaż rozdzielnic",
-            "Serwis awaryjny",
-            "Wyposażenie warsztatu",
-        ],
-        faq: [
-            {
-                question: "Czy wysyłacie drobnicę razem z dużym zamówieniem?",
-                answer:
-                    "Tak, kompletujemy całe zamówienie w jednej przesyłce. Jeśli część produktów ma dłuższy termin, możemy podzielić wysyłkę bez dodatkowych kosztów.",
-            },
-            {
-                question: "Czy złączki są dopuszczone do instalacji stałych?",
-                answer:
-                    "Oferowane przez nas złączki spełniają normę PN-EN 60998 i są dopuszczone do połączeń w puszkach instalacyjnych oraz rozdzielnicach.",
-            },
-            {
-                question: "Czy dostępne są opakowania zbiorcze?",
-                answer:
-                    "Większość drobnicy oferujemy zarówno w opakowaniach detalicznych, jak i w kartonach zbiorczych z rabatem ilościowym.",
-            },
-        ],
-    },
 ];
 
 /** Kategoria „awaryjna" tworzona dla wartości spoza taksonomii (np. nowa kategoria z backendu). */
@@ -517,6 +520,14 @@ export function buildFallbackCategory(name: string): CategoryDef {
         faq: [],
     };
 }
+
+/**
+ * Kategorie spoza grupy agregatów (obecnie Akcesoria) — używane jako
+ * szybkie linki obok „Oferta" w pasku nawigacji.
+ */
+export const AKCESORIA: CategoryDef[] = CATEGORIES.filter(
+    (category) => category.group !== AGGREGATE_GROUP
+);
 
 export function getCategoryBySlug(slug: string): CategoryDef | undefined {
     const wanted = slug.toLowerCase();

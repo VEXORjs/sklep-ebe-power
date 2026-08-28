@@ -8,7 +8,7 @@ import { useCart } from '@/app/context/CartContext';
 import Image from "next/image";
 import { currentPathCallbackUrl } from '@/app/lib/auth-redirect';
 import ThemeToggle from '@/app/components/ThemeToggle';
-import { CATEGORIES, type CategoryDef } from '@/app/data/categories';
+import {AKCESORIA, CATEGORIES, type CategoryDef} from '@/app/data/categories';
 import { ChevronDown, Menu, X } from 'lucide-react';
 
 /** Kategorie pogrupowane po etykiecie `group` — do menu nawigacji. */
@@ -49,7 +49,7 @@ export default function Navbar() {
     void setters();
     }, [pathname]);
 
-    // Zamykanie dropdownu po kliknięciu poza obszarem
+    // Zamykanie dropdown po kliknięciu poza obszarem
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -157,9 +157,22 @@ export default function Navbar() {
                         )}
                     </div>
 
+                    <div className="flex items-center gap-2">
+                        {AKCESORIA.map((category) => (
+                            <Link
+                                key={category.slug}
+                                href={`/kategoria/${category.slug}`}
+                                className="rounded-full border border-neutral-800 bg-black/30 px-2.5 py-1 text-[11px] font-semibold text-neutral-400 transition-colors hover:border-emerald-500/60 hover:text-emerald-300"
+                            >
+                                {category.name}
+                            </Link>
+                        ))}
+                    </div>
+
                     <Link href="/#produkty" className="text-sm font-medium text-neutral-300 transition-colors hover:text-emerald-400">
                         Oferta
                     </Link>
+
                     {/* <Link href="/wynajem" className="text-sm font-medium text-neutral-300 transition-colors hover:text-emerald-400">
                         Wynajem
                     </Link>
