@@ -57,6 +57,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/products/**").permitAll()
                         .requestMatchers("/api/payment", "/api/payment/**").permitAll()
                         .requestMatchers("/api/webhook", "/api/webhook/**").permitAll()
+                        .requestMatchers("/api/orders/**").permitAll()
+                        .requestMatchers("/api/admin/**").permitAll()
                         .requestMatchers("/admin/**").permitAll()
                         .anyRequest().authenticated()
                 );
