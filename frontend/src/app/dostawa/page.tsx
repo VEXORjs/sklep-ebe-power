@@ -4,7 +4,7 @@ import LegalPageShell, { LegalSection } from "@/app/components/LegalPageShell";
 export const metadata: Metadata = {
     title: "Dostawa i płatności — wysyłka w 24 h, transport HDS",
     description:
-        "Dostawa i płatności w sklepie ebe power (TRAFO ENERGIA) — wysyłka w 24 h z magazynu w Bełchatowie, kurier od 19 zł, darmowa dostawa od 1 000 zł, transport HDS, płatności online Stripe, BLIK, przelew.",
+        "Dostawa i płatności w sklepie ebe power — wysyłka w 24 h z magazynu w Bełchatowie, kurier od 19 zł, darmowa dostawa od 1 000 zł, transport HDS, płatności online Stripe, BLIK, przelew.",
     alternates: { canonical: "/dostawa" },
     openGraph: {
         title: "Dostawa i płatności | ebe power",

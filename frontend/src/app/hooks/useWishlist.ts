@@ -2,8 +2,8 @@
 
 import { useCallback, useSyncExternalStore } from "react";
 
-const STORAGE_KEY = "trafo_wishlist";
-const SYNC_EVENT = "trafo:wishlist-change";
+const STORAGE_KEY = "ebe_power_wishlist";
+const SYNC_EVENT = "ebe_power:wishlist-change";
 const EMPTY: number[] = [];
 
 let snapshot: number[] = EMPTY;

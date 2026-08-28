@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight, LayoutGrid, List, Search, SlidersHorizontal, X } from "lucide-react";
@@ -26,6 +26,7 @@ export default function ShopSection({ products, initialVisible = 9 }: ShopSectio
     const router = useRouter();
     const searchParams = useSearchParams();
     const pathname = usePathname();
+    const sectionRef = useRef<HTMLElement>(null);
 
     // Źródłem prawdy dla aktywnej kategorii jest adres URL (?kategoria=...),
     // dzięki czemu filtr przetrwa odświeżenie strony i działa z przyciskiem „wstecz".
@@ -95,7 +96,7 @@ export default function ShopSection({ products, initialVisible = 9 }: ShopSectio
     ).length;
 
     return (
-        <section id="produkty" className="mx-auto w-full max-w-7xl scroll-mt-24 px-4 py-16 sm:px-6 lg:px-8">
+        <section ref={sectionRef} id="produkty" className="mx-auto w-full max-w-7xl scroll-mt-24 px-4 py-16 sm:px-6 lg:px-8">
             {/* Nagłówek sekcji */}
             <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                 <div>
@@ -118,93 +119,97 @@ export default function ShopSection({ products, initialVisible = 9 }: ShopSectio
                 </Link>
             </div>
 
-            {/* Panel: wyszukiwarka + sortowanie */}
-            <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div className="relative w-full md:max-w-md">
-                    <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
-                    <input
-                        type="text"
-                        value={query}
-                        onChange={(e) => {
-                            setQuery(e.target.value);
-                            setExpanded(false);
-                        }}
-                        placeholder="Szukaj: nazwa, SKU, kategoria..."
-                        className="w-full rounded-md border border-neutral-800 bg-[#141618] py-3 pl-11 pr-10 text-sm text-white placeholder:text-neutral-500 outline-none transition-colors focus:border-emerald-500/60"
-                    />
-                    {query && (
-                        <button
-                            onClick={() => {
-                                setQuery("");
+            {/* Panel: wyszukiwarka + sortowanie + filtry — sticky pod paskiem nawigacji */}
+            <div className="sticky top-16 z-30 -mx-4 mb-6 space-y-4 border-b border-neutral-800/70 bg-black/95 px-4 pb-4 pt-3 backdrop-blur-md sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div className="relative w-full md:max-w-md">
+                        <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+                        <input
+                            type="text"
+                            value={query}
+                            onChange={(e) => {
+                                setQuery(e.target.value);
                                 setExpanded(false);
                             }}
-                            aria-label="Wyczyść wyszukiwanie"
-                            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-neutral-500 hover:text-white"
-                        >
-                            <X className="h-4 w-4" />
-                        </button>
-                    )}
-                </div>
+                            placeholder="Szukaj: nazwa, SKU, kategoria..."
+                            className="w-full rounded-md border border-neutral-800 bg-[#141618] py-3 pl-11 pr-10 text-sm text-white placeholder:text-neutral-500 outline-none transition-colors focus:border-emerald-500/60"
+                        />
+                        {query && (
+                            <button
+                                onClick={() => {
+                                    setQuery("");
+                                    setExpanded(false);
+                                }}
+                                aria-label="Wyczyść wyszukiwanie"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-neutral-500 hover:text-white"
+                            >
+                                <X className="h-4 w-4" />
+                            </button>
+                        )}
+                    </div>
 
-                <div className="flex items-center gap-3">
-                    <SlidersHorizontal className="h-4 w-4 shrink-0 text-neutral-500" />
-                    <select
-                        value={sort}
-                        onChange={(e) => {
-                            setSort(e.target.value as SortKey);
-                            setExpanded(false);
-                        }}
-                        aria-label="Sortowanie produktów"
-                        className="w-full rounded-md border border-neutral-800 bg-[#141618] px-4 py-3 text-sm text-white outline-none transition-colors focus:border-emerald-500/60 md:w-auto"
-                    >
-                        <option value="popularnosc">Sortuj: popularność</option>
-                        <option value="cena-asc">Cena: od najniższej</option>
-                        <option value="cena-desc">Cena: od najwyższej</option>
-                        <option value="ocena-desc">Ocena: od najwyższej</option>
-                    </select>
+                    <div className="flex items-center gap-3">
+                        <SlidersHorizontal className="h-4 w-4 shrink-0 text-neutral-500" />
+                        <select
+                            value={sort}
+                            onChange={(e) => {
+                                setSort(e.target.value as SortKey);
+                                setExpanded(false);
+                                // Wróć na początek sekcji, żeby od razu zobaczyć posortowane produkty.
+                                sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                            }}
+                            aria-label="Sortowanie produktów"
+                            className="w-full rounded-md border border-neutral-800 bg-[#141618] px-4 py-3 text-sm text-white outline-none transition-colors focus:border-emerald-500/60 md:w-auto"
+                        >
+                            <option value="popularnosc">Sortuj: popularność</option>
+                            <option value="cena-asc">Cena: od najniższej</option>
+                            <option value="cena-desc">Cena: od najwyższej</option>
+                            <option value="ocena-desc">Ocena: od najwyższej</option>
+                        </select>
 
-                    <div className="flex items-center rounded-md border border-neutral-800 bg-[#141618] p-1">
-                        <button
-                            type="button"
-                            onClick={() => setView("grid")}
-                            aria-label="Widok siatki"
-                            aria-pressed={view === "grid"}
-                            className={`rounded p-2 transition-colors ${
-                                view === "grid" ? "bg-neutral-800 text-white" : "text-neutral-500 hover:text-white"
-                            }`}
-                        >
-                            <LayoutGrid className="h-4 w-4" />
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setView("list")}
-                            aria-label="Widok listy"
-                            aria-pressed={view === "list"}
-                            className={`rounded p-2 transition-colors ${
-                                view === "list" ? "bg-neutral-800 text-white" : "text-neutral-500 hover:text-white"
-                            }`}
-                        >
-                            <List className="h-4 w-4" />
-                        </button>
+                        <div className="flex items-center rounded-md border border-neutral-800 bg-[#141618] p-1">
+                            <button
+                                type="button"
+                                onClick={() => setView("grid")}
+                                aria-label="Widok siatki"
+                                aria-pressed={view === "grid"}
+                                className={`rounded p-2 transition-colors ${
+                                    view === "grid" ? "bg-neutral-800 text-white" : "text-neutral-500 hover:text-white"
+                                }`}
+                            >
+                                <LayoutGrid className="h-4 w-4" />
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setView("list")}
+                                aria-label="Widok listy"
+                                aria-pressed={view === "list"}
+                                className={`rounded p-2 transition-colors ${
+                                    view === "list" ? "bg-neutral-800 text-white" : "text-neutral-500 hover:text-white"
+                                }`}
+                            >
+                                <List className="h-4 w-4" />
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Filtry kategorii */}
-            <div className="mb-6 flex flex-wrap gap-2">
-                {categories.map((cat) => (
-                    <button
-                        key={cat}
-                        onClick={() => handleCategorySelect(cat)}
-                        className={`rounded-full border px-4 py-2 text-xs font-semibold transition-colors ${
-                            category === cat
-                                ? "border-emerald-500 bg-emerald-500 text-slate-950"
-                                : "border-neutral-800 bg-[#141618] text-neutral-300 hover:border-emerald-500/60 hover:text-emerald-300"
-                        }`}
-                    >
-                        {cat}
-                    </button>
-                ))}
+                {/* Filtry kategorii */}
+                <div className="flex flex-wrap gap-2">
+                    {categories.map((cat) => (
+                        <button
+                            key={cat}
+                            onClick={() => handleCategorySelect(cat)}
+                            className={`rounded-full border px-4 py-2 text-xs font-semibold transition-colors ${
+                                category === cat
+                                    ? "border-emerald-500 bg-emerald-500 text-slate-950"
+                                    : "border-neutral-800 bg-[#141618] text-neutral-300 hover:border-emerald-500/60 hover:text-emerald-300"
+                            }`}
+                        >
+                            {cat}
+                        </button>
+                    ))}
+                </div>
             </div>
 
             {/* Licznik wyników + przejście na stronę kategorii */}

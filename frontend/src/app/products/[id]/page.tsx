@@ -157,7 +157,7 @@ export default async function ProductPage({ params }: PageProps) {
         sku,
         mpn: sku,
         image: product.images,
-        brand: { "@type": "Brand", name: "TRAFO ENERGIA" },
+        brand: { "@type": "Brand", name: "EBE POWER" },
         category: product.category,
         url: `${site}/products/${product.id}`,
         offers: {
@@ -173,7 +173,7 @@ export default async function ProductPage({ params }: PageProps) {
             url: `${site}/products/${product.id}`,
             seller: {
                 "@type": "Organization",
-                name: "ebe power — TRAFO ENERGIA",
+                name: "ebe power",
                 url: site,
             },
             shippingDetails: {

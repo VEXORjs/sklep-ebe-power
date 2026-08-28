@@ -4,7 +4,7 @@ import LegalPageShell, { LegalSection } from "@/app/components/LegalPageShell";
 export const metadata: Metadata = {
     title: "Zwroty i reklamacje — 30 dni na zwrot, gwarancja 24 miesiące",
     description:
-        "Zwroty i reklamacje w sklepie ebe power (TRAFO ENERGIA) — 14 dni na odstąpienie od umowy, 24 miesiące gwarancji, własny serwis, szybkie rozpatrzenie reklamacji.",
+        "Zwroty i reklamacje w sklepie ebe power — 14 dni na odstąpienie od umowy, 24 miesiące gwarancji, własny serwis, szybkie rozpatrzenie reklamacji.",
     alternates: { canonical: "/zwroty" },
     openGraph: {
         title: "Zwroty i reklamacje | ebe power",

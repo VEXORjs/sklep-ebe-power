@@ -5,7 +5,7 @@ import LegalPageShell, { LegalSection } from "@/app/components/LegalPageShell";
 export const metadata: Metadata = {
     title: "Regulamin sklepu internetowego",
     description:
-        "Regulamin sklepu internetowego ebe power (TRAFO ENERGIA) — zasady składania zamówień, płatności, dostawy, prawa konsumenta, gwarancja i serwis.",
+        "Regulamin sklepu internetowego ebe power — zasady składania zamówień, płatności, dostawy, prawa konsumenta, gwarancja i serwis.",
     alternates: { canonical: "/regulamin" },
     openGraph: {
         title: "Regulamin sklepu | ebe power",

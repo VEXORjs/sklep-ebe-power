@@ -1,4 +1,4 @@
-# Panel Admina — Trafo Energia — Dokumentacja
+# Panel Admina — ebe power — Dokumentacja
 
 Panel administracyjny jest dostępny pod adresem `/admin` (np. https://ebe-power.pl/admin lub lokalnie http://localhost:3001/admin).
 
@@ -126,11 +126,11 @@ Panel administracyjny jest dostępny pod adresem `/admin` (np. https://ebe-power
 
 ### Pliki zmienione / nowe
 
-- `backend/src/main/java/com/example/trafo/ProductController.java` — fix PUT
-- `backend/src/main/java/com/example/trafo/AdminController.java` — nowy
-- `backend/src/main/java/com/example/trafo/OrderController.java` — nowy
-- `backend/src/main/java/com/example/trafo/SecurityConfig.java` — permit orders/admin
-- `backend/src/main/java/com/example/trafo/OrderItem.java` — JsonIgnore
+- `backend/src/main/java/com/example/ebepower/ProductController.java` — fix PUT
+- `backend/src/main/java/com/example/ebepower/AdminController.java` — nowy
+- `backend/src/main/java/com/example/ebepower/OrderController.java` — nowy
+- `backend/src/main/java/com/example/ebepower/SecurityConfig.java` — permit orders/admin
+- `backend/src/main/java/com/example/ebepower/OrderItem.java` — JsonIgnore
 - `frontend/src/app/services/adminService.ts` — nowy
 - `frontend/src/app/components/AdminProductForm.tsx` — nowy, pełny formularz
 - `frontend/src/app/components/AdminAddProductForm.tsx` — wrapper dla kompatybilności

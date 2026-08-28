@@ -12,9 +12,11 @@ const stripePromise = loadStripe(publishableKey);
 
 interface StripeContainerProps {
     clientSecret: string;
+    /** E-mail konta (NextAuth) — opcjonalnie wstępnie wypełnia pole e-mail w formularzu. */
+    defaultEmail?: string | null;
 }
 
-export default function StripeContainer({ clientSecret }: StripeContainerProps) {
+export default function StripeContainer({ clientSecret, defaultEmail }: StripeContainerProps) {
     const options = {
         clientSecret,
         locale: 'pl' as const,
@@ -41,7 +43,7 @@ export default function StripeContainer({ clientSecret }: StripeContainerProps) 
 
     return (
         <Elements stripe={stripePromise} options={options} key={clientSecret}>
-            <CheckoutForm />
+            <CheckoutForm defaultEmail={defaultEmail} />
         </Elements>
     );
 }

@@ -13,7 +13,7 @@ export const revalidate = 60;
 export const metadata: Metadata = {
     title: "Kategorie produktów — agregaty prądotwórcze PRAMAC",
     description:
-        "Pełna oferta sklepu ebe power (TRAFO ENERGIA) — agregaty prądotwórcze PRAMAC do domu, warsztatu, na budowę i do zastosowań terenowych.",
+        "Pełna oferta sklepu ebe power — agregaty prądotwórcze PRAMAC do domu, warsztatu, na budowę i do zastosowań terenowych.",
     alternates: { canonical: "/kategoria" },
     openGraph: {
         title: "Kategorie produktów | ebe power",

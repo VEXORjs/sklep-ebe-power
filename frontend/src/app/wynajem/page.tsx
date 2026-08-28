@@ -5,7 +5,7 @@ import RentalStats from "@/app/components/RentalStats";
 export const metadata: Metadata = {
     title: "Wynajem transformatorów i stacji kontenerowych — zasilanie tymczasowe",
     description:
-        "Wynajem transformatorów olejowych, suchych oraz kompletnych stacji kontenerowych. Zasilanie tymczasowe i awaryjne z dostawą HDS, montażem i wsparciem 24/7. TRAFO ENERGIA — Bełchatów.",
+        "Wynajem transformatorów olejowych, suchych oraz kompletnych stacji kontenerowych. Zasilanie tymczasowe i awaryjne z dostawą HDS, montażem i wsparciem 24/7. ebe power — Bełchatów.",
     alternates: { canonical: "/wynajem" },
     keywords: [
         "wynajem transformatorów",
@@ -32,7 +32,7 @@ export default function RentalPage() {
             "Elastyczny wynajem transformatorów olejowych i suchych oraz kompletnych stacji kontenerowych. Natychmiastowa dostępność, transport HDS, profesjonalny montaż i pełne wsparcie techniczne 24/7.",
         provider: {
             "@type": "Organization",
-            name: "ebe power — TRAFO ENERGIA",
+            name: "ebe power",
             url: "https://sklep.ebe-power.pl",
         },
         areaServed: {

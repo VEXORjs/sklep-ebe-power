@@ -6,7 +6,7 @@ import SignInForm from "./SignInForm";
 
 export const metadata: Metadata = {
     title: "Logowanie | ebe power",
-    description: "Zaloguj się do sklepu TRAFO ENERGIA — zamówienia, faktury i szybsza kasa.",
+    description: "Zaloguj się do sklepu ebe power — zamówienia, faktury i szybsza kasa.",
 };
 
 function SignInFallback() {
@@ -25,7 +25,7 @@ export default function SignInPage() {
     return (
         <AuthShell
             eyebrow="Konto klienta"
-            headline="Witaj z powrotem w TRAFO ENERGIA"
+            headline="Witaj z powrotem w ebe power"
             description="Zaloguj się, żeby wrócić do zamówień, faktur VAT i zapisanych koszyków. Po zalogowaniu wrócisz dokładnie tam, gdzie skończyłeś."
         >
             <Suspense fallback={<SignInFallback />}>
