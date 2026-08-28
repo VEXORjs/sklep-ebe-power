@@ -1,4 +1,13 @@
-import { Cpu, Fuel, Gauge, ShieldCheck, type LucideIcon } from "lucide-react";
+import {
+    ArrowLeftRight,
+    Cpu,
+    Fuel,
+    Gauge,
+    Plug,
+    PlugZap,
+    ShieldCheck,
+    type LucideIcon,
+} from "lucide-react";
 import ProducerParamLink from "./ProducerParamLink";
 
 import {
@@ -20,6 +29,9 @@ const ICONS: Record<SubcategoryIcon, LucideIcon> = {
     inverter: Cpu,
     petrol: Gauge,
     diesel: ShieldCheck,
+    single: Plug,
+    three: PlugZap,
+    dual: ArrowLeftRight,
 };
 
 function SubcategoryCard({
@@ -58,7 +70,8 @@ export default function CategorySubcategoryGrid({
     category,
     products,
 }: CategorySubcategoryGridProps) {
-    if (!category.subcategories?.length) return null;
+    const subcategories = category.subcategories ?? [];
+    if (subcategories.length === 0) return null;
 
     return (
         <section id="podkategorie" className="border-b border-neutral-900 bg-[#0b0d0e]">
@@ -68,14 +81,19 @@ export default function CategorySubcategoryGrid({
                         Podkategorie
                     </span>
                     <h2 className="mt-2 text-2xl font-extrabold tracking-tight text-white">
-                        Wybierz typ agregatu
+                        Wybierz rodzaj zasilania
                     </h2>
                     <p className="mt-2 text-sm leading-relaxed text-neutral-400">
-                        Zawęź katalog według rodzaju paliwa i technologii pracy, aby szybciej znaleźć model dopasowany do zastosowania.
+                        Zawęź katalog według liczby faz — jednofazowe gniazda 230 V, siłowe 400&nbsp;V
+                        albo wersje dual łączące oba rodzaje wyjść.
                     </p>
                 </div>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    {category.subcategories.map((subcategory) => (
+                <div
+                    className={`grid grid-cols-1 gap-4 sm:grid-cols-2 ${
+                        subcategories.length >= 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"
+                    }`}
+                >
+                    {subcategories.map((subcategory) => (
                         <SubcategoryCard
                             key={subcategory.slug}
                             category={category}
