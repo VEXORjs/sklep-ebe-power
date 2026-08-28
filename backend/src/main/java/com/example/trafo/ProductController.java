@@ -56,14 +56,21 @@ public class ProductController {
             }
             else {
                 Product existingProduct = productRepository.findById(id)
-                        .orElseThrow(() -> new RuntimeException("Produkt nie istnieje dla id: \" + id"));
+                        .orElseThrow(() -> new RuntimeException("Produkt nie istnieje dla id: " + id));
                 existingProduct.setName(productDetails.getName());
                 existingProduct.setPrice(productDetails.getPrice());
+                existingProduct.setOldPrice(productDetails.getOldPrice());
+                if (productDetails.getStock() != null) {
+                    existingProduct.setStock(productDetails.getStock());
+                }
                 existingProduct.setCategory(productDetails.getCategory());
                 existingProduct.setSubcategory(productDetails.getSubcategory());
                 existingProduct.setSku(productDetails.getSku());
                 existingProduct.setDescription(productDetails.getDescription());
                 existingProduct.setImages(productDetails.getImages());
+                if (productDetails.getParameters() != null) {
+                    existingProduct.setParameters(productDetails.getParameters());
+                }
 
                 Product savedProduct = productRepository.save(existingProduct);
                 return ResponseEntity.ok(savedProduct);
