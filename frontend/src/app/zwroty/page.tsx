@@ -19,7 +19,7 @@ export default function ZwrotyPage() {
         <LegalPageShell
             eyebrow="Informacje"
             title="Zwroty i reklamacje"
-            updated="19 sierpnia 2026"
+            updated="28 sierpnia 2026"
         >
             <LegalSection title="1. Zwrot towaru — 14 dni">
                 <p>
@@ -63,8 +63,7 @@ export default function ZwrotyPage() {
                         podaj numer zamówienia i powód zgłoszenia.
                     </li>
                     <li>
-                        Otrzymasz instrukcję zwrotu oraz adres magazynu w
-                        Bełchatowie.
+                        Otrzymasz instrukcję zwrotu oraz adres magazynu.
                     </li>
                     <li>
                         Po otrzymaniu przesyłki zweryfikujemy towar i
