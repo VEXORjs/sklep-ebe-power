@@ -5,7 +5,7 @@ TRUNCATE TABLE product_images RESTART IDENTITY CASCADE;
 TRUNCATE TABLE products RESTART IDENTITY CASCADE;
 
 INSERT INTO products (name, price, old_price, stock, description, category, subcategory, sku) VALUES
-('Pramac GA10000 — agregat gazowy 10 kVA, 230 V', 2.10, NULL, 2,
+('Pramac GA10000 — agregat gazowy 10 kVA, 230 V', 21031.71, NULL, 2,
  'Stacjonarny, automatyczny agregat gazowy do awaryjnego zasilania domu lub małego obiektu. Obudowa aluminiowa RhinoCoat tłumi hałas i chroni urządzenie przed warunkami atmosferycznymi. Model współpracuje z przełącznikiem zasilania awaryjnego LTS.',
  'Agregaty', 'gazowe', 'PRM-GA10000'),
 ('Pramac GA13000 — agregat gazowy 13 kVA, 230 V', 21828.46, NULL, 2,
