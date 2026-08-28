@@ -19,11 +19,11 @@ export default function PolitykaPrywatnosciPage() {
         <LegalPageShell
             eyebrow="Informacje"
             title="Polityka prywatności"
-            updated="19 sierpnia 2026"
+            updated="28 sierpnia 2026"
         >
             <LegalSection title="1. Administrator danych">
                 <p>
-                    Administratorem danych osobowych jest TRAFO ENERGIA z siedzibą
+                    Administratorem danych osobowych jest EBE POWER z siedzibą
                     w Bełchatowie. W sprawach dotyczących danych osobowych możesz
                     się z nami skontaktować mailowo:{" "}
                     <a href="mailto:kontakt@ebe-power.pl" className="text-emerald-400 hover:text-emerald-300 transition-colors">kontakt@ebe-power.pl</a>.
@@ -34,7 +34,7 @@ export default function PolitykaPrywatnosciPage() {
                 <p>Przetwarzamy wyłącznie dane niezbędne do obsługi zamówień:</p>
                 <ul className="list-disc pl-6 space-y-2">
                     <li>imię i nazwisko (lub nazwę firmy),</li>
-                    <li>adres e-mail i numer telefonu,</li>
+                    <li>adres e-mail,</li>
                     <li>adres dostawy oraz dane do faktury (w tym NIP),</li>
                     <li>historię zamówień i płatności.</li>
                 </ul>
