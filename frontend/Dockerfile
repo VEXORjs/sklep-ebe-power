@@ -21,13 +21,13 @@ ARG NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
 ENV NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 
-ARG NEXT_PUBLIC_APP_URL=https://ebe-power.pl
+ARG NEXT_PUBLIC_APP_URL=https://sklep.ebe-power.pl
 ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
 
-ARG NEXT_PUBLIC_SITE_URL=https://ebe-power.pl
+ARG NEXT_PUBLIC_SITE_URL=https://sklep.ebe-power.pl
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 
-ARG NEXTAUTH_URL=https://ebe-power.pl
+ARG NEXTAUTH_URL=https://sklep.ebe-power.pl
 ENV NEXTAUTH_URL=$NEXTAUTH_URL
 
 RUN npm run build
@@ -44,7 +44,7 @@ ENV NODE_ENV=production
 # aplikacja jest wywoływana przez adres *.run.app (np. health-check Google),
 # redirect_uri nie zgadza się z tym zarejestrowanym w Google Cloud Console
 # i dostajemy błąd 400: redirect_uri_mismatch.
-ARG NEXTAUTH_URL=https://ebe-power.pl
+ARG NEXTAUTH_URL=https://sklep.ebe-power.pl
 ENV NEXTAUTH_URL=$NEXTAUTH_URL
 
 # Kopiujemy tylko niezbędne pliki statyczne i wygenerowany serwer standalone

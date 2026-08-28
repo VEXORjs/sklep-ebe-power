@@ -9,7 +9,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/orders")
-@CrossOrigin(origins = {"https://frontend-1078992546635.europe-west1.run.app", "http://localhost:3000", "http://localhost:3001", "https://ebe-power.pl", "https://www.ebe-power.pl"})
+@CrossOrigin(origins = {"https://frontend-1078992546635.europe-west1.run.app", "http://localhost:3000", "http://localhost:3001", "https://sklep.ebe-power.pl", "https://www.sklep.ebe-power.pl"})
 public class OrderController {
 
     @Autowired

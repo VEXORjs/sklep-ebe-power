@@ -77,7 +77,7 @@ export default async function CategoryPage({ params }: PageProps) {
         .filter((c) => c.slug !== category.slug)
         .slice(0, 8);
 
-    const site = "https://ebe-power.pl";
+    const site = "https://sklep.ebe-power.pl";
 
     const jsonLd = {
         "@context": "https://schema.org",

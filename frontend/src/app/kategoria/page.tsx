@@ -33,8 +33,8 @@ export default async function CategoriesPage() {
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
         itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Strona główna", item: "https://ebe-power.pl" },
-            { "@type": "ListItem", position: 2, name: "Kategorie", item: "https://ebe-power.pl/kategoria" },
+            { "@type": "ListItem", position: 1, name: "Strona główna", item: "https://sklep.ebe-power.pl" },
+            { "@type": "ListItem", position: 2, name: "Kategorie", item: "https://sklep.ebe-power.pl/kategoria" },
         ],
     };
 
@@ -43,7 +43,7 @@ export default async function CategoriesPage() {
         "@type": "CollectionPage",
         name: "Kategorie produktów",
         description: "Pełna oferta sklepu ebe power w podziale na kategorie.",
-        url: "https://ebe-power.pl/kategoria",
+        url: "https://sklep.ebe-power.pl/kategoria",
         mainEntity: {
             "@type": "ItemList",
             numberOfItems: categories.length,
@@ -51,7 +51,7 @@ export default async function CategoriesPage() {
                 "@type": "ListItem",
                 position: i + 1,
                 name: cat.name,
-                url: `https://ebe-power.pl/kategoria/${cat.slug}`,
+                url: `https://sklep.ebe-power.pl/kategoria/${cat.slug}`,
             })),
         },
     };

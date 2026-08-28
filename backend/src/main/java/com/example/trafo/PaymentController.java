@@ -24,7 +24,7 @@ import java.util.Map;
         "http://localhost:3000", "http://127.0.0.1:3000",
         "http://localhost:3001", "http://127.0.0.1:3001",
         "https://frontend-1078992546635.europe-west1.run.app",
-        "https://ebe-power.pl", "https://www.ebe-power.pl"
+        "https://sklep.ebe-power.pl", "https://www.sklep.ebe-power.pl"
 })
 @RequestMapping("/api/payment")
 public class PaymentController {

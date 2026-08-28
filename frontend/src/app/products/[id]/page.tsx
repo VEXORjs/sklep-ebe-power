@@ -147,7 +147,7 @@ export default async function ProductPage({ params }: PageProps) {
         })
         .slice(0, 3);
 
-    const site = "https://ebe-power.pl";
+    const site = "https://sklep.ebe-power.pl";
 
     const jsonLd = {
         "@context": "https://schema.org",

@@ -1,7 +1,7 @@
 /**
  * Bazowy adres API dla kodu działającego w PRZEGLĄDARCE.
  *
- * Na produkcji (https://ebe-power.pl) NIGDY nie zwracamy bezwzględnego
+ * Na produkcji (https://sklep.ebe-power.pl) NIGDY nie zwracamy bezwzględnego
  * adresu backendu — przeglądarka mówiłaby użytkownikowi, by łączył się z
  * `http://localhost:8080`, co z wiadomych przyczyn nie działa (CORS,
  * mixed-content, 127.0.0.1 u klienta). Zamiast tego zwracamy ścieżkę

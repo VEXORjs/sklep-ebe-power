@@ -33,7 +33,7 @@ export default function ServicePage() {
         provider: {
             "@type": "Organization",
             name: "ebe power — TRAFO ENERGIA",
-            url: "https://ebe-power.pl",
+            url: "https://sklep.ebe-power.pl",
         },
         areaServed: {
             "@type": "Country",
@@ -46,8 +46,8 @@ export default function ServicePage() {
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
         itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Strona główna", item: "https://ebe-power.pl" },
-            { "@type": "ListItem", position: 2, name: "Serwis", item: "https://ebe-power.pl/serwis" },
+            { "@type": "ListItem", position: 1, name: "Strona główna", item: "https://sklep.ebe-power.pl" },
+            { "@type": "ListItem", position: 2, name: "Serwis", item: "https://sklep.ebe-power.pl/serwis" },
         ],
     };
 
