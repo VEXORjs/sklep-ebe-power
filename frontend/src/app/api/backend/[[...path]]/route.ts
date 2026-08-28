@@ -122,7 +122,7 @@ function healthResponse(req: NextRequest): Response {
 /**
  * Proxy z `/api/backend/*` na backend Spring Boot.
  *
- * Przeglądarka łączy się z tą samą domeną (https://ebe-power.pl), więc nie ma
+ * Przeglądarka łączy się z tą samą domeną (https://sklep.ebe-power.pl), więc nie ma
  * ani CORS, ani mixed-content. Next.js dopiero po stronie serwera łączy się z
  * wewnętrznym adresem backendu (API_URL), którego adres nie jest wypalany w
  * klienckim bundle.

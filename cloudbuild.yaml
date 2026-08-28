@@ -8,7 +8,7 @@
 # Substitutions są definiowane w ustawieniach triggera Cloud Build
 # (można je nadpisać per trigger, bez edytowania tego pliku).
 #
-#   _APP_URL       — produkcyjna domena. MUSI wskazywać na https://ebe-power.pl,
+#   _APP_URL       — produkcyjna domena. MUSI wskazywać na https://sklep.ebe-power.pl,
 #                    nigdy na wewnętrzny adres *.run.app — z niego NextAuth
 #                    buduje redirect_uri wysyłane do Google podczas OAuth.
 #   _REGION        — region Cloud Run.
@@ -21,7 +21,7 @@
 # https://trafo-....europe-west1.run.app. Nie ustawiamy go tutaj, żeby
 # `gcloud run deploy` go nie nadpisywał. Proxy /api/backend czyta je w runtime.
 substitutions:
-  _APP_URL: 'https://ebe-power.pl'
+  _APP_URL: 'https://sklep.ebe-power.pl'
   _REGION: 'europe-west1'
 
 # WAŻNE — dlaczego "SHA" każdego buildu jest inne:

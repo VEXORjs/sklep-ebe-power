@@ -23,7 +23,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-    metadataBase: new URL("https://ebe-power.pl"),
+    metadataBase: new URL("https://sklep.ebe-power.pl"),
     title: {
         default: "ebe power — Agregaty prądotwórcze PRAMAC | Sklep online",
         template: "%s | ebe power",
@@ -44,8 +44,8 @@ export const metadata: Metadata = {
     ],
     robots: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
     alternates: {
-        canonical: "https://ebe-power.pl",
-        languages: { "pl-PL": "https://ebe-power.pl" },
+        canonical: "https://sklep.ebe-power.pl",
+        languages: { "pl-PL": "https://sklep.ebe-power.pl" },
     },
     openGraph: {
         type: "website",
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
         title: "ebe power — Agregaty prądotwórcze PRAMAC",
         description:
             "Sklep internetowy z agregatami prądotwórczymi PRAMAC do domu, warsztatu i na budowę. Faktura VAT i wsparcie techniczne.",
-        url: "https://ebe-power.pl",
+        url: "https://sklep.ebe-power.pl",
         images: [
             {
                 url: BRAND_LOGO_URL,
@@ -92,12 +92,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         "@type": "WebSite",
         name: "ebe power",
         alternateName: "TRAFO ENERGIA",
-        url: "https://ebe-power.pl",
+        url: "https://sklep.ebe-power.pl",
         potentialAction: {
             "@type": "SearchAction",
             target: {
                 "@type": "EntryPoint",
-                urlTemplate: "https://ebe-power.pl/?kategoria={search_term_string}",
+                urlTemplate: "https://sklep.ebe-power.pl/?kategoria={search_term_string}",
             },
             "query-input": "required name=search_term_string",
         },
@@ -106,10 +106,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     const localBusinessJsonLd = {
         "@context": "https://schema.org",
         "@type": "ElectricalStore",
-        "@id": "https://ebe-power.pl/#organization",
+        "@id": "https://sklep.ebe-power.pl/#organization",
         name: "ebe power — TRAFO ENERGIA",
         alternateName: "TRAFO ENERGIA",
-        url: "https://ebe-power.pl",
+        url: "https://sklep.ebe-power.pl",
         logo: BRAND_LOGO_URL,
         image: BRAND_LOGO_URL,
         email: "kontakt@ebe-power.pl",
