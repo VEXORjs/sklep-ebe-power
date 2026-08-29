@@ -5,7 +5,7 @@ export default function ContactBanner() {
     return (
         <div className="w-full max-w-7xl mx-auto p-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
             {/* ✉️ Sekcja Bezpośredniego Kontaktu (2/3 szerokości) */}
-            <div className="lg:col-span-2 rounded-lg bg-gradient-to-r from-emerald-700 via-emerald-950 to-slate-950 p-6 md:p-8 flex flex-col justify-between gap-6 shadow-lg">
+            <div className="surface-dark lg:col-span-2 rounded-lg bg-gradient-to-r from-emerald-700 via-emerald-950 to-slate-950 p-6 md:p-8 flex flex-col justify-between gap-6 shadow-lg">
                 <div className="space-y-2 text-white">
                     <span className="text-xs font-bold uppercase tracking-wider text-emerald-300">
                         Kontakt bezpośredni 💬
@@ -23,7 +23,7 @@ export default function ContactBanner() {
             </div>
 
             {/* ⚡ Karta Promocyjna: Agregaty (1/3 szerokości) */}
-            <div className="relative rounded-lg overflow-hidden min-h-[160px] shadow-lg flex items-end justify-between p-6 group">
+            <div className="surface-dark relative rounded-lg overflow-hidden min-h-[160px] shadow-lg flex items-end justify-between p-6 group">
                 <Image
                     src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=800"
                     alt="Agregaty prądotwórcze"

@@ -137,8 +137,8 @@ export default async function CategoryPage({ params }: PageProps) {
                 />
             )}
 
-            {/* Nagłówek kategorii */}
-            <header className="relative overflow-hidden border-b border-neutral-900">
+            {/* Nagłówek kategorii — surface-dark: zostaje czytelny w light mode (foto + gradient) */}
+            <header className="surface-dark relative overflow-hidden border-b border-neutral-900">
                 <Image
                     src={category.image}
                     alt={`${category.name} — ${category.tagline}`}
@@ -167,7 +167,7 @@ export default async function CategoryPage({ params }: PageProps) {
                     <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
                         Kategoria
                     </span>
-                    <h1 className="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
+                    <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl">
                         {category.name}
                     </h1>
                     <p className="mt-2 text-base font-semibold text-neutral-300">{category.tagline}</p>
@@ -212,7 +212,7 @@ export default async function CategoryPage({ params }: PageProps) {
                             {category.applications.map((app) => (
                                 <span
                                     key={app}
-                                    className="rounded-full border border-neutral-800 bg-black/50 px-3 py-1.5 text-[11px] font-semibold text-neutral-300"
+                                    className="rounded-full border border-neutral-700 bg-black/50 px-3 py-1.5 text-[11px] font-semibold text-neutral-300"
                                 >
                                     {app}
                                 </span>
