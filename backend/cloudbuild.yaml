@@ -47,7 +47,7 @@ steps:
     args:
       - 'run'
       - 'deploy'
-      - 'ebe-power'
+      - 'trafo'
       - '--image'
       - 'europe-west1-docker.pkg.dev/$PROJECT_ID/sklep-repo/sklep-backend:v1'
       - '--region'
