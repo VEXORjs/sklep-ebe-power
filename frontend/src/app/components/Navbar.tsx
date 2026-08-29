@@ -8,23 +8,28 @@ import { useCart } from '@/app/context/CartContext';
 import Image from "next/image";
 import { currentPathCallbackUrl } from '@/app/lib/auth-redirect';
 import ThemeToggle from '@/app/components/ThemeToggle';
-import {AKCESORIA, CATEGORIES, type CategoryDef} from '@/app/data/categories';
+import { AKCESORIA, CATEGORIES, AGGREGATE_GROUP, type CategoryDef } from '@/app/data/categories';
 import { ChevronDown, Menu, X } from 'lucide-react';
 
-/** Kategorie pogrupowane po etykiecie `group` — do menu nawigacji. */
-const CATEGORY_GROUPS: { label: string; categories: CategoryDef[] }[] = CATEGORIES.reduce(
-    (groups, category) => {
-        const label = category.group ?? 'Inne kategorie';
-        const existing = groups.find((group) => group.label === label);
-        if (existing) {
-            existing.categories.push(category);
-        } else {
-            groups.push({ label, categories: [category] });
-        }
-        return groups;
-    },
-    [] as { label: string; categories: CategoryDef[] }[]
-);
+/** Kategorie pogrupowane po etykiecie `group` — do menu nawigacji (bez akcesoriów, bo mają osobny link). */
+const CATEGORY_GROUPS: { label: string; categories: CategoryDef[] }[] = CATEGORIES
+    .filter((c) => c.group === AGGREGATE_GROUP)
+    .reduce(
+        (groups, category) => {
+            const label = category.group ?? 'Inne kategorie';
+            const existing = groups.find((group) => group.label === label);
+            if (existing) {
+                existing.categories.push(category);
+            } else {
+                groups.push({ label, categories: [category] });
+            }
+            return groups;
+        },
+        [] as { label: string; categories: CategoryDef[] }[]
+    );
+
+/** Kategoria Akcesoria — wyeksportowana dla wygody (link główny + kompatybilność). */
+const AKCESORIA_LINK = AKCESORIA[0];
 
 export default function Navbar() {
     const { data: session } = useSession();
@@ -157,23 +162,19 @@ export default function Navbar() {
                         )}
                     </div>
 
+                    {/* AKCESORIA — osobny link między kategoriami agregatów a Ofertą */}
+                    {AKCESORIA_LINK && (
+                        <Link
+                            href={`/kategoria/${AKCESORIA_LINK.slug}`}
+                            className="text-sm font-medium text-neutral-300 transition-colors hover:text-emerald-400"
+                        >
+                            {AKCESORIA_LINK.name}
+                        </Link>
+                    )}
+
                     <Link href="/#produkty" className="text-sm font-medium text-neutral-300 transition-colors hover:text-emerald-400">
                         Oferta
                     </Link>
-
-                    <div className="flex items-center gap-2">
-                        {AKCESORIA.map((category) => (
-                            <Link
-                                key={category.slug}
-                                href={`/kategoria/${category.slug}`}
-                                className="rounded-full border border-neutral-800 bg-black/30 px-2.5 py-1 text-[11px] font-semibold text-neutral-400 transition-colors hover:border-emerald-500/60 hover:text-emerald-300"
-                            >
-                                {category.name}
-                            </Link>
-                        ))}
-                    </div>
-
-
 
                     {/* <Link href="/wynajem" className="text-sm font-medium text-neutral-300 transition-colors hover:text-emerald-400">
                         Wynajem
@@ -270,7 +271,7 @@ export default function Navbar() {
                                     >
                                         Wszystkie kategorie →
                                     </Link>
-                                    {CATEGORIES.map((c) => (
+                                    {CATEGORIES.filter((c) => c.group === AGGREGATE_GROUP).map((c) => (
                                         <div key={c.slug}>
                                             <Link
                                                 href={`/kategoria/${c.slug}`}
@@ -296,6 +297,16 @@ export default function Navbar() {
                                 </div>
                             )}
                         </div>
+
+                        {/* Akcesoria — osobny link między kategoriami a Ofertą */}
+                        {AKCESORIA_LINK && (
+                            <Link
+                                href={`/kategoria/${AKCESORIA_LINK.slug}`}
+                                className="py-2 text-base font-semibold text-neutral-200 hover:text-emerald-400 transition-colors"
+                            >
+                                {AKCESORIA_LINK.name}
+                            </Link>
+                        )}
 
                         <Link
                             href="/#produkty"
