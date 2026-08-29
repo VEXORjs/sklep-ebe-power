@@ -59,9 +59,6 @@ export default function Hero({ product }: HeroProps) {
                     {/* Prawa kolumna — opis */}
                          <div className="space-y-7">
                         <div className="flex flex-wrap items-center gap-3">
-                            <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-emerald-400">
-                                    Katalog PRAMAC 
-                            </span>
                             {discount !== null && (
                                 <span className="rounded-full bg-red-600 px-3 py-1.5 text-[11px] font-extrabold text-white">
                                     -{discount}%
