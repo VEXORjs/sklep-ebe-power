@@ -23,15 +23,25 @@ export default function StripeContainer({ clientSecret, defaultEmail }: StripeCo
     const isDark = theme === 'dark';
 
     const options = useMemo(() => {
+        const backgroundColor = isDark ? '#171717' : '#ffffff';
+        const inputBackgroundColor = isDark ? '#141618' : '#ffffff';
+        const textColor = isDark ? '#ffffff' : '#171717';
+
         return {
             clientSecret,
             locale: 'pl' as const,
             appearance: {
+                // PaymentElement is rendered by Stripe in an iframe, so its
+                // colors must be passed through the Appearance API rather than
+                // inherited from the page's CSS.
                 theme: isDark ? 'night' : 'stripe',
                 variables: {
                     colorPrimary: '#10b981',
-                    colorBackground: isDark ? '#171717' : '#ffffff',
-                    colorText: isDark ? '#ffffff' : '#171717',
+                    colorBackground: backgroundColor,
+                    colorInputBackground: inputBackgroundColor,
+                    colorText: textColor,
+                    colorTextSecondary: isDark ? '#a3a3a3' : '#525252',
+                    colorTextPlaceholder: isDark ? '#737373' : '#737373',
                     colorDanger: '#ef4444',
                     borderRadius: '6px',
                     fontFamily: 'Arial, Helvetica, sans-serif',
@@ -40,15 +50,15 @@ export default function StripeContainer({ clientSecret, defaultEmail }: StripeCo
                     '.Input': {
                         border: isDark ? '1px solid #262626' : '1px solid #e5e5e5',
                         boxShadow: 'none',
-                        backgroundColor: isDark ? '#141618' : '#ffffff',
+                        backgroundColor: inputBackgroundColor,
                         padding: '12px 16px',
                     },
                     '.Input:focus': {
                         border: '1px solid #10b981',
                         boxShadow: 'none',
-                    }
-                }
-            }
+                    },
+                },
+            },
         };
     }, [clientSecret, isDark]);
 
@@ -61,7 +71,7 @@ export default function StripeContainer({ clientSecret, defaultEmail }: StripeCo
     }
 
     return (
-        <Elements stripe={stripePromise} options={options} key={clientSecret}>
+        <Elements stripe={stripePromise} options={options} key={`${clientSecret}-${theme}`}>
             <CheckoutForm defaultEmail={defaultEmail} />
         </Elements>
     );
