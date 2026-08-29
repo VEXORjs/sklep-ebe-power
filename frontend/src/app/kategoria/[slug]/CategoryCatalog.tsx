@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { LayoutGrid, List, Search, SlidersHorizontal, X } from "lucide-react";
 
@@ -90,6 +90,12 @@ function CategoryCatalogInner({ products, categoryName }: CategoryCatalogProps) 
     const [onlyAvailable, setOnlyAvailable] = useState(false);
     const [onlyPromo, setOnlyPromo] = useState(false);
     const [view, setView] = useState<ProductCardVariant>("grid");
+
+    // Na mobile panel filtrów nie może stać pełnej szerokości między
+    // kategoriami a produktami — chowamy go za przyciskiem „Filtry” i
+    // otwieramy jako szufladę od dołu (bottom sheet).
+    const [filtersOpen, setFiltersOpen] = useState(false);
+    const filtersRef = useRef<HTMLElement>(null);
 
     const searchParams = useSearchParams();
     const pathname = usePathname();
@@ -206,6 +212,35 @@ function CategoryCatalogInner({ products, categoryName }: CategoryCatalogProps) 
         setPowerRange({ min, max });
     };
 
+    // Ile filtrów jest aktywanych — pokazywane na przycisku „Filtry” na mobile,
+    // żeby po zamknięciu szuflady było widać, że coś jednak zawęża wyniki.
+    const activeFilterCount =
+        (query.trim() !== "" ? 1 : 0) +
+        (onlyAvailable ? 1 : 0) +
+        (onlyPromo ? 1 : 0) +
+        (maxPrice !== null && maxPrice < priceBounds.max ? 1 : 0) +
+        Object.values(generatorFilters).reduce((sum, selected) => sum + selected.length, 0) +
+        (powerRange.min !== null || powerRange.max !== null ? 1 : 0);
+
+    // Otwarta szuflada: blokada przewijania strony + zamykanie klawiszem Escape.
+    useEffect(() => {
+        if (!filtersOpen) return;
+
+        const onKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") setFiltersOpen(false);
+        };
+
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        document.addEventListener("keydown", onKeyDown);
+        filtersRef.current?.focus({ preventScroll: true });
+
+        return () => {
+            document.removeEventListener("keydown", onKeyDown);
+            document.body.style.overflow = previousOverflow;
+        };
+    }, [filtersOpen]);
+
     return (
         <section id="produkty" className="scroll-mt-24 mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
             <div className="flex flex-col lg:flex-row gap-8">
@@ -215,17 +250,41 @@ function CategoryCatalogInner({ products, categoryName }: CategoryCatalogProps) 
                   LEWA KOLUMNA: FILTRY (Sidebar)
                   =======================================================
                 */}
-                <aside className="w-full lg:w-[280px] shrink-0 space-y-6 rounded-xl border border-neutral-800 bg-[#151719] p-5 h-fit sticky top-24">
-                    <div className="flex items-center justify-between mb-2">
+                <aside
+                    ref={filtersRef}
+                    id="katalog-filtry"
+                    aria-label="Filtry w katalogu"
+                    role={filtersOpen ? "dialog" : undefined}
+                    aria-modal={filtersOpen ? true : undefined}
+                    tabIndex={-1}
+                    className={`space-y-6 rounded-xl border border-neutral-800 bg-[#151719] p-5 outline-none lg:sticky lg:top-24 lg:h-fit lg:w-[280px] lg:shrink-0 ${
+                        filtersOpen
+                            ? "filter-sheet max-lg:fixed max-lg:inset-x-0 max-lg:bottom-0 max-lg:z-[999] max-lg:max-h-[85dvh] max-lg:overflow-y-auto max-lg:overscroll-contain max-lg:rounded-b-none max-lg:border-x-0 max-lg:border-b-0 max-lg:px-4 max-lg:pb-[max(1.25rem,env(safe-area-inset-bottom))] max-lg:shadow-2xl"
+                            : "hidden lg:block"
+                    }`}
+                >
+                    {/* Uchwyt i zamknięcie — tylko w szufladzie mobilnej */}
+                    <div className="mx-auto mb-3 hidden h-1 w-10 rounded-full bg-neutral-700 max-lg:block" aria-hidden="true" />
+                    <div className="mb-2 flex items-center justify-between gap-3">
                         <h2 className="text-base font-extrabold text-white">Filtruj wyniki</h2>
-                        {hasFilters && (
+                        <div className="flex items-center gap-3">
+                            {hasFilters && (
+                                <button
+                                    onClick={clearFilters}
+                                    className="hidden text-[11px] font-semibold text-neutral-500 hover:text-emerald-400 uppercase tracking-wider transition-colors lg:inline"
+                                >
+                                    Wyczyść
+                                </button>
+                            )}
                             <button
-                                onClick={clearFilters}
-                                className="text-[11px] font-semibold text-neutral-500 hover:text-emerald-400 uppercase tracking-wider transition-colors"
+                                type="button"
+                                onClick={() => setFiltersOpen(false)}
+                                aria-label="Zamknij filtry"
+                                className="-mr-1.5 hidden rounded-md p-1.5 text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-white max-lg:block"
                             >
-                                Wyczyść
+                                <X className="h-4 w-4" />
                             </button>
-                        )}
+                        </div>
                     </div>
 
                     {/* Szukaj */}
@@ -361,7 +420,34 @@ function CategoryCatalogInner({ products, categoryName }: CategoryCatalogProps) 
                             </span>
                         </div>
                     )}
+
+                    {/* Stopka szuflady — mobile: liczba wyników od razu po zmianie filtrów */}
+                    <div className="hidden items-center gap-3 border-t border-neutral-800 pt-4 max-lg:sticky max-lg:bottom-0 max-lg:flex max-lg:bg-[#151719]">
+                        <button
+                            type="button"
+                            onClick={clearFilters}
+                            className="rounded-md border border-neutral-700 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-neutral-300 transition-colors hover:border-emerald-500/60 hover:text-emerald-300"
+                        >
+                            Wyczyść
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setFiltersOpen(false)}
+                            className="flex-1 rounded-md bg-emerald-500 px-5 py-2.5 text-sm font-bold text-slate-950 transition-colors hover:bg-emerald-400"
+                        >
+                            Pokaż {filtered.length} {productsLabel(filtered.length)}
+                        </button>
+                    </div>
                 </aside>
+
+                {/* Tło szuflady filtrów (mobile) */}
+                {filtersOpen && (
+                    <div
+                        onClick={() => setFiltersOpen(false)}
+                        aria-hidden="true"
+                        className="fixed inset-0 z-[998] bg-black/70 backdrop-blur-sm lg:hidden"
+                    />
+                )}
 
 
                 {/*
@@ -372,14 +458,33 @@ function CategoryCatalogInner({ products, categoryName }: CategoryCatalogProps) 
                 <div className="flex-1">
                     {/* Górny pasek */}
                     <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-xl border border-neutral-800 bg-[#151719] p-2.5 px-4">
-                        <p className="text-sm text-neutral-400 font-medium">
-                            Znaleziono: <span className="font-bold text-white">{filtered.length}</span>{" "}
-                            {productsLabel(filtered.length)}
-                        </p>
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                            <p className="text-sm text-neutral-400 font-medium">
+                                Znaleziono: <span className="font-bold text-white">{filtered.length}</span>{" "}
+                                {productsLabel(filtered.length)}
+                            </p>
+
+                            {/* Filtry jako szuflada — do lg kolumna filtrów jest ukryta */}
+                            <button
+                                type="button"
+                                onClick={() => setFiltersOpen((open) => !open)}
+                                aria-expanded={filtersOpen}
+                                aria-controls="katalog-filtry"
+                                className="inline-flex items-center gap-2 rounded-md border border-neutral-700 bg-[#0f1113] px-3 py-2 text-xs font-bold uppercase tracking-wider text-white transition-colors hover:border-emerald-500/60 hover:text-emerald-300 lg:hidden"
+                            >
+                                <SlidersHorizontal className="h-3.5 w-3.5 text-emerald-400" />
+                                Filtry
+                                {activeFilterCount > 0 && (
+                                    <span className="rounded-full bg-emerald-500 px-1.5 py-0.5 text-[10px] font-extrabold text-slate-950">
+                                        {activeFilterCount}
+                                    </span>
+                                )}
+                            </button>
+                        </div>
 
                         <div className="flex flex-wrap items-center gap-3">
                             <div className="flex items-center gap-2">
-                                <SlidersHorizontal className="h-4 w-4 shrink-0 text-neutral-500" />
+                                <SlidersHorizontal className="hidden h-4 w-4 shrink-0 text-neutral-500 lg:block" />
                                 <select
                                     value={sort}
                                     onChange={(e) => setSort(e.target.value as SortKey)}
