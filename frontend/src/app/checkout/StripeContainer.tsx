@@ -4,6 +4,7 @@ import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { useTheme } from '@/app/context/ThemeContext'; // Upewnij się, że ścieżka to @/app/...
 import { useMemo } from 'react';
+import type { StripeElementsOptions } from '@stripe/stripe-js';
 import CheckoutForm from './CheckoutForm';
 
 const publishableKey =
@@ -22,7 +23,7 @@ export default function StripeContainer({ clientSecret, defaultEmail }: StripeCo
     const { theme } = useTheme();
     const isDark = theme === 'dark';
 
-    const options = useMemo(() => {
+    const options = useMemo<StripeElementsOptions>(() => {
         const backgroundColor = isDark ? '#171717' : '#ffffff';
         const inputBackgroundColor = isDark ? '#141618' : '#ffffff';
         const textColor = isDark ? '#ffffff' : '#171717';
