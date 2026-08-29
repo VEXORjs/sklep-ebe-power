@@ -157,6 +157,10 @@ export default function Navbar() {
                         )}
                     </div>
 
+                    <Link href="/#produkty" className="text-sm font-medium text-neutral-300 transition-colors hover:text-emerald-400">
+                        Oferta
+                    </Link>
+
                     <div className="flex items-center gap-2">
                         {AKCESORIA.map((category) => (
                             <Link
@@ -169,9 +173,7 @@ export default function Navbar() {
                         ))}
                     </div>
 
-                    <Link href="/#produkty" className="text-sm font-medium text-neutral-300 transition-colors hover:text-emerald-400">
-                        Oferta
-                    </Link>
+
 
                     {/* <Link href="/wynajem" className="text-sm font-medium text-neutral-300 transition-colors hover:text-emerald-400">
                         Wynajem

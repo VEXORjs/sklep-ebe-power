@@ -48,6 +48,28 @@ export default function SignInForm() {
     const [googleLoading, setGoogleLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
+    // 1. Wyłapywanie powrotu strzałką "Wstecz" w przeglądarce (Bfcache)
+    useEffect(() => {
+        const handlePageShow = (event: PageTransitionEvent) => {
+            if (event.persisted) {
+                setGoogleLoading(false);
+                setLoading(false);
+            }
+        };
+        window.addEventListener("pageshow", handlePageShow);
+        return () => window.removeEventListener("pageshow", handlePageShow);
+    }, []);
+
+    // 2. Wyłapywanie przekierowania z powrotem przez NextAuth (gdy w URL pojawia się błąd)
+    useEffect(() => {
+        const handleGoogleLoading = async () => {
+            if (searchParams.has("error")) {
+                setGoogleLoading(false);
+            }
+        }
+        void handleGoogleLoading();
+    }, [searchParams]);
+
     useEffect(() => {
         if (status === "authenticated") {
             window.location.assign(callbackUrl);

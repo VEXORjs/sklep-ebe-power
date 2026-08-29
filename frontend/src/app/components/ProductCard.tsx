@@ -154,7 +154,7 @@ export default function ProductCard({
         <div
             className={`relative shrink-0 overflow-hidden bg-white ${
                 variant === "list"
-                    ? "aspect-[16/10] w-full sm:h-full sm:w-56 sm:aspect-auto"
+                    ? "aspect-[16/10] w-full sm:w-64 lg:w-72 sm:aspect-auto sm:min-h-[280px]"
                     : "aspect-[16/10] w-full"
             }`}
         >
