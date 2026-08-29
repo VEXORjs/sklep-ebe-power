@@ -287,8 +287,8 @@ function CategoryCatalogInner({ products, categoryName }: CategoryCatalogProps) 
                         </div>
                     </div>
 
-                    {/* Szukaj */}
-                    <div className="relative">
+                    {/* Szukaj — w panelu tylko od lg; poniżej lg jest nad produktami */}
+                    <div className="relative hidden lg:block">
                         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
                         <input
                             type="search"
@@ -456,6 +456,31 @@ function CategoryCatalogInner({ products, categoryName }: CategoryCatalogProps) 
                   =======================================================
                 */}
                 <div className="flex-1">
+                    {/* Szukaj — wyniesione przed panel filtrów, żeby na mobile
+                        zostało zawsze widoczne nad produktami (od lg siedzi w
+                        kolumnie filtrów po lewej). */}
+                    <div className="relative mb-3 lg:hidden">
+                        <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" />
+                        <input
+                            type="search"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            aria-label="Szukaj produktu po nazwie, SKU lub opisie"
+                            placeholder="Szukaj modelu..."
+                            className="w-full rounded-lg border border-neutral-800 bg-[#151719] py-3 pl-11 pr-10 text-sm text-white outline-none transition-colors placeholder:text-neutral-500 focus:border-emerald-500/60"
+                        />
+                        {query && (
+                            <button
+                                type="button"
+                                onClick={() => setQuery("")}
+                                aria-label="Wyczyść wyszukiwanie"
+                                className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-full p-1 text-neutral-500 transition-colors hover:text-white"
+                            >
+                                <X className="h-4 w-4" />
+                            </button>
+                        )}
+                    </div>
+
                     {/* Górny pasek */}
                     <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-xl border border-neutral-800 bg-[#151719] p-2.5 px-4">
                         <div className="flex flex-wrap items-center justify-between gap-3">
