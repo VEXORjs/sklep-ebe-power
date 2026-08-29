@@ -114,7 +114,7 @@ export default async function CategoriesPage() {
                                 href={`/kategoria/${category.slug}`}
                                 className="group flex flex-col overflow-hidden rounded-xl border border-neutral-800 bg-[#141618] transition-all duration-300 hover:border-emerald-500/60 hover:shadow-lg hover:shadow-emerald-950/30"
                             >
-                                <div className="relative h-40 overflow-hidden">
+                                <div className="surface-dark relative h-40 overflow-hidden">
                                     <Image
                                         src={category.image}
                                         alt={category.name}

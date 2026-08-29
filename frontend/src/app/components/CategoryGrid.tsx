@@ -45,7 +45,7 @@ export default function CategoryGrid({ products, limit = 6 }: CategoryGridProps)
             <Link
                 key={category.slug}
                 href={`/kategoria/${category.slug}?producent=${producer}`}
-                className="group relative h-48 overflow-hidden rounded-lg border border-neutral-800 transition-all duration-300 hover:border-emerald-500/60 hover:shadow-lg hover:shadow-emerald-950/30"
+                className="surface-dark group relative h-48 overflow-hidden rounded-lg border border-neutral-800 transition-all duration-300 hover:border-emerald-500/60 hover:shadow-lg hover:shadow-emerald-950/30"
             >
                 <Image
                     src={category.image}
