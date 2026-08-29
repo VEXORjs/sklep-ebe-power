@@ -95,7 +95,7 @@ export default function Navbar() {
                             className="flex items-center gap-1.5 text-sm font-medium text-neutral-300 transition-colors hover:text-emerald-400 focus:outline-none py-2"
                             aria-expanded={isDropdownOpen}
                         >
-                            <span>Kategorie</span>
+                            <span>Agregaty prądotwórcze</span>
                             <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180 text-emerald-400' : ''}`} />
                         </button>
 
@@ -259,7 +259,7 @@ export default function Navbar() {
                                 onClick={() => setIsMobileCategoriesOpen((prev) => !prev)}
                                 className="flex w-full items-center justify-between py-2 text-base font-semibold text-neutral-200 hover:text-emerald-400 transition-colors"
                             >
-                                <span>Kategorie produktów</span>
+                                <span>Agregaty prądotwórcze</span>
                                 <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isMobileCategoriesOpen ? 'rotate-180 text-emerald-400' : ''}`} />
                             </button>
 
