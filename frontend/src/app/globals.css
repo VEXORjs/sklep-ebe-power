@@ -65,6 +65,30 @@ button:not(:disabled),
   animation-play-state: paused;
 }
 
+/* Szuflada filtrów w katalogu (mobile) — panel wjeżdża od dołu.
+   Poniżej breakpointu `lg` kolumna filtrów zmienia się w bottom sheet,
+   dzięki czemu nie wypycha produktów pod długą kolumną checkboxów. */
+@keyframes filter-sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1023.98px) {
+  .filter-sheet {
+    animation: filter-sheet-up 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+@media (max-width: 1023.98px) and (prefers-reduced-motion: reduce) {
+  .filter-sheet {
+    animation: none;
+  }
+}
+
 /* Fade tabeli specyfikacji */
 .spec-table-fade {
   background: linear-gradient(
