@@ -2,6 +2,8 @@
 
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import { useTheme } from '@/app/context/ThemeContext'; // Upewnij się, że ścieżka to @/app/...
+import { useMemo } from 'react';
 import CheckoutForm from './CheckoutForm';
 
 const publishableKey =
@@ -17,21 +19,38 @@ interface StripeContainerProps {
 }
 
 export default function StripeContainer({ clientSecret, defaultEmail }: StripeContainerProps) {
-    const options = {
-        clientSecret,
-        locale: 'pl' as const,
-        appearance: {
-            theme: 'night' as const,
-            variables: {
-                colorPrimary: '#10b981',
-                colorBackground: '#171717',
-                colorText: '#ffffff',
-                colorDanger: '#ef4444',
-                borderRadius: '6px',
-                fontFamily: 'Arial, Helvetica, sans-serif',
-            },
-        },
-    };
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
+
+    const options = useMemo(() => {
+        return {
+            clientSecret,
+            locale: 'pl' as const,
+            appearance: {
+                theme: isDark ? 'night' : 'stripe',
+                variables: {
+                    colorPrimary: '#10b981',
+                    colorBackground: isDark ? '#171717' : '#ffffff',
+                    colorText: isDark ? '#ffffff' : '#171717',
+                    colorDanger: '#ef4444',
+                    borderRadius: '6px',
+                    fontFamily: 'Arial, Helvetica, sans-serif',
+                },
+                rules: {
+                    '.Input': {
+                        border: isDark ? '1px solid #262626' : '1px solid #e5e5e5',
+                        boxShadow: 'none',
+                        backgroundColor: isDark ? '#141618' : '#ffffff',
+                        padding: '12px 16px',
+                    },
+                    '.Input:focus': {
+                        border: '1px solid #10b981',
+                        boxShadow: 'none',
+                    }
+                }
+            }
+        };
+    }, [clientSecret, isDark]);
 
     if (!publishableKey) {
         return (
