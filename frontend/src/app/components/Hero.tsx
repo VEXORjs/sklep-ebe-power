@@ -47,7 +47,7 @@ export default function Hero({ product }: HeroProps) {
                             />
                         </div>
 
-                        <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg border border-emerald-500/40 bg-neutral-950/95 px-5 py-3 shadow-xl shadow-black/60 backdrop-blur">
+                        <div className="mx-auto mt-4 w-fit max-w-full whitespace-nowrap rounded-lg border border-emerald-500/40 bg-neutral-950/95 px-5 py-3 shadow-xl shadow-black/60 backdrop-blur">
                             <p className="text-center text-xs font-bold text-emerald-400">
                                 Oryginalny produkt PRAMAC
                             </p>
