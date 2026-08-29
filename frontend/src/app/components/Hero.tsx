@@ -32,11 +32,35 @@ export default function Hero({ product }: HeroProps) {
 
             <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
                 <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
-                    {/* Lewa kolumna — treść */}
-                    <div className="space-y-7">
+                    {/* Lewa kolumna — zdjecie */}
+                   <div className="relative mx-auto w-full max-w-lg xl:max-w-xl">
+                        <div className="absolute -inset-3 rounded-2xl bg-emerald-500/10 blur-2xl" />
+                        <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-emerald-500/30 bg-white shadow-2xl shadow-black/60">
+                            <FallbackImage
+                                srcs={product.images ?? []}
+                                alt={product.name}
+                                fill
+                                priority
+                                quality={75}
+                                sizes="(max-width: 1024px) min(100vw - 2rem, 512px), 512px"
+                                className="object-contain p-6"
+                            />
+                        </div>
+
+                        <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg border border-emerald-500/40 bg-neutral-950/95 px-5 py-3 shadow-xl shadow-black/60 backdrop-blur">
+                            <p className="text-center text-xs font-bold text-emerald-400">
+                                Oryginalny produkt PRAMAC
+                            </p>
+                            <p className="text-center text-[10px] uppercase tracking-wide text-neutral-500">
+                                kategoria: {product.category ?? "Brak"}
+                            </p>
+                        </div>
+
+                    {/* Prawa kolumna — opis */}
+                         <div className="space-y-7">
                         <div className="flex flex-wrap items-center gap-3">
                             <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-emerald-400">
-                                ⚡ Katalog PRAMAC
+                                    Katalog PRAMAC 
                             </span>
                             {discount !== null && (
                                 <span className="rounded-full bg-red-600 px-3 py-1.5 text-[11px] font-extrabold text-white">
@@ -97,30 +121,6 @@ export default function Hero({ product }: HeroProps) {
                             ))}
                         </div>
                     </div>
-
-                    {/* Prawa kolumna — zdjęcie produktu */}
-                    <div className="relative mx-auto w-full max-w-lg xl:max-w-xl">
-                        <div className="absolute -inset-3 rounded-2xl bg-emerald-500/10 blur-2xl" />
-                        <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-emerald-500/30 bg-white shadow-2xl shadow-black/60">
-                            <FallbackImage
-                                srcs={product.images ?? []}
-                                alt={product.name}
-                                fill
-                                priority
-                                quality={75}
-                                sizes="(max-width: 1024px) min(100vw - 2rem, 512px), 512px"
-                                className="object-contain p-6"
-                            />
-                        </div>
-
-                        <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg border border-emerald-500/40 bg-neutral-950/95 px-5 py-3 shadow-xl shadow-black/60 backdrop-blur">
-                            <p className="text-center text-xs font-bold text-emerald-400">
-                                Oryginalny produkt PRAMAC
-                            </p>
-                            <p className="text-center text-[10px] uppercase tracking-wide text-neutral-500">
-                                kategoria: {product.category ?? "Brak"}
-                            </p>
-                        </div>
                     </div>
                 </div>
             </div>
