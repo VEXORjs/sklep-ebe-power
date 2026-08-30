@@ -3,6 +3,7 @@ import FallbackImage from "@/app/components/FallbackImage";
 import Link from "next/link";
 import { ArrowRight, BadgeCheck, Clock, ShieldCheck } from "lucide-react";
 import HeroAddToCart from "@/app/components/HeroAddToCart";
+import HeroCustomerMap from "@/app/components/HeroCustomerMap";
 
 interface HeroProps {
     product: Product;
@@ -55,9 +56,10 @@ export default function Hero({ product }: HeroProps) {
                                 kategoria: {product.category ?? "Brak"}
                             </p>
                         </div>
+                    </div>
 
                     {/* Prawa kolumna — opis */}
-                         <div className="space-y-7">
+                    <div className="space-y-7">
                         <div className="flex flex-wrap items-center gap-3">
                             {discount !== null && (
                                 <span className="rounded-full bg-red-600 px-3 py-1.5 text-[11px] font-extrabold text-white">
@@ -117,7 +119,9 @@ export default function Hero({ product }: HeroProps) {
                                 </span>
                             ))}
                         </div>
-                    </div>
+
+                        {/* Interaktywna mapa 3D z lokalizacjami klientów */}
+                        <HeroCustomerMap />
                     </div>
                 </div>
             </div>

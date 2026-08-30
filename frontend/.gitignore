@@ -20,6 +20,9 @@
 # production
 /build
 
+# web worker MapLibre GL (generowany przez scripts/copy-maplibre-worker.mjs)
+/public/maplibre/
+
 # misc
 .DS_Store
 *.pem

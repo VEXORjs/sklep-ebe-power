@@ -611,3 +611,72 @@ html.light [class*="bg-emerald-500"][class*="text-slate"] div[style*="border"] {
   border-color: rgba(2, 6, 23, 0.25) !important;
   border-top-color: #020617 !important;
 }
+
+/* ── Mapa 3D klientów w hero (MapLibre GL) ────────────────────────────── */
+
+/* Popup hover — ciemny, z emeraldowym akcentem */
+.customer-map-popup .maplibregl-popup-content {
+  background: rgba(9, 12, 17, 0.95);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+}
+.customer-map-popup .customer-map-popup-heading {
+  color: #ecfdf5;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.customer-map-popup .customer-map-popup-sub {
+  color: #6ee7b7;
+  font-size: 11px;
+  line-height: 1.3;
+  margin-top: 2px;
+}
+.customer-map-popup .maplibregl-popup-anchor-bottom .maplibregl-popup-tip {
+  border-top-color: rgba(9, 12, 17, 0.95);
+}
+.customer-map-popup .maplibregl-popup-anchor-top .maplibregl-popup-tip {
+  border-bottom-color: rgba(9, 12, 17, 0.95);
+}
+.customer-map-popup .maplibregl-popup-anchor-left .maplibregl-popup-tip {
+  border-right-color: rgba(9, 12, 17, 0.95);
+}
+.customer-map-popup .maplibregl-popup-anchor-right .maplibregl-popup-tip {
+  border-left-color: rgba(9, 12, 17, 0.95);
+}
+
+/* Atrybucja (© OpenStreetMap) — dyskretna, ciemna */
+.customer-map .maplibregl-ctrl-attrib {
+  background: rgba(0, 0, 0, 0.45) !important;
+  border-radius: 4px 0 0 0;
+}
+.customer-map .maplibregl-ctrl-attrib,
+.customer-map .maplibregl-ctrl-attrib a {
+  color: #52525b;
+  font-size: 10px;
+}
+.customer-map .maplibregl-ctrl-attrib-button {
+  filter: invert(1) grayscale(1) brightness(1.6);
+}
+
+/* Podpowiedź „coop gestures” — po polsku */
+.customer-map .maplibregl-cooperative-gesture-screen {
+  font-size: 13px;
+  background: rgba(3, 7, 5, 0.55);
+  backdrop-filter: blur(2px);
+}
+.customer-map .maplibregl-cooperative-gesture-screen .maplibregl-desktop-message,
+.customer-map .maplibregl-cooperative-gesture-screen .maplibregl-mobile-message {
+  display: none;
+}
+.customer-map .maplibregl-cooperative-gesture-screen::after {
+  content: "Przytrzymaj Ctrl i scrolluj, aby przybliżyć mapę";
+}
+@media (hover: none), (pointer: coarse) {
+  .customer-map .maplibregl-cooperative-gesture-screen::after {
+    content: "Użyj dwóch palców, aby przesuwać mapą";
+  }
+}
