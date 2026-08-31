@@ -33,12 +33,12 @@ export default function Hero({ product }: HeroProps) {
             <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
                 <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16">
                     {/* ── Lewa kolumna — zdjęcie agregatu ──
-                        `order-2 lg:order-1`: na mobile kolejność bez zmian
-                        (najpierw tekst), na desktopie zdjęcie wędruje do lewej.
+                        Zdjęcie jest pierwsze w DOM: na mobile wyświetla się
+                        nad treścią, na desktopie ląduje w lewej kolumnie.
                         `relative z-0`: warstwy dekoracyjne (siatka, poświata,
                         maskowany kadr) nie mogą przykryć przycisków i przechwycić
                         kliknięć — elementy pozycjonowane rysują się nad statycznymi. */}
-                    <div className="hero-shot relative z-0 order-2 mx-auto w-full max-w-lg lg:order-1 xl:max-w-xl">
+                    <div className="hero-shot relative z-0 mx-auto w-full max-w-lg xl:max-w-xl">
                         {/* Kadr: maska (nierówna krawędź + fade out) + border — inline SVG,
                             zdjęcie w środku SVG, żeby maska działała we wszystkich przeglądarkach. */}
                         <div className="relative aspect-[4/3]">
@@ -63,7 +63,7 @@ export default function Hero({ product }: HeroProps) {
 
                     {/* ── Prawa kolumna — treść ──
                         `relative z-10`: patrz komentarz przy zdjęciu. */}
-                    <div className="relative z-10 order-1 space-y-7 lg:order-2">
+                    <div className="relative z-10 space-y-7">
                         <div className="flex flex-wrap items-center gap-3">
                             <span className="rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-emerald-400">
                                 Oferta tygodnia
