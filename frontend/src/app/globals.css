@@ -611,3 +611,70 @@ html.light [class*="bg-emerald-500"][class*="text-slate"] div[style*="border"] {
   border-color: rgba(2, 6, 23, 0.25) !important;
   border-top-color: #020617 !important;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   HERO — zdjęcie agregatu (prawa kolumna)
+   Kadr nie ma prostokątnej ramki: maska SVG daje nierówną,
+   poszarpaną krawędź, którą rozmycie (feGaussianBlur) wygasza
+   w fade out. Maska operuje na przezroczystości, więc zdjęcie
+   wtapia się w tło zarówno w motywie ciemnym, jak i jasnym.
+   ═══════════════════════════════════════════════════════════ */
+
+.hero-shot {
+  /* Ten sam kształt co ścieżka `RAGGED_EDGE_PATH` w Hero.tsx.
+     feTurbulence + feDisplacementMap = poszarpana krawędź,
+     feGaussianBlur = wygaszenie (fade out) w tło. */
+  --hero-edge-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 600' preserveAspectRatio='none'><filter id='r' filterUnits='userSpaceOnUse' x='-150' y='-150' width='900' height='900'><feTurbulence type='fractalNoise' baseFrequency='0.02' numOctaves='3' seed='7' result='n'/><feDisplacementMap in='SourceGraphic' in2='n' scale='24' xChannelSelector='R' yChannelSelector='G'/><feGaussianBlur stdDeviation='13'/></filter><path d='M52 66C140 40 258 54 372 46C462 40 546 56 556 116C568 184 542 258 556 336C566 422 544 502 470 532C390 564 272 542 180 552C100 562 48 532 42 452C36 370 56 298 46 218C38 150 36 88 52 66Z' fill='white' filter='url(%23r)'/></svg>");
+}
+
+.hero-shot__media {
+  /* Jednolita, jasna „karta" — zdjęcia produktów mają białe tło,
+     więc ich krawędzie znikają, a kadr wycina dopiero maska. */
+  background: radial-gradient(
+    120% 120% at 50% 30%,
+    #ffffff 0%,
+    #ffffff 55%,
+    #f4f7f8 100%
+  );
+  -webkit-mask-image: var(--hero-edge-mask);
+  mask-image: var(--hero-edge-mask);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+/* Poświata pod kadrem — powtarza nieregularny kształt */
+.hero-shot__glow {
+  background: radial-gradient(
+    60% 60% at 50% 50%,
+    rgba(16, 185, 129, 0.28) 0%,
+    rgba(16, 185, 129, 0.1) 55%,
+    transparent 100%
+  );
+  filter: blur(36px);
+}
+
+/* Nierówny border rysowany po tej samej krawędzi */
+.hero-shot__edge {
+  overflow: visible;
+}
+
+/* Fallback: brak wsparcia dla masek — zwykły, miękko zaokrąglony kadr */
+@supports not ((mask-image: linear-gradient(#000, #000)) or (-webkit-mask-image: linear-gradient(#000, #000))) {
+  .hero-shot__media {
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+}
+
+html.light .hero-shot__media {
+  background: radial-gradient(
+    120% 120% at 50% 30%,
+    #ffffff 0%,
+    #ffffff 55%,
+    #eef2f5 100%
+  );
+}

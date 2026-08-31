@@ -1,7 +1,7 @@
 // context/CartContext.tsx
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { CartDto } from "@/app/types/cart";
 import { useSession } from "next-auth/react";
 import { Product } from "@/app/types/product";
@@ -41,6 +41,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const [cart, setCart] = useState<CartDto | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
+
+    /**
+     * Zawsze aktualny koszyk dla handlerów zdarzeń.
+     *
+     * Bez tego dwa szybkie kliknięcia „Dodaj do koszyka" liczyły się od tego
+     * samego (przeterminowanego) stanu z domknięcia i drugie nadpisywało
+     * pierwsze — z perspektywy użytkownika przycisk „nie działał".
+     */
+    const cartRef = useRef<CartDto | null>(null);
+    useEffect(() => {
+        cartRef.current = cart;
+    }, [cart]);
 
     const userId = session?.user ? (session.user).id : null;
     const token = session?.accessToken;
@@ -157,13 +169,20 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     // Dodawanie produktu do koszyka (POST)
     const addToCart = async (product: Product, quantity: number = 1) => {
         if (!userId) {
-            const currentItems = cart?.items ? [...cart?.items] : [];
+            const currentCart = cartRef.current ?? cart;
+            const currentItems = currentCart?.items ? [...currentCart.items] : [];
 
             const existingIndex = currentItems.findIndex((i) => i.productId === product.id);
 
             if (existingIndex > -1) {
-                currentItems[existingIndex].quantity += quantity;
-                currentItems[existingIndex].totalPrice = currentItems[existingIndex].quantity * currentItems[existingIndex].productPrice;
+                // Kopia zamiast mutacji obiektu trzymanego w stanie Reacta.
+                const existing = currentItems[existingIndex];
+                const newQuantity = existing.quantity + quantity;
+                currentItems[existingIndex] = {
+                    ...existing,
+                    quantity: newQuantity,
+                    totalPrice: newQuantity * existing.productPrice,
+                };
             }
             else {
                 currentItems.push({
@@ -180,9 +199,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 userId: 'guest',
                 items: currentItems,
                 cartTotal: newTotal,
-                firstStartup: cart?.firstStartup ?? false,
+                firstStartup: currentCart?.firstStartup ?? false,
             };
 
+            cartRef.current = updatedCart;
             setCart(updatedCart);
 
             localStorage.setItem("guest_cart", JSON.stringify(updatedCart));
@@ -195,9 +215,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 });
                 if (!res.ok) throw describeHttpError('Błąd podczas dodawania do koszyka', res, `${API_BASE_URL}/${userId}/add?productId=${product.id}&quantity=${quantity}`);
                 const updatedCart: CartDto = await res.json();
+                cartRef.current = updatedCart;
                 setCart({ ...updatedCart, firstStartup: cart?.firstStartup ?? false });
             } catch (error) {
                 console.error(error);
+                // Błąd musi dotrzeć do przycisku, inaczej UI pokaże „Dodano",
+                // mimo że w koszyku nic nie przybyło.
+                throw error instanceof Error ? error : new Error(String(error));
             }
         }
     };
