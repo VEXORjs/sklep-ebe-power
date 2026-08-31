@@ -1,16 +1,12 @@
 import { Product } from "@/app/types/product";
-import FallbackImage from "@/app/components/FallbackImage";
 import Link from "next/link";
 import { ArrowRight, BadgeCheck, Clock, ShieldCheck } from "lucide-react";
 import HeroAddToCart from "@/app/components/HeroAddToCart";
+import HeroShot from "@/app/components/HeroShot";
 
 interface HeroProps {
     product: Product;
 }
-
-/** Nierówna („odręczna") krawędź kadru — ten sam kształt co maska w `globals.css`. */
-const RAGGED_EDGE_PATH =
-    "M52 66C140 40 258 54 372 46C462 40 546 56 556 116C568 184 542 258 556 336C566 422 544 502 470 532C390 564 272 542 180 552C100 562 48 532 42 452C36 370 56 298 46 218C38 150 36 88 52 66Z";
 
 export default function Hero({ product }: HeroProps) {
     const discount =
@@ -36,11 +32,38 @@ export default function Hero({ product }: HeroProps) {
 
             <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
                 <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16">
-                    {/* ── Lewa kolumna — treść ──
-                        `relative z-10`: warstwy dekoracyjne (siatka, poświaty,
+                    {/* ── Lewa kolumna — zdjęcie agregatu ──
+                        `order-2 lg:order-1`: na mobile kolejność bez zmian
+                        (najpierw tekst), na desktopie zdjęcie wędruje do lewej.
+                        `relative z-0`: warstwy dekoracyjne (siatka, poświata,
                         maskowany kadr) nie mogą przykryć przycisków i przechwycić
                         kliknięć — elementy pozycjonowane rysują się nad statycznymi. */}
-                    <div className="relative z-10 space-y-7">
+                    <div className="hero-shot relative z-0 order-2 mx-auto w-full max-w-lg lg:order-1 xl:max-w-xl">
+                        {/* Kadr: maska (nierówna krawędź + fade out) + border — inline SVG,
+                            zdjęcie w środku SVG, żeby maska działała we wszystkich przeglądarkach. */}
+                        <div className="relative aspect-[4/3]">
+                            {/* Poświata pod kadrem */}
+                            <div
+                                className="hero-shot__glow pointer-events-none absolute -inset-8"
+                                aria-hidden
+                            />
+
+                            <HeroShot srcs={product.images ?? []} alt={product.name} />
+                        </div>
+
+                        <div className="relative mx-auto mt-4 w-fit max-w-full whitespace-nowrap rounded-lg border border-emerald-500/40 bg-neutral-950/95 px-5 py-3 shadow-xl shadow-black/60 backdrop-blur">
+                            <p className="text-center text-xs font-bold text-emerald-400">
+                                Oryginalny produkt PRAMAC
+                            </p>
+                            <p className="text-center text-[10px] uppercase tracking-wide text-neutral-500">
+                                kategoria: {product.category ?? "Brak"}
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* ── Prawa kolumna — treść ──
+                        `relative z-10`: patrz komentarz przy zdjęciu. */}
+                    <div className="relative z-10 order-1 space-y-7 lg:order-2">
                         <div className="flex flex-wrap items-center gap-3">
                             <span className="rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-emerald-400">
                                 Oferta tygodnia
@@ -102,89 +125,6 @@ export default function Hero({ product }: HeroProps) {
                                     {perk.text}
                                 </span>
                             ))}
-                        </div>
-                    </div>
-
-                    {/* ── Prawa kolumna — zdjęcie agregatu ── */}
-                    <div className="hero-shot relative z-0 mx-auto w-full max-w-lg xl:max-w-xl">
-                        {/* Kadr: maska (nierówna krawędź + fade out) + rysowany po niej border */}
-                        <div className="relative aspect-[4/3]">
-                            {/* Poświata pod kadrem */}
-                            <div
-                                className="hero-shot__glow pointer-events-none absolute -inset-8"
-                                aria-hidden
-                            />
-
-                            <div className="hero-shot__media absolute inset-0">
-                                <FallbackImage
-                                    srcs={product.images ?? []}
-                                    alt={product.name}
-                                    fill
-                                    priority
-                                    quality={75}
-                                    sizes="(max-width: 1024px) min(100vw - 2rem, 512px), 512px"
-                                    className="object-contain p-8"
-                                />
-                            </div>
-
-                            {/* Nierówny border, który przechodzi w fade out */}
-                            <svg
-                                className="hero-shot__edge pointer-events-none absolute inset-0 h-full w-full"
-                                viewBox="0 0 600 600"
-                                preserveAspectRatio="none"
-                                aria-hidden
-                                focusable="false"
-                            >
-                                <defs>
-                                    <linearGradient id="hero-edge-fade" x1="0" y1="0" x2="1" y2="1">
-                                        <stop offset="0%" stopColor="#34d399" stopOpacity="0.95" />
-                                        <stop offset="38%" stopColor="#10b981" stopOpacity="0.55" />
-                                        <stop offset="68%" stopColor="#10b981" stopOpacity="0.18" />
-                                        <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
-                                    </linearGradient>
-                                    <filter
-                                        id="hero-edge-rough"
-                                        filterUnits="userSpaceOnUse"
-                                        x="-150"
-                                        y="-150"
-                                        width="900"
-                                        height="900"
-                                    >
-                                        <feTurbulence
-                                            type="fractalNoise"
-                                            baseFrequency="0.02"
-                                            numOctaves="3"
-                                            seed="7"
-                                            result="noise"
-                                        />
-                                        <feDisplacementMap
-                                            in="SourceGraphic"
-                                            in2="noise"
-                                            scale="24"
-                                            xChannelSelector="R"
-                                            yChannelSelector="G"
-                                        />
-                                    </filter>
-                                </defs>
-                                <path
-                                    d={RAGGED_EDGE_PATH}
-                                    fill="none"
-                                    stroke="url(#hero-edge-fade)"
-                                    strokeWidth="4"
-                                    strokeLinecap="round"
-                                    filter="url(#hero-edge-rough)"
-                                    vectorEffect="non-scaling-stroke"
-                                />
-                            </svg>
-                        </div>
-
-                        <div className="relative mx-auto mt-4 w-fit max-w-full whitespace-nowrap rounded-lg border border-emerald-500/40 bg-neutral-950/95 px-5 py-3 shadow-xl shadow-black/60 backdrop-blur">
-                            <p className="text-center text-xs font-bold text-emerald-400">
-                                Oryginalny produkt PRAMAC
-                            </p>
-                            <p className="text-center text-[10px] uppercase tracking-wide text-neutral-500">
-                                kategoria: {product.category ?? "Brak"}
-                            </p>
                         </div>
                     </div>
                 </div>
