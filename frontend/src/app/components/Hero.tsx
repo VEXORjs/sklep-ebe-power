@@ -36,8 +36,11 @@ export default function Hero({ product }: HeroProps) {
 
             <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
                 <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-16">
-                    {/* ── Lewa kolumna — treść ── */}
-                    <div className="space-y-7">
+                    {/* ── Lewa kolumna — treść ──
+                        `relative z-10`: warstwy dekoracyjne (siatka, poświaty,
+                        maskowany kadr) nie mogą przykryć przycisków i przechwycić
+                        kliknięć — elementy pozycjonowane rysują się nad statycznymi. */}
+                    <div className="relative z-10 space-y-7">
                         <div className="flex flex-wrap items-center gap-3">
                             <span className="rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-emerald-400">
                                 Oferta tygodnia
@@ -103,7 +106,7 @@ export default function Hero({ product }: HeroProps) {
                     </div>
 
                     {/* ── Prawa kolumna — zdjęcie agregatu ── */}
-                    <div className="hero-shot relative mx-auto w-full max-w-lg xl:max-w-xl">
+                    <div className="hero-shot relative z-0 mx-auto w-full max-w-lg xl:max-w-xl">
                         {/* Kadr: maska (nierówna krawędź + fade out) + rysowany po niej border */}
                         <div className="relative aspect-[4/3]">
                             {/* Poświata pod kadrem */}

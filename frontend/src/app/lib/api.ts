@@ -22,6 +22,20 @@ export function getPublicApiUrl(): string {
         return "/api/backend";
     }
 
+    // Dev, ale strona NIE jest otwarta na localhoście (podgląd w sandboxie,
+    // telefon w tej samej sieci, Codespaces…). `http://localhost:8080` wskazuje
+    // wtedy maszynę użytkownika, więc każde żądanie koszyka kończy się
+    // „Failed to fetch" i przyciski wyglądają na martwe. Idziemy przez
+    // same-origin proxy Next.js.
+    if (typeof window !== "undefined") {
+        const host = window.location.hostname;
+        const isLocalhost =
+            host === "localhost" || host === "127.0.0.1" || host === "::1" || host === "[::1]";
+        if (!isLocalhost) {
+            return "/api/backend";
+        }
+    }
+
     return "http://localhost:8080";
 }
 
