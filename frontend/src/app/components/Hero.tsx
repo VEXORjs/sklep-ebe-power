@@ -99,8 +99,8 @@ export default function Hero({ product }: HeroProps) {
                         </div>
 
                         {/* Akcje */}
-                        <div className="flex flex-wrap items-center gap-4">
-                            <HeroAddToCart product={product} />
+                        <div className="flex flex-wrap items-start gap-4">
+                            <HeroAddToCart product={product}/>
                             <Link
                                 href={`/products/${product.id}`}
                                 className="inline-flex items-center gap-2 rounded-md border border-neutral-700 bg-neutral-900/60 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:border-emerald-500/60 hover:text-emerald-300"
