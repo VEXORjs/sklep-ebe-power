@@ -13,35 +13,32 @@ export default function AdminProducts() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
-  const [stockFilter, setStockFilter] = useState<FilterType>('all');
+  // Początkowy filtr stanu odczytywany raz z URL (?filter=low|out|in) —
+  // wzorzec „lazy initial state" zamiast setState w efekcie.
+  const [stockFilter, setStockFilter] = useState<FilterType>(() => {
+    if (typeof window === 'undefined') return 'all';
+    const f = new URLSearchParams(window.location.search).get('filter') as FilterType | null;
+    return f && ['low', 'out', 'in', 'all'].includes(f) ? f : 'all';
+  });
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const fetchProducts = async () => {
-    setLoading(true);
-    try {
-      const data = await getProductsClient();
-      setProducts(data);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  // parse URL filter param
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const f = params.get('filter') as FilterType | null;
-      if (f && ['low', 'out', 'in', 'all'].includes(f)) setStockFilter(f);
-    }
+    // Funkcja zdefiniowana wewnątrz efektu — wszystkie setState wywołują się
+    // po await (asynchronicznie), czego wymaga reguła react-hooks/set-state-in-effect.
+    const load = async () => {
+      try {
+        const data = await getProductsClient();
+        setProducts(data);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
   }, []);
 
   const categories = useMemo(() => {
@@ -72,9 +69,26 @@ export default function AdminProducts() {
     return filtered.slice(start, start + itemsPerPage);
   }, [filtered, currentPage]);
 
-  useEffect(() => {
+  // Zmiana filtrów to zdarzenie użytkownika — reset strony w handlerach
+  // (zamiast setState synchronicznie w efekcie).
+  const changeSearch = (value: string) => {
+    setSearch(value);
     setCurrentPage(1);
-  }, [search, categoryFilter, stockFilter]);
+  };
+  const changeCategory = (value: string) => {
+    setCategoryFilter(value);
+    setCurrentPage(1);
+  };
+  const changeStockFilter = (value: FilterType) => {
+    setStockFilter(value);
+    setCurrentPage(1);
+  };
+  const resetFilters = () => {
+    setSearch('');
+    setCategoryFilter('all');
+    setStockFilter('all');
+    setCurrentPage(1);
+  };
 
   const handleDelete = async (id: number) => {
     if (!confirm('Czy na pewno chcesz usunąć ten produkt? Tej operacji nie można cofnąć.')) return;
@@ -141,6 +155,7 @@ export default function AdminProducts() {
       {showForm && (
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
           <AdminProductForm
+            key={editingProduct?.id ?? 'new'}
             editingProduct={editingProduct}
             onSuccess={handleSuccess}
             onCancel={() => {
@@ -157,14 +172,14 @@ export default function AdminProducts() {
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">🔍</span>
           <input
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={e => changeSearch(e.target.value)}
             placeholder="Szukaj po nazwie, SKU, kategorii..."
             className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 focus:bg-white transition"
           />
         </div>
         <select
           value={categoryFilter}
-          onChange={e => setCategoryFilter(e.target.value)}
+          onChange={e => changeCategory(e.target.value)}
           className="px-3 py-2.5 rounded-xl border border-slate-200 text-sm bg-white min-w-[160px]"
         >
           <option value="all">Wszystkie kategorie</option>
@@ -174,7 +189,7 @@ export default function AdminProducts() {
         </select>
         <select
           value={stockFilter}
-          onChange={e => setStockFilter(e.target.value as FilterType)}
+          onChange={e => changeStockFilter(e.target.value as FilterType)}
           className="px-3 py-2.5 rounded-xl border border-slate-200 text-sm bg-white min-w-[160px]"
         >
           <option value="all">Wszystkie stany</option>
@@ -183,7 +198,7 @@ export default function AdminProducts() {
           <option value="out">Brak (0)</option>
         </select>
         <button
-          onClick={() => { setSearch(''); setCategoryFilter('all'); setStockFilter('all'); }}
+          onClick={resetFilters}
           className="px-4 py-2.5 rounded-xl border border-slate-200 text-sm bg-white hover:bg-slate-50"
         >
           Wyczyść

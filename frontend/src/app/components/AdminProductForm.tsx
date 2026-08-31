@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Product } from '@/app/types/product';
 import { uploadProductImage } from '@/lib/uploadImage';
 import { getPublicApiUrl } from '@/app/lib/api';
@@ -31,58 +31,66 @@ const SUBCATEGORY_OPTIONS: Record<string, string[]> = {
   Transformatory: ['toroidalne', 'bezpieczeństwa', 'separacyjne'],
 };
 
+/** Zamienia `parameters` produktu (mapa albo string „klucz: wartość; …") na wiersze formularza. */
+function toParamEntries(product: Product | null): ParamEntry[] {
+  const p = product?.parameters;
+  if (!p) return [{ key: '', value: '' }];
+
+  let entries: ParamEntry[] = [];
+  if (typeof p === 'object' && !Array.isArray(p)) {
+    entries = Object.entries(p as Record<string, string>).map(([key, value]) => ({ key, value }));
+  } else if (typeof p === 'string') {
+    entries = p
+      .split(/[;\n]+/)
+      .map(s => s.trim())
+      .filter(Boolean)
+      .map(part => {
+        const idx = part.indexOf(':');
+        return idx === -1
+          ? { key: 'param', value: part }
+          : { key: part.slice(0, idx).trim(), value: part.slice(idx + 1).trim() };
+      });
+  }
+  return entries.length ? entries : [{ key: '', value: '' }];
+}
+
+/** Ciało żądania POST/PUT /api/products — bez `any` (reguła no-explicit-any). */
+interface ProductPayload {
+  name: string;
+  price: number;
+  oldPrice: number | null;
+  stock: number;
+  sku: string | null;
+  category: string | null;
+  subcategory: string | null;
+  description: string;
+  images: string[];
+  parameters: Record<string, string>;
+}
+
 export default function AdminProductForm({ editingProduct, onSuccess, onCancel }: Props) {
   const isEdit = Boolean(editingProduct);
+
+  // Stan formularza inicjalizowany bezpośrednio z `editingProduct`.
+  // Rodzic montuje formularz z key={editingProduct?.id ?? 'new'}, więc przy
+  // każdej zmianie edytowanego produktu komponent jest remontowany i stan
+  // ustawia się od zera — bez efektu z synchronicznym setState
+  // (react-hooks/set-state-in-effect).
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
-  const [existingImages, setExistingImages] = useState<string[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>(editingProduct?.images || []);
 
   // form fields
-  const [name, setName] = useState('');
-  const [price, setPrice] = useState('');
-  const [oldPrice, setOldPrice] = useState('');
-  const [stock, setStock] = useState('');
-  const [sku, setSku] = useState('');
-  const [category, setCategory] = useState('');
-  const [subcategory, setSubcategory] = useState('');
-  const [description, setDescription] = useState('');
-  const [params, setParams] = useState<ParamEntry[]>([{ key: '', value: '' }]);
-
-  useEffect(() => {
-    if (editingProduct) {
-      setName(editingProduct.name || '');
-      setPrice(editingProduct.price?.toString() || '');
-      setOldPrice(editingProduct.oldPrice?.toString() || '');
-      setStock(editingProduct.stock?.toString() || '');
-      setSku(editingProduct.sku || '');
-      setCategory(editingProduct.category || '');
-      setSubcategory(editingProduct.subcategory || '');
-      setDescription(editingProduct.description || '');
-      setExistingImages(editingProduct.images || []);
-      // parse parameters
-      if (editingProduct.parameters) {
-        if (typeof editingProduct.parameters === 'object' && !Array.isArray(editingProduct.parameters)) {
-          const entries = Object.entries(editingProduct.parameters as Record<string, string>).map(([k, v]) => ({ key: k, value: v }));
-          setParams(entries.length ? entries : [{ key: '', value: '' }]);
-        } else if (typeof editingProduct.parameters === 'string') {
-          const parts = (editingProduct.parameters as string).split(/[;\n]+/).map(s => s.trim()).filter(Boolean);
-          const entries = parts.map(p => {
-            const idx = p.indexOf(':');
-            if (idx === -1) return { key: 'param', value: p };
-            return { key: p.slice(0, idx).trim(), value: p.slice(idx + 1).trim() };
-          });
-          setParams(entries.length ? entries : [{ key: '', value: '' }]);
-        }
-      } else {
-        setParams([{ key: '', value: '' }]);
-      }
-    } else {
-      // reset
-      setName(''); setPrice(''); setOldPrice(''); setStock(''); setSku(''); setCategory(''); setSubcategory(''); setDescription('');
-      setExistingImages([]); setFiles([]); setPreviews([]); setParams([{ key: '', value: '' }]);
-    }
-  }, [editingProduct]);
+  const [name, setName] = useState(editingProduct?.name || '');
+  const [price, setPrice] = useState(editingProduct?.price?.toString() || '');
+  const [oldPrice, setOldPrice] = useState(editingProduct?.oldPrice?.toString() || '');
+  const [stock, setStock] = useState(editingProduct?.stock?.toString() || '');
+  const [sku, setSku] = useState(editingProduct?.sku || '');
+  const [category, setCategory] = useState(editingProduct?.category || '');
+  const [subcategory, setSubcategory] = useState(editingProduct?.subcategory || '');
+  const [description, setDescription] = useState(editingProduct?.description || '');
+  const [params, setParams] = useState<ParamEntry[]>(() => toParamEntries(editingProduct ?? null));
 
   const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -142,7 +150,7 @@ export default function AdminProductForm({ editingProduct, onSuccess, onCancel }
         if (k && v) paramMap[k] = v;
       });
 
-      const payload: any = {
+      const payload: ProductPayload = {
         name: name.trim(),
         price: parseFloat(price),
         oldPrice: oldPrice ? parseFloat(oldPrice) : null,
@@ -176,9 +184,9 @@ export default function AdminProductForm({ editingProduct, onSuccess, onCancel }
         setName(''); setPrice(''); setOldPrice(''); setStock(''); setSku(''); setCategory(''); setSubcategory(''); setDescription('');
         setExistingImages([]); setFiles([]); setPreviews([]); setParams([{ key: '', value: '' }]);
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      alert(err.message || 'Błąd zapisu produktu');
+      alert(err instanceof Error ? err.message : 'Błąd zapisu produktu');
     } finally {
       setLoading(false);
     }

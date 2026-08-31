@@ -42,6 +42,16 @@ export const revalidate = 60;
 const loadProduct = cache(getProduct);
 const loadProducts = cache(getProducts);
 
+/**
+ * Data ważności ceny w danych strukturalnych (schema.org Offer).
+ * Celowo liczone na poziomie modułu, a NIE w trakcie renderu — `Date.now()`
+ * jest funkcją nieczystą (react-hooks/purity), a przy ISR wystarczy wartość
+ * ustalana raz na odsłonie modułu (build/revalidacja + 30 dni).
+ */
+const PRICE_VALID_UNTIL = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .split("T")[0];
+
 /** Pre-render all known product pages at build time for SEO. */
 export async function generateStaticParams() {
     const products = await getProducts();
@@ -164,7 +174,7 @@ export default async function ProductPage({ params }: PageProps) {
             "@type": "Offer",
             priceCurrency: "PLN",
             price: gross.toFixed(2),
-            priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+            priceValidUntil: PRICE_VALID_UNTIL,
             availability:
                 product.stock > 0
                     ? "https://schema.org/InStock"

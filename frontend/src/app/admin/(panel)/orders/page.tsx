@@ -10,33 +10,46 @@ export default function AdminOrders() {
   const [orders, setOrders] = useState<OrderDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+  // Początkowy filtr statusu odczytywany raz z URL (?status=PAID...) —
+  // wzorzec „lazy initial state" zamiast setState w efekcie.
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>(() => {
+    if (typeof window === 'undefined') return 'all';
+    const s = new URLSearchParams(window.location.search).get('status') as StatusFilter | null;
+    return s && ['PENDING', 'PAID', 'PAID_OUT_OF_STOCK', 'COMPLETED', 'CANCELLED'].includes(s) ? s : 'all';
+  });
   const [selected, setSelected] = useState<OrderDto | null>(null);
   const [updatingId, setUpdatingId] = useState<number | null>(null);
 
-  const load = async () => {
-    setLoading(true);
-    try {
-      const data = await getAllOrders();
-      setOrders(data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
+  // Czyste pobranie danych (bez setState) — używane i w efekcie montażu,
+  // i przez przycisk „Odśwież".
+  const fetchSortedOrders = async (): Promise<OrderDto[]> => {
+    const data = await getAllOrders();
+    return data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   };
 
   useEffect(() => {
-    load();
-    // read ?status from URL
-    if (typeof window !== 'undefined') {
-      const p = new URLSearchParams(window.location.search);
-      const s = p.get('status') as StatusFilter | null;
-      if (s && ['PENDING', 'PAID', 'PAID_OUT_OF_STOCK', 'COMPLETED', 'CANCELLED'].includes(s)) {
-        setStatusFilter(s);
+    // Funkcja zdefiniowana wewnątrz efektu — wszystkie setState wywołują się
+    // po await (asynchronicznie), czego wymaga reguła react-hooks/set-state-in-effect.
+    const load = async () => {
+      try {
+        const data = await fetchSortedOrders();
+        setOrders(data);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
       }
-    }
+    };
+    load();
   }, []);
+
+  const refresh = async () => {
+    try {
+      setOrders(await fetchSortedOrders());
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const filtered = useMemo(() => {
     return orders.filter(o => {
@@ -52,7 +65,7 @@ export default function AdminOrders() {
       const updated = await updateOrderStatus(id, newStatus);
       setOrders(prev => prev.map(o => (o.id === id ? updated : o)));
       if (selected?.id === id) setSelected(updated);
-    } catch (e) {
+    } catch {
       alert('Nie udało się zaktualizować statusu');
     } finally {
       setUpdatingId(null);
@@ -135,7 +148,7 @@ export default function AdminOrders() {
           <option value="COMPLETED">Zrealizowane</option>
           <option value="CANCELLED">Anulowane</option>
         </select>
-        <button onClick={load} className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm hover:bg-slate-50">🔄 Odśwież</button>
+        <button onClick={refresh} className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm hover:bg-slate-50">🔄 Odśwież</button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

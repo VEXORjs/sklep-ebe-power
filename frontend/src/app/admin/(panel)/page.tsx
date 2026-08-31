@@ -17,8 +17,8 @@ export default function AdminDashboard() {
         const [s, orders] = await Promise.all([getAdminStats(), getAllOrders()]);
         setStats(s);
         setRecentOrders(orders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 5));
-      } catch (e: any) {
-        setError(e.message || 'Błąd ładowania danych');
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Błąd ładowania danych');
       } finally {
         setLoading(false);
       }

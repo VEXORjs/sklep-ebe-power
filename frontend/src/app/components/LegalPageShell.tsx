@@ -5,8 +5,6 @@ interface LegalPageProps {
     eyebrow: string;
     title: string;
     updated: string;
-    /** URL path of this page for breadcrumb (e.g. "/regulamin") */
-    breadcrumbPath?: string;
     children: React.ReactNode;
 }
 
@@ -15,7 +13,6 @@ export default function LegalPageShell({
     eyebrow,
     title,
     updated,
-    breadcrumbPath,
     children,
 }: LegalPageProps) {
     return (
