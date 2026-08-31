@@ -47,7 +47,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Mobile overlay */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 bg-black/40 z-30 lg:hidden"
+          className="fixed inset-0 bg-black/40 z-[60] lg:hidden"
           onClick={() => setMobileOpen(false)}
         />
       )}
@@ -55,7 +55,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Sidebar */}
       <aside
         className={`
-          fixed lg:sticky top-0 z-40 h-screen w-[280px] bg-slate-950 text-white
+          fixed lg:sticky top-0 z-[70] h-screen w-[280px] bg-slate-950 text-white
           flex flex-col transition-transform duration-300
           ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
