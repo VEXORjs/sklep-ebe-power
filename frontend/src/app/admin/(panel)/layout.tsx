@@ -1,8 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { signOut, useSession } from 'next-auth/react';
+import { LogOut } from 'lucide-react';
 
 const navItems = [
   { href: '/admin', label: 'Pulpit', icon: '📊', exact: true },
@@ -13,7 +15,27 @@ const navItems = [
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { data: session, status } = useSession();
+
+  const adminEmail = session?.user?.email ?? '';
+  const adminName = session?.user?.name || adminEmail || 'Administrator';
+
+  // Podwójne zabezpieczenie — middleware zwykle przekierowuje wcześniej,
+  // ale sesja może wygasnąć w trakcie przeglądania panelu.
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.replace(`/admin/login?callbackUrl=${encodeURIComponent(pathname)}`);
+    } else if (status === 'authenticated' && session?.user?.role !== 'ADMIN') {
+      router.replace('/admin/login?error=forbidden');
+    }
+  }, [status, session, router, pathname]);
+
+  const handleLogout = () => {
+    signOut({ callbackUrl: '/' });
+  };
+
 
   const isActive = (href: string, exact?: boolean) => {
     if (exact) return pathname === href;
@@ -40,8 +62,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       >
         <div className="p-6 border-b border-slate-800">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center font-bold text-lg">
-              T
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center font-bold text-lg uppercase">
+              {(adminEmail || 'a').charAt(0)}
             </div>
             <div>
               <div className="font-bold tracking-tight">ebe power Admin</div>
@@ -93,8 +115,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="p-4 border-t border-slate-800">
           <div className="rounded-xl bg-slate-900 p-3 border border-slate-800">
             <div className="text-xs text-slate-400">Zalogowany jako</div>
-            <div className="text-sm font-medium truncate">Administrator</div>
-            <div className="mt-2 text-[11px] text-slate-500">v2.0 • ebe power</div>
+            <div className="text-sm font-medium truncate">{adminName}</div>
+            {adminEmail && (
+              <div className="text-[11px] text-slate-500 truncate">{adminEmail}</div>
+            )}
+            <button
+              onClick={handleLogout}
+              className="mt-2.5 flex w-full items-center justify-center gap-2 rounded-lg bg-slate-800 px-3 py-2 text-xs font-medium text-slate-300 transition-colors hover:bg-red-600 hover:text-white"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              Wyloguj się
+            </button>
+            <div className="mt-2 text-[11px] text-slate-500 text-center">v2.0 • ebe power</div>
           </div>
         </div>
       </aside>

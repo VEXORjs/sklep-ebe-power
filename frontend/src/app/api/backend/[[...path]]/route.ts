@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
 import { getServerApiUrl } from "@/app/lib/api";
 
 export const runtime = "nodejs";
@@ -69,6 +70,47 @@ function validateBackendBase(req: NextRequest): Response | null {
             502,
             "backend_points_to_frontend",
             "Zmienna API_URL wskazuje na domenę frontendu zamiast na backend Spring Boot. Ustaw wewnętrzny adres usługi backendu."
+        );
+    }
+
+    return null;
+}
+
+/**
+ * Bramka autoryzacji API panelu administratora.
+ *
+ * Żądania do /api/admin/** i /api/orders/** wymagają sesji NextAuth z rolą
+ * ADMIN (rola pochodzi z backendu i jest zapisywana w tokenie sesji przy
+ * logowaniu przez /admin/login). Weryfikacja dzieje się na serwerze Next.js —
+ * nie wymaga współdzielenia sekretu z backendem i działa od razu po wdrożeniu,
+ * jako pierwsza linia obrony przed bezpośrednim wywołaniem API z przeglądarki.
+ * Drugą linią jest AdminAuthFilter po stronie Spring Boota.
+ */
+async function authorizeAdminApi(req: NextRequest, path: string): Promise<Response | null> {
+    if (!(path.startsWith("/api/admin") || path.startsWith("/api/orders"))) {
+        return null;
+    }
+
+    let token = null;
+    try {
+        token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    } catch (error) {
+        console.error("[backend-proxy] Błąd weryfikacji sesji:", error);
+    }
+
+    if (!token) {
+        return jsonError(
+            401,
+            "admin_unauthorized",
+            "Brak aktywnej sesji. Zaloguj się w panelu administratora (/admin/login)."
+        );
+    }
+
+    if (token.role !== "ADMIN") {
+        return jsonError(
+            403,
+            "admin_forbidden",
+            "To konto nie ma uprawnień administratora."
         );
     }
 
@@ -156,6 +198,12 @@ async function proxy(req: NextRequest): Promise<Response> {
 
     const path = req.nextUrl.pathname.replace(/^\/api\/backend/, "");
     const targetUrl = `${BACKEND_BASE}${path}${req.nextUrl.search}`;
+
+    // API panelu administratora — tylko sesje z rolą ADMIN
+    const adminAuthError = await authorizeAdminApi(req, path);
+    if (adminAuthError) {
+        return adminAuthError;
+    }
 
     let body: BodyInit | null = null;
     if (req.method !== "GET" && req.method !== "HEAD") {

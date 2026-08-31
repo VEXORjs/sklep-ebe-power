@@ -27,8 +27,15 @@ export const authOptions: NextAuthOptions = {
                     return null;
                 }
 
+                // Strona logowania administratora (/admin/login) ustawia adminLogin=true —
+                // wtedy używamy endpointu /api/auth/admin-login, który oprócz hasła
+                // WYMAGA roli ADMIN na koncie (klient sklepu nie wejdzie do panelu).
+                const isAdminLogin =
+                    (credentials as Record<string, string | undefined>).adminLogin === "true";
+                const endpoint = isAdminLogin ? "/api/auth/admin-login" : "/api/auth/login";
+
                 try {
-                    const res = await fetch(`${API_URL}/api/auth/login`, {
+                    const res = await fetch(`${API_URL}${endpoint}`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
@@ -53,6 +60,7 @@ export const authOptions: NextAuthOptions = {
                         name: data.name,
                         // Backend może zwracać token jako `mockToken` lub `token`
                         token: data.mockToken ?? data.token,
+                        role: data.role ?? "USER",
                     };
                 } catch (error) {
                     console.error("Błąd podczas logowania", error);
@@ -74,6 +82,8 @@ export const authOptions: NextAuthOptions = {
                 token.id = user.id;
                 token.email = user.email;
                 token.springToken = user.token;
+                // Rola z backendu ("USER"/"ADMIN") — warunek dostępu do /admin
+                token.role = (user as { role?: string }).role ?? "USER";
             }
             return token;
         },
@@ -84,6 +94,7 @@ export const authOptions: NextAuthOptions = {
                     user: {
                         ...session.user,
                         id: token.id as string,
+                        role: token.role ?? "USER",
                     },
                     accessToken: token.springToken,
                 };

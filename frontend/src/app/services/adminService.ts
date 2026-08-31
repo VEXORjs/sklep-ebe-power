@@ -42,6 +42,7 @@ export interface UserDto {
   id: number;
   name: string;
   email: string;
+  role?: 'ADMIN' | 'USER';
 }
 
 function getApiBase(): string {
@@ -53,6 +54,7 @@ function getApiBase(): string {
 export async function getAdminStats(): Promise<AdminStats> {
   const res = await fetch(`${getApiBase()}/api/admin/stats`, {
     cache: 'no-store',
+    credentials: 'include',
   });
   if (!res.ok) throw new Error('Nie udało się pobrać statystyk');
   return res.json();
@@ -61,6 +63,7 @@ export async function getAdminStats(): Promise<AdminStats> {
 export async function getAllOrders(): Promise<OrderDto[]> {
   const res = await fetch(`${getApiBase()}/api/orders`, {
     cache: 'no-store',
+    credentials: 'include',
   });
   if (!res.ok) throw new Error('Nie udało się pobrać zamówień');
   return res.json();
@@ -69,6 +72,7 @@ export async function getAllOrders(): Promise<OrderDto[]> {
 export async function getOrderById(id: number): Promise<OrderDto> {
   const res = await fetch(`${getApiBase()}/api/orders/${id}`, {
     cache: 'no-store',
+    credentials: 'include',
   });
   if (!res.ok) throw new Error('Nie udało się pobrać zamówienia');
   return res.json();
@@ -79,6 +83,7 @@ export async function updateOrderStatus(id: number, status: string): Promise<Ord
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ status }),
+    credentials: 'include',
   });
   if (!res.ok) throw new Error('Nie udało się zaktualizować statusu');
   return res.json();
@@ -87,6 +92,7 @@ export async function updateOrderStatus(id: number, status: string): Promise<Ord
 export async function deleteOrder(id: number): Promise<void> {
   const res = await fetch(`${getApiBase()}/api/orders/${id}`, {
     method: 'DELETE',
+    credentials: 'include',
   });
   if (!res.ok) throw new Error('Nie udało się usunąć zamówienia');
 }
@@ -94,6 +100,7 @@ export async function deleteOrder(id: number): Promise<void> {
 export async function getAllUsers(): Promise<UserDto[]> {
   const res = await fetch(`${getApiBase()}/api/admin/users`, {
     cache: 'no-store',
+    credentials: 'include',
   });
   if (!res.ok) throw new Error('Nie udało się pobrać użytkowników');
   return res.json();

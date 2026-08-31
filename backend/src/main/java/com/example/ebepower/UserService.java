@@ -35,6 +35,7 @@ public class UserService {
             newUser.setPassword(passwordEncoder.encode(randomPassword));
 
             // Możesz też dodać pole w encji User: newUser.setProvider(request.getProvider());
+            newUser.setRole("USER");
             return userRepository.save(newUser);
         }
     }
@@ -68,6 +69,7 @@ public class UserService {
         newUser.setName(registerRequest.getName());
         newUser.setEmail(registerRequest.getEmail());
         newUser.setPassword(encodedPassword);
+        newUser.setRole("USER");
         return userRepository.save(newUser);
     }
 }
