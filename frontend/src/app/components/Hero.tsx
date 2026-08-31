@@ -98,9 +98,16 @@ export default function Hero({ product }: HeroProps) {
                             </span>
                         </div>
 
-                        {/* Akcje */}
+                        {/* Akcje
+                            `items-start` (nie `items-center`): przycisk
+                            „Dodaj do koszyka" ma pod spodem wiersz pomocy
+                            (HeroAddToCart), przez co cała kolumna jest
+                            wyższa od linku — centrowanie przesuwało wtedy
+                            „Zobacz szczegóły" w dół względem przycisku.
+                            Wyrównanie do góry trzyma oba przyciski na
+                            jednej linii w każdej sytuacji. */}
                         <div className="flex flex-wrap items-start gap-4">
-                            <HeroAddToCart product={product}/>
+                            <HeroAddToCart product={product} />
                             <Link
                                 href={`/products/${product.id}`}
                                 className="inline-flex items-center gap-2 rounded-md border border-neutral-700 bg-neutral-900/60 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:border-emerald-500/60 hover:text-emerald-300"
