@@ -3,6 +3,7 @@ import FallbackImage from "@/app/components/FallbackImage";
 import Link from "next/link";
 import { ArrowRight, BadgeCheck, Clock, ShieldCheck } from "lucide-react";
 import HeroAddToCart from "@/app/components/HeroAddToCart";
+import PolandMap from "@/app/components/PolandMap";
 
 interface HeroProps {
     product: Product;
@@ -116,6 +117,14 @@ export default function Hero({ product }: HeroProps) {
                                     {perk.text}
                                 </span>
                             ))}
+                        </div>
+
+                        {/* Mapa dostaw — losowe miasta */}
+                        <div className="mt-6">
+                            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-neutral-500">
+                                Dostarczaliśmy już na terenie Polski
+                            </p>
+                            <PolandMap className="h-[180px] w-full" />
                         </div>
                     </div>
                     </div>
