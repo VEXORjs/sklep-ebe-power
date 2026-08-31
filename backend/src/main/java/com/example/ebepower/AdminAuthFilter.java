@@ -1,6 +1,5 @@
 package com.example.ebepower;
 
-import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -16,6 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Ochrona API panelu administratora (/api/admin/**, /api/orders/**).
@@ -77,22 +77,27 @@ public class AdminAuthFilter extends OncePerRequestFilter {
         }
 
         String token = extractToken(request);
-        DecodedJWT jwt = jwtService.verifyAndDecode(token);
+        // Obsługuje oba formaty sesji NextAuth: domyślne JWE (dir + A256GCM)
+        // oraz podpisane JWT HS256 — patrz JwtService.decodeSessionToken().
+        Map<String, Object> claims = jwtService.decodeSessionToken(token);
 
-        if (jwt == null) {
+        if (claims == null) {
             writeError(response, HttpServletResponse.SC_UNAUTHORIZED,
                     "unauthorized", "Brak lub nieprawidłowa sesja. Zaloguj się w panelu administratora.");
             return;
         }
 
-        String role = jwt.getClaim("role").isNull() ? null : jwt.getClaim("role").asString();
-        if (!"ADMIN".equals(role)) {
+        Object roleClaim = claims.get("role");
+        if (!"ADMIN".equals(roleClaim)) {
             writeError(response, HttpServletResponse.SC_FORBIDDEN,
                     "forbidden", "To konto nie ma uprawnień administratora.");
             return;
         }
 
-        String userId = jwt.getClaim("id").isNull() ? jwt.getSubject() : jwt.getClaim("id").asString();
+        Object idClaim = claims.get("id");
+        String userId = idClaim != null
+                ? String.valueOf(idClaim)
+                : (claims.get("sub") != null ? String.valueOf(claims.get("sub")) : null);
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 userId, null, List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
         SecurityContextHolder.getContext().setAuthentication(authentication);
