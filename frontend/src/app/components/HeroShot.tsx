@@ -147,21 +147,13 @@ export default function HeroShot({ srcs, alt }: HeroShotProps) {
                     colorInterpolationFilters="sRGB"
                 >
                     <feGaussianBlur in="SourceAlpha" stdDeviation="8" result="blur" />
-                    <feColorMatrix
-                        in="blur"
-                        type="matrix"
-                        values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0"
-                        result="softAlpha"
-                    />
-                    <feComposite in="SourceGraphic" in2="softAlpha" operator="in" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="in" />
                 </filter>
 
-                {/* Jasna „karta” pod zdjęciem — kolory sterowane zmiennymi
-                    z globals.css (osobne dla motywu ciemnego i jasnego). */}
                 <radialGradient id="hero-card" cx="50%" cy="30%" r="100%">
-                    <stop offset="0%" style={{ stopColor: "var(--hero-card-inner)" }} />
-                    <stop offset="55%" style={{ stopColor: "var(--hero-card-inner)" }} />
-                    <stop offset="100%" style={{ stopColor: "var(--hero-card-outer)" }} />
+                    <stop offset="0%" stopColor="#ffffff" />
+                    <stop offset="55%" stopColor="#ffffff" />
+                    <stop offset="100%" stopColor="#f5f5f5"/>
                 </radialGradient>
 
                 {/* Border krawędzi przechodzący w fade out */}
