@@ -1,4 +1,4 @@
--- Katalog agregatów PRAMAC przygotowany na podstawie kart katalogowych.
+-- Katalog agregatów PRAMAC oraz CGM przygotowany na podstawie kart katalogowych.
 -- W środowisku developerskim seed jest odtwarzany przy każdym starcie.
 TRUNCATE TABLE product_parameters RESTART IDENTITY CASCADE;
 TRUNCATE TABLE product_images RESTART IDENTITY CASCADE;
