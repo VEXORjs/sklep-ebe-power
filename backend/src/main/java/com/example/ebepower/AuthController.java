@@ -62,6 +62,35 @@ public class AuthController {
                 "id", user.getId(),
                 "email", user.getEmail(),
                 "name", user.getName(),
+                "role", user.getRole() == null ? "USER" : user.getRole(),
+                "mockToken", mockToken
+        ));
+    }
+
+    /**
+     * Logowanie do panelu administratora (/admin/login).
+     * Różni się od /login tym, że oprócz poprawnych danych WYMAGA roli ADMIN —
+     * klient sklepu z poprawnym hasłem dostanie 403 i nie utworzy sesji
+     * administratora.
+     */
+    @PostMapping("/admin-login")
+    public ResponseEntity<?> handleAdminLogin(@RequestBody LoginRequest loginRequest) {
+        User user = userService.processUser(loginRequest);
+
+        if (user == null) {
+            return ResponseEntity.status(401).body("Nieprawidłowy email lub hasło");
+        }
+        if (!"ADMIN".equals(user.getRole())) {
+            return ResponseEntity.status(403).body("To konto nie ma uprawnień administratora");
+        }
+
+        String mockToken = "user" + user.getId();
+
+        return ResponseEntity.ok(Map.of(
+                "id", user.getId(),
+                "email", user.getEmail(),
+                "name", user.getName(),
+                "role", "ADMIN",
                 "mockToken", mockToken
         ));
     }

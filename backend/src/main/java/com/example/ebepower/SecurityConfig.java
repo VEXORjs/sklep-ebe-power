@@ -6,9 +6,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -45,10 +47,14 @@ public class SecurityConfig {
 
     // 2. Łańcuch zabezpieczeń
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtService jwtService) throws Exception {
         http
                 .cors(Customizer.withDefaults()) // Automatycznie używa powyższego Beana corsConfigurationSource
                 .csrf(csrf -> csrf.disable())
+                // Panel admina jest stateless — sesja przychodzi jako JWT NextAuth
+                // (nagłówek Authorization lub ciasteczko), weryfikowany w AdminAuthFilter.
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(new AdminAuthFilter(jwtService), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Przepuszcza wszystkie zapytania OPTIONS
                         .requestMatchers("/api/auth/**").permitAll()
@@ -57,8 +63,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/products/**").permitAll()
                         .requestMatchers("/api/payment", "/api/payment/**").permitAll()
                         .requestMatchers("/api/webhook", "/api/webhook/**").permitAll()
-                        .requestMatchers("/api/orders/**").permitAll()
-                        .requestMatchers("/api/admin/**").permitAll()
+                        // API panelu administratora — wymaga roli ADMIN (AdminAuthFilter
+                        // ustawia ją po weryfikacji sesji NextAuth). Gdy backend nie zna
+                        // NEXTAUTH_SECRET, filtr przepuszcza żądania (loguje ostrzeżenie) —
+                        // główną bramą jest wtedy middleware + proxy na frontendzie.
+                        .requestMatchers("/api/orders/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/admin/**").permitAll()
                         .anyRequest().authenticated()
                 );
