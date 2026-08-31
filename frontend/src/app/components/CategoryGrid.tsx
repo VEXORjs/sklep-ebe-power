@@ -40,6 +40,8 @@ export default function CategoryGrid({ products, limit = 6 }: CategoryGridProps)
     // kategorii sama zaznaczyła odpowiedni filtr producenta.
     const renderCategoryCard = ({ category, items, producer }: { category: CategoryDef; items: Product[]; producer: BrandParam }) => {
         const cheapest = items.length > 0 ? Math.min(...items.map((p) => grossPrice(p.price))) : null;
+        const firstProductImage = items.find((p) => p.images && p.images.length > 0);
+        const dynamicSrc = firstProductImage?.images?.[0] || category.image;
 
         return (
             <Link
@@ -48,7 +50,7 @@ export default function CategoryGrid({ products, limit = 6 }: CategoryGridProps)
                 className="surface-dark group relative h-48 overflow-hidden rounded-lg border border-neutral-800 transition-all duration-300 hover:border-emerald-500/60 hover:shadow-lg hover:shadow-emerald-950/30"
             >
                 <Image
-                    src={category.image}
+                    src={dynamicSrc}
                     alt={`${category.name} — ${category.tagline}`}
                     fill
                     quality={70}
