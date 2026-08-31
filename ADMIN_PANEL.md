@@ -216,3 +216,49 @@ Panel `/admin` jest chroniony hasłem na trzech niezależnych poziomach:
 - `docker-compose.yml` — NEXTAUTH_SECRET (frontend+backend), ADMIN_EMAIL, ADMIN_PASSWORD
 
 Gotowe do użycia przez klienta. Wystarczy wejść na `/admin`.
+
+---
+
+## 🔧 Rozwiązywanie problemów: „Nie udało się pobrać statystyk / zamówień / użytkowników”
+
+Ten błąd na pulpicie `/admin` oznacza dokładnie jedno: **frontend nie dostał odpowiedzi
+z backendu**. Przyczyny bywają dwie — poniżej jak je rozróżnić i naprawić.
+
+### 1. Nic nie nasłuchuje na `localhost:8080` (najczęstsze w dev)
+
+Przeglądarka woła `/api/backend/*`, proxy w Next.js przekazuje żądanie na adres z
+`API_URL` (domyślnie `http://localhost:8080`). Sprawdź jednym żądaniem:
+
+```bash
+curl http://localhost:8080/api/products | head -c 200
+# lub przez proxy (mówi też, JAKI backend jest skonfigurowany):
+curl http://localhost:3001/api/backend
+```
+
+Jeśli backend nie działa, a nie chcesz stawiać Javy/Mavena/Postgresa — uruchom
+**atrapę API** (czysty Node, zero zależności), która odtwarza kontrakt Spring Boota
+i seeduje produkty z `backend/src/main/resources/data.sql`:
+
+```bash
+npm run dev            # z roota repo: atrapa :8080 + Next.js :3001
+npm run dev:backend    # sama atrapa
+```
+
+Logowanie panelu na atrapie: `admin@ebe-power.pl` / `admin123`
+(overriduj przez `ADMIN_EMAIL`/`ADMIN_PASSWORD`; szczegóły: `dev-backend/README.md`).
+
+### 2. Backend działa, ale odrzuca sesję (produkcja z `NEXTAUTH_SECRET`)
+
+NextAuth v4 wystawia ciasteczko sesji jako **JWE (alg=dir, enc=A256GCM)** — token jest
+*SZYFROWANY*, a nie podpisany HMAC256. Wcześniejsza wersja `JwtService.verifyAndDecode`
+używała java-jwt z HMAC256, więc każda sesja była odrzucana i całe API panelu
+(`/api/admin/**`, `/api/orders/**`) zwracało 401 „Brak lub nieprawidłowa sesja”.
+
+Naprawione: `JwtService.decodeSessionToken()` obsługuje teraz oba formaty
+(JWE `dir`+`A256GCM` z kluczem HKDF-SHA256 z `NEXTAUTH_SECRET`, dokładnie jak
+`next-auth/jwt`, oraz klasyczne podpisane JWT HS256). `AdminAuthFilter` korzysta
+z nowego dekodera. Zgodność z next-auth jest zablokowana testem jednostkowym
+`JwtServiceJweTest` (wektory wygenerowane biblioteką `jose`).
+
+Warunek działania: `NEXTAUTH_SECRET` musi mieć **tę samą wartość** na frontendzie
+i backendzie (patrz `frontend/.env.example` oraz `docker-compose.yml`).
