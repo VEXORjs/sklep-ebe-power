@@ -57,7 +57,7 @@ function SubcategoryCard({
     return (
         <ProducerParamLink
             href={`/kategoria/${category.slug}/${subcategory.slug}`}
-            className="group flex flex-col rounded-xl border border-neutral-800 bg-[#141618] p-3.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/60 hover:bg-neutral-50 hover:shadow-lg hover:shadow-emerald-950/20 sm:min-h-44 sm:p-5"
+            className="group flex flex-col rounded-xl border border-neutral-800 bg-[#141618] p-3.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/90 hover:shadow-lg hover:shadow-emerald-950/20 sm:min-h-44 sm:p-5"
         >
             <span className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 transition-colors group-hover:bg-emerald-500/20 sm:mb-5 sm:h-11 sm:w-11">
                 <Icon className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
