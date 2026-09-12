@@ -13,7 +13,7 @@ import {
 import CategoryCatalog from "../CategoryCatalog";
 import ProducerParamLink from "@/app/components/ProducerParamLink";
 
-export const revalidate = 60;
+export const revalidate = 0;
 
 interface PageProps {
     params: Promise<{ slug: string; subcategory: string }>;
