@@ -24,8 +24,8 @@ export default function ZwrotyPage() {
             <LegalSection title="1. Zwrot towaru — 14 dni">
                 <p>
                     Jako konsument masz prawo odstąpić od umowy w terminie 14 dni
-                    od dnia otrzymania towaru, bez podawania przyczyny. Wystarczy,
-                    że poinformujesz nas o odstąpieniu (np. mailowo na adres{" "}
+                    od dnia otrzymania towaru. Wystarczy,
+                    że złożysz nam oświadczenie o odstąpieniu (np. mailowo na adres{" "}
                     <a href="mailto:kontakt@ebe-power.pl" className="text-emerald-400 hover:text-emerald-300 transition-colors">kontakt@ebe-power.pl</a>), a
                     następnie odeślesz towar w terminie 14 dni.
                 </p>
