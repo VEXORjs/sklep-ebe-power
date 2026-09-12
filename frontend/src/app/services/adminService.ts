@@ -51,6 +51,27 @@ function getApiBase(): string {
   return API_URL;
 }
 
+/**
+ * Prosi Next.js o natychmiastowe unieważnienie cache'a stron produktowych
+ * (ISR/`revalidate: 60`) zaraz po zmianie w panelu admina — patrz
+ * `src/app/api/revalidate/route.ts`. Dzięki temu klient widzi nowe
+ * ceny/stany magazynowe od razu, a nie dopiero po odświeżeniu strony po
+ * wygaśnięciu 60-sekundowego okna cache.
+ *
+ * Celowo "fire and forget" (błąd rewalidacji nie może zepsuć zapisu
+ * produktu, który już się powiódł po stronie backendu).
+ */
+function triggerCatalogRevalidate(productId?: number): void {
+  fetch('/api/revalidate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(productId != null ? { productId } : {}),
+  }).catch((error) => {
+    console.warn('⚠️ Nie udało się odświeżyć cache katalogu:', error);
+  });
+}
+
 export async function getAdminStats(): Promise<AdminStats> {
   const res = await fetch(`${getApiBase()}/api/admin/stats`, {
     cache: 'no-store',
@@ -120,6 +141,7 @@ export async function deleteProductClient(id: number): Promise<void> {
     method: 'DELETE',
   });
   if (!res.ok) throw new Error('Nie udało się usunąć produktu');
+  triggerCatalogRevalidate(id);
 }
 
 export async function createProductClient(data: Partial<Product>): Promise<Product> {
@@ -132,7 +154,9 @@ export async function createProductClient(data: Partial<Product>): Promise<Produ
     const text = await res.text();
     throw new Error(`Błąd tworzenia produktu: ${res.status} ${text}`);
   }
-  return res.json();
+  const created = await res.json();
+  triggerCatalogRevalidate(created?.id);
+  return created;
 }
 
 export async function updateProductClient(id: number, data: Partial<Product>): Promise<Product> {
@@ -145,5 +169,7 @@ export async function updateProductClient(id: number, data: Partial<Product>): P
     const text = await res.text();
     throw new Error(`Błąd aktualizacji produktu: ${res.status} ${text}`);
   }
-  return res.json();
+  const updated = await res.json();
+  triggerCatalogRevalidate(id);
+  return updated;
 }

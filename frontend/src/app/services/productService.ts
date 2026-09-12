@@ -46,7 +46,11 @@ export async function getProducts(): Promise<Product[]> {
     }
     try {
         const res = await fetch(`${API_URL}/api/products`, {
-            next: { revalidate: CATALOG_REVALIDATE_SECONDS },
+            // Tag "products" pozwala natychmiast unieważnić ten wpis w Data Cache
+            // wywołaniem revalidateTag("products") (zob. /api/revalidate) zaraz po
+            // zapisie w panelu admina — bez czekania na 60s TTL i bez podwójnego
+            // odświeżania strony przez klienta.
+            next: { revalidate: CATALOG_REVALIDATE_SECONDS, tags: ["products"] },
             // Nie blokujemy renderowania strony, gdy backend jest niedostępny
             signal: AbortSignal.timeout(3000),
         });
@@ -76,7 +80,10 @@ export async function getProduct(id: string | number): Promise<Product | null> {
         const res = await fetch(`${API_URL}/api/products/${id}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" },
-            next: { revalidate: CATALOG_REVALIDATE_SECONDS },
+            next: {
+                revalidate: CATALOG_REVALIDATE_SECONDS,
+                tags: ["products", `product-${id}`],
+            },
             signal: AbortSignal.timeout(3000),
         });
 
