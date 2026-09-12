@@ -22,7 +22,7 @@ const API_URL = getServerApiUrl();
  * Strony zostają przy `export const revalidate = 0` (render dynamiczny): HTML
  * jest liczony na żądanie, ale dane katalogu bierzemy z cache.
  */
-export const CATALOG_REVALIDATE_SECONDS = 60;
+export const CATALOG_REVALIDATE_SECONDS = 0;
 
 function normalizeProduct(raw: Partial<Product> & { id: number; name: string; price: number }): Product {
     // Okładka zawsze ze storage Supabase (`product_images/products/{id}.jpg`).
