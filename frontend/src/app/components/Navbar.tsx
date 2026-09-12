@@ -9,7 +9,7 @@ import Image from "next/image";
 import { currentPathCallbackUrl } from '@/app/lib/auth-redirect';
 import ThemeToggle from '@/app/components/ThemeToggle';
 import { AKCESORIA, CATEGORIES, AGGREGATE_GROUP, type CategoryDef } from '@/app/data/categories';
-import { ChevronDown, Menu, X } from 'lucide-react';
+import { ChevronDown, ChevronRight, Menu, X } from 'lucide-react';
 
 /** Kategorie pogrupowane po etykiecie `group` — do menu nawigacji (bez akcesoriów, bo mają osobny link). */
 const CATEGORY_GROUPS: { label: string; categories: CategoryDef[] }[] = CATEGORIES
@@ -102,7 +102,9 @@ export default function Navbar() {
                         {isDropdownOpen && (
                             <div className="absolute left-0 top-full pt-1 w-[26rem] z-50 animate-in fade-in slide-in-from-top-1 duration-150">
                                 <div className="rounded-xl border border-neutral-800 bg-[#101214] p-2 shadow-2xl">
-                                    <div className="max-h-[min(72vh,540px)] overflow-y-auto">
+
+                                    {/* UWAGA: Z tego miejsca usunięto overflow-y-auto, aby boczne menu nie zostało ucięte */}
+                                    <div className="relative">
                                         {CATEGORY_GROUPS.map((group, groupIndex) => (
                                             <div
                                                 key={group.label}
@@ -116,31 +118,42 @@ export default function Navbar() {
                                                     {group.label}
                                                 </div>
                                                 {group.categories.map((category) => (
-                                                    <div key={category.slug}>
+                                                    <div key={category.slug} className="group/item relative">
                                                         <Link
                                                             href={`/kategoria/${category.slug}`}
                                                             onClick={() => setIsDropdownOpen(false)}
-                                                            className="group flex flex-col px-3 py-2 rounded-lg text-sm transition-colors hover:bg-neutral-800/70"
+                                                            className="flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors hover:bg-neutral-800/70"
                                                         >
-                                                            <span className="font-semibold text-neutral-200 group-hover:text-emerald-400 transition-colors">
-                                                                {category.name}
-                                                            </span>
-                                                            <span className="text-xs text-neutral-500 line-clamp-1">
-                                                                {category.tagline}
-                                                            </span>
+                                                            <div className="flex flex-col">
+                                        <span className="font-semibold text-neutral-200 group-hover/item:text-emerald-400 transition-colors">
+                                            {category.name}
+                                        </span>
+                                                                <span className="text-xs text-neutral-500 line-clamp-1">
+                                            {category.tagline}
+                                        </span>
+                                                            </div>
+
+                                                            {/* Strzałka w prawo widoczna, jeśli są subkategorie */}
+                                                            {category.subcategories && category.subcategories.length > 0 && (
+                                                                <ChevronRight className="h-4 w-4 text-neutral-500 transition-transform group-hover/item:translate-x-0.5 group-hover/item:text-emerald-400" />
+                                                            )}
                                                         </Link>
+
+                                                        {/* ROZWIJANE SUBKATEGORIE W PRAWO */}
                                                         {category.subcategories && category.subcategories.length > 0 && (
-                                                            <div className="flex flex-wrap gap-1.5 px-3 pb-2">
-                                                                {category.subcategories.map((subcategory) => (
-                                                                    <Link
-                                                                        key={subcategory.slug}
-                                                                        href={`/kategoria/${category.slug}/${subcategory.slug}`}
-                                                                        onClick={() => setIsDropdownOpen(false)}
-                                                                        className="rounded-full border border-neutral-800 bg-black/30 px-2.5 py-1 text-[11px] font-semibold text-neutral-400 transition-colors hover:border-emerald-500/60 hover:text-emerald-300"
-                                                                    >
-                                                                        {subcategory.shortName ?? subcategory.name}
-                                                                    </Link>
-                                                                ))}
+                                                            <div className="absolute left-full top-0 ml-1 hidden w-56 group-hover/item:block z-50 animate-in fade-in slide-in-from-left-2 duration-200">
+                                                                <div className="rounded-xl border border-neutral-800 bg-[#101214] p-2 shadow-2xl">
+                                                                    {category.subcategories.map((subcategory) => (
+                                                                        <Link
+                                                                            key={subcategory.slug}
+                                                                            href={`/kategoria/${category.slug}/${subcategory.slug}`}
+                                                                            onClick={() => setIsDropdownOpen(false)}
+                                                                            className="block px-3 py-2 rounded-lg text-sm font-semibold text-neutral-300 transition-colors hover:bg-neutral-800/70 hover:text-emerald-400"
+                                                                        >
+                                                                            {subcategory.shortName ?? subcategory.name}
+                                                                        </Link>
+                                                                    ))}
+                                                                </div>
                                                             </div>
                                                         )}
                                                     </div>
@@ -148,6 +161,7 @@ export default function Navbar() {
                                             </div>
                                         ))}
                                     </div>
+
                                     <div className="mt-1 pt-1 border-t border-neutral-800/60">
                                         <Link
                                             href="/kategoria"
