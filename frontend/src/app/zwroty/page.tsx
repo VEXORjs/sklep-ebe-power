@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import LegalPageShell, { LegalSection } from "@/app/components/LegalPageShell";
+import { Download } from "lucide-react";
 
 export const metadata: Metadata = {
     title: "Zwroty i reklamacje — 30 dni na zwrot, gwarancja 24 miesiące",
@@ -58,18 +59,32 @@ export default function ZwrotyPage() {
             <LegalSection title="4. Jak zgłosić zwrot lub reklamację">
                 <ol className="list-decimal pl-6 space-y-2">
                     <li>
-                        Napisz do nas na{" "}
-                        <a href="mailto:kontakt@ebe-power.pl" className="text-emerald-400 hover:text-emerald-300 transition-colors">kontakt@ebe-power.pl</a> —
-                        podaj numer zamówienia i powód zgłoszenia.
+                        Pobierz i wypełnij formularz zwrotu/reklamacji.
                     </li>
                     <li>
-                        Otrzymasz instrukcję zwrotu oraz adres magazynu.
+                        Napisz do nas na{" "}
+                        <a href="mailto:kontakt@ebe-power.pl" className="text-emerald-400 hover:text-emerald-300 transition-colors">kontakt@ebe-power.pl</a> —
+                        podaj numer zamówienia, powód zgłoszenia oraz załącz formularz, który wypełniłeś.
+                    </li>
+                    <li>
+                        Otrzymasz od nas instrukcję zwrotu oraz adres magazynu.
                     </li>
                     <li>
                         Po otrzymaniu przesyłki zweryfikujemy towar i
                         poinformujemy Cię o wyniku rozpatrzenia.
                     </li>
                 </ol>
+
+                <div className="mt-8">
+                    <a
+                        href="/formularz_zwrotu_ebe_power.pdf"
+                        download
+                        className="inline-flex items-center gap-2.5 rounded-lg bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-md transition-all hover:bg-emerald-500 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-[#101214]"
+                    >
+                        <Download className="h-5 w-5" />
+                        Pobierz formularz zwrotu (PDF)
+                    </a>
+                </div>
             </LegalSection>
         </LegalPageShell>
     );
