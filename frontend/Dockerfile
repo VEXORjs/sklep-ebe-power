@@ -52,6 +52,23 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 # COPY --from=builder /app/public ./public
 
+# Cache Next.js MUSI być zapisywalny, a Cloud Run montuje system plików
+# kontenera jako read-only — jedynym zapisywalnym miejscem jest /tmp (tmpfs,
+# wliczany w limit pamięci instancji).
+#
+# Co tu trafia:
+#   • `.next/cache/images`  — wyniki optimizera obrazów (sharp). Bez tego każde
+#     żądanie `/_next/image` pobierałoby oryginał z Supabase i transformowało go
+#     od zera (setki ms CPU na zdjęcie), co zjada całą korzyść z optymalizacji.
+#     Rozmiar jest ograniczony `images.maximumDiskCacheSize` (32 MB) w
+#     next.config.ts, żeby tmpfs nie wyparł pamięci potrzebnej aplikacji.
+#   • `.next/cache/fetch-cache` — Data Cache, z którego `productService` czyta
+#     katalog produktów (TTL 60 s, czyszczony przez `/api/revalidate`).
+#
+# Zapis do cache i tak jest w Next.js owinięty w try/catch, więc nawet gdyby
+# /tmp był niedostępny, sklep działa dalej — tylko wolniej.
+RUN rm -rf /app/.next/cache && ln -s /tmp/next-cache /app/.next/cache
+
 EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"

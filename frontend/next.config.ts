@@ -1,5 +1,36 @@
 import type { NextConfig } from "next";
 
+/**
+ * Ile sekund zoptymalizowany obraz żyje w pamięci podręcznej.
+ *
+ * `images.minimumCacheTTL` steruje DWIEMA warstwami naraz:
+ *   1. cache optimizera po stronie serwera (pliki w `.next/cache/images`,
+ *      na Cloud Run przez symlink w `/tmp` — patrz Dockerfile),
+ *   2. nagłówek `Cache-Control: public, max-age=<TTL>, must-revalidate`,
+ *      który Next ustawia SAM w odpowiedzi `/_next/image` (własny wpis
+ *      w `headers()` i tak by go nie nadpisał — dlatego go tu nie ma).
+ *
+ * Adres `/_next/image?url=…&w=…&q=…` jest deterministyczny dla danej
+ * kombinacji parametrów, więc długi TTL jest bezpieczny: podmiana zdjęcia
+ * w storage (ten sam URL) i tak nie byłaby widoczna wcześniej, bo serwer
+ * trzyma własną kopię przez `minimumCacheTTL`.
+ *
+ * Efekt dla Lighthouse: audit „Używaj efektywnego czasu przechowywania
+ * w pamięci podręcznej" wskazywał ~919 KiB zdjęć z `supabase.co` z TTL 1 h —
+ * teraz obrazy są tego samego pochodzenia i mają TTL 30 dni.
+ */
+const IMAGE_CACHE_TTL_SECONDS = 60 * 60 * 24 * 30; // 30 dni
+
+/**
+ * Limit cache obrazów na dysku.
+ *
+ * Na Cloud Run zapisywalny jest wyłącznie `/tmp`, który jest tmpfs-em
+ * (czyli zajmuje pamięć RAM instancji) — patrz symlink w `Dockerfile`.
+ * Bez twardego limitu Next policzyłby go jako 50% dostępnego „dysku"
+ * i mógłby zjeść pamięć potrzebną sharpowi.
+ */
+const IMAGE_DISK_CACHE_BYTES = 32 * 1024 * 1024; // 32 MB
+
 const nextConfig: NextConfig = {
     output: "standalone",
     compress: true,
@@ -7,30 +38,46 @@ const nextConfig: NextConfig = {
     // Trailing slashes — consistent URLs for SEO (no duplicates)
     trailingSlash: false,
     experimental: {
-        optimizeCss: true,
-        optimizePackageImports: ["lucide-react"],
+        // `optimizeCss` (critters) celowo WYŁĄCZONE: w Next 16 ten krok działa
+        // wyłącznie w Pages Router (post-process HTML w `server/render.js`) i w
+        // buildzie webpackowym. Ten projekt to App Router + Turbopack, więc flaga
+        // nic nie robiła, a ciągnęła `critters` z zależnościami do obrazu
+        // standalone (niepotrzebne MB i dłuższy cold start).
+        optimizePackageImports: ["lucide-react", "@supabase/supabase-js"],
     },
     images: {
-        unoptimized: true,  
+        // WAŻNE: `unoptimized: true` jest usunięte. Bez niego każde zdjęcie leciało
+        // do przeglądarki prosto z Supabase w oryginalnym rozmiarze i formacie
+        // (logo 8000×3572 / 791 KiB wyświetlane jako 149×66 px, miniatury produktów
+        // jako JPEG). Teraz przechodzą przez optimizer Nexta (`/_next/image`),
+        // który skaluje je do faktycznego rozmiaru wyświetlania i konwertuje
+        // na AVIF/WebP — Lighthouse liczył tu ~964 KiB oszczędności na samej
+        // stronie głównej.
         formats: ["image/avif", "image/webp"],
-        deviceSizes: [384, 640, 750, 828, 1080, 1200, 1920],
-        imageSizes: [16, 32, 48, 64, 96, 128, 256],
-        qualities: [70, 75],
-        minimumCacheTTL: 60 * 60 * 24 * 30,
+        // Lista szerokości jest jednocześnie listą kandydatów w `srcset` dla
+        // zdjęć z `fill`/`sizes` — każdy dodatkowy wpis to ~190 znaków URL-a
+        // w HTML-u przy KAŻDYM obrazku (i dodatkowy wariant do wygenerowania
+        // przez optimizer). Dlatego tylko szerokości, których realnie używamy:
+        //   64/128      — miniatury w galerii produktu (`sizes="64px"`, DPR 1–2)
+        //   160/320     — logo w nawigacji (156 px × DPR 1–2)
+        //   256/384     — karty produktów na telefonie
+        //   640–1200    — karty/kafele kategorii, galeria produktu
+        //   1920        — tło nagłówka kategorii na dużym ekranie (DPR 2)
+        imageSizes: [64, 128, 160, 256, 320, 384],
+        deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+        qualities: [60, 70, 75],
+        minimumCacheTTL: IMAGE_CACHE_TTL_SECONDS,
+        maximumDiskCacheSize: IMAGE_DISK_CACHE_BYTES,
+        // `dangerouslyAllowSVG` pozostaje wyłączone: next/image i tak obsługuje
+        // źródła `.svg` specjalnym przypadkiem (`unoptimized = true`), więc SVG
+        // wgrany przez panel admina omija optimizer i wyświetla się bez zmian.
         remotePatterns: [
             {
-                protocol: "https",
-                hostname: "iyugrhskjjyegxppeqoj.supabase.co",
-                pathname: "/storage/v1/object/public/**",
-            },
-            {
+                // `*.supabase.co` obejmuje też host projektu
+                // (iyugrhskjjyegxppeqoj.supabase.co) — jeden wzorzec zamiast dwóch.
                 protocol: "https",
                 hostname: "*.supabase.co",
                 pathname: "/storage/v1/object/public/**",
-            },
-            {
-                protocol: "https",
-                hostname: "unsplash.com",
             },
             {
                 protocol: "https",
@@ -92,16 +139,10 @@ const nextConfig: NextConfig = {
                     },
                 ],
             },
-            {
-                // Cache images
-                source: "/_next/image(.*)",
-                headers: [
-                    {
-                        key: "Cache-Control",
-                        value: "public, max-age=86400, stale-while-revalidate=604800",
-                    },
-                ],
-            },
+            // UWAGA: celowo BRAK własnego `Cache-Control` dla `/_next/image`.
+            // Optimizer ustawia ten nagłówek sam (`public, max-age=<minimumCacheTTL>,
+            // must-revalidate`) i wpis z `headers()` go nie nadpisuje — wcześniej
+            // była tu martwa reguła z `max-age=86400`.
         ];
     },
     async redirects() {

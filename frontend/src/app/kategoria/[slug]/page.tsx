@@ -139,13 +139,23 @@ export default async function CategoryPage({ params }: PageProps) {
 
             {/* Nagłówek kategorii — surface-dark: zostaje czytelny w light mode (foto + gradient) */}
             <header className="surface-dark relative overflow-hidden border-b border-neutral-900">
+                {/* Tło nagłówka kategorii: zdjęcie jest dekoracyjne (opacity-25 pod
+                    gradientem), ale zajmuje całą szerokość powyżej zgięcia, więc to
+                    ono zwykle jest elementem LCP na tej stronie.
+                    • `loading="eager"` + `fetchPriority="high"` zamiast
+                      przestarzałego w Next 16 `priority`,
+                    • `sizes` z sufitem 1280 px (zamiast `100vw`) — na monitorze
+                      1920 px nie pobieramy wariantu 1920 dla rozmytego tła,
+                    • `quality={60}` — przy 25 % krycia i tak nie widać różnicy,
+                      a AVIF jest ~30 % mniejszy. */}
                 <Image
                     src={category.image}
                     alt={`${category.name} — ${category.tagline}`}
                     fill
-                    priority
-                    quality={70}
-                    sizes="100vw"
+                    loading="eager"
+                    fetchPriority="high"
+                    quality={60}
+                    sizes="(max-width: 1023px) 100vw, 1280px"
                     className="object-cover opacity-25"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-black via-black/85 to-black/40" />

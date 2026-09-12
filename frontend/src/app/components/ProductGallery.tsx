@@ -90,7 +90,11 @@ export default function ProductGallery({ product }: ProductDetailProps) {
                         srcs={visibleImages.slice(photoIndex)}
                         alt={product.name}
                         fill
-                        priority
+                        // Next 16: `priority` jest przestarzałe (alias `preload`).
+                        // To zdjęcie jest elementem LCP na /products/[id], więc
+                        // ładujemy je natychmiast i z wysokim priorytetem.
+                        loading="eager"
+                        fetchPriority="high"
                         quality={75}
                         sizes="(max-width: 1024px) calc(100vw - 2rem), 640px"
                         className="cursor-zoom-in object-contain p-6 transition-transform duration-500 hover:scale-105"
