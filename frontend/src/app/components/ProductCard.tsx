@@ -163,7 +163,11 @@ export default function ProductCard({
                     srcs={imageSrcs}
                     alt={product.name}
                     fill
-                    priority={priority}
+                    // Next 16: `priority` jest przestarzałe (alias `preload`).
+                    // Karty nad zgięciem ładujemy od razu (`eager`), ale bez
+                    // `fetchPriority="high"` — wysoki priorytet rezerwujemy dla
+                    // jednego obrazu LCP na stronę (hero / główne zdjęcie produktu).
+                    loading={priority ? "eager" : "lazy"}
                     quality={75}
                     sizes={imageSizes}
                     className="object-contain p-4 transition-transform duration-500 group-hover:scale-105"

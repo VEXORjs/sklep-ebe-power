@@ -9,6 +9,7 @@ import Image from "next/image";
 import { currentPathCallbackUrl } from '@/app/lib/auth-redirect';
 import ThemeToggle from '@/app/components/ThemeToggle';
 import { AKCESORIA, CATEGORIES, AGGREGATE_GROUP, type CategoryDef } from '@/app/data/categories';
+import { BRAND_LOGO_URL } from '@/app/lib/brand';
 import { ChevronDown, ChevronRight, Menu, X } from 'lucide-react';
 
 /** Kategorie pogrupowane po etykiecie `group` — do menu nawigacji (bez akcesoriów, bo mają osobny link). */
@@ -70,13 +71,19 @@ export default function Navbar() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 {/* LOGO */}
                 <Link href="/" className="flex items-center h-10 w-auto">
+                    {/* Źródło w storage ma 8000×3572 px (791 KiB) — optimizer Nexta
+                        i tak serwuje tu wariant ~320 px w AVIF/WebP (kilkanaście KiB),
+                        bo `width`/`height` definiują rozmiar wyświetlania.
+                        `loading="eager"` (zamiast przestarzałego w Next 16 `priority`):
+                        logo jest nad zgięciem, ale NIE jest elementem LCP — tym jest
+                        zdjęcie w hero, więc to ono dostaje `fetchPriority="high"`. */}
                     <Image
-                        src="https://iyugrhskjjyegxppeqoj.supabase.co/storage/v1/object/public/product_images/EBE_Power_1_upscaled.jpeg"
+                        src={BRAND_LOGO_URL}
                         alt="EBE POWER"
                         className="h-full w-auto object-contain border border-neutral-800 rounded-md"
                         width={156}
                         height={67}
-                        priority
+                        loading="eager"
                         quality={75}
                     />
                 </Link>

@@ -1,6 +1,5 @@
 // app/layout.tsx
 import type { Metadata, Viewport } from "next";
-import Script from 'next/script';
 import { CartProvider } from '@/app/context/CartContext';
 import { ThemeProvider } from '@/app/context/ThemeContext';
 import AuthProvider from "@/app/components/AuthProvider";
@@ -10,8 +9,7 @@ import Footer from "@/app/components/Footer";
 import TopBar from "@/app/components/TopBar";
 import CartDrawer from "@/app/components/CartDrawer";
 import ProductionAlert from "@/app/components/ProductionAlert";
-
-const BRAND_LOGO_URL = "https://iyugrhskjjyegxppeqoj.supabase.co/storage/v1/object/public/product_images/EBE_Power_1_upscaled.jpeg";
+import { BRAND_LOGO_URL } from "@/app/lib/brand";
 
 export const viewport: Viewport = {
     width: "device-width",
@@ -71,11 +69,14 @@ export const metadata: Metadata = {
             "Agregaty prądotwórcze PRAMAC: modele inwerterowe, benzynowe, diesla i gazowe.",
         images: [BRAND_LOGO_URL],
     },
-    icons: {
-        icon: [{ url: BRAND_LOGO_URL, type: "image/png" }],
-        apple: [{ url: BRAND_LOGO_URL, type: "image/png" }],
-        shortcut: [BRAND_LOGO_URL],
-    },
+    // `icons` celowo NIE jest ustawione.
+    //
+    // Wcześniej wskazywało na `BRAND_LOGO_URL`, czyli JPEG 8000×3572 (791 KiB),
+    // więc przeglądarka pobierała go jako favicon, apple-touch-icon i shortcut
+    // na każdej podstronie. Bez tego wpisu ikony serwuje konwencja plikowa App
+    // Routera: `src/app/favicon.ico` → `/favicon.ico` (16/32/48 px, ~15 KiB).
+    // Gdy pojawi się zestaw ikon marki (`src/app/icon.png`, `src/app/apple-icon.png`),
+    // Next doda je automatycznie — nadal bez wpisu w `metadata.icons`.
     verification: {
         // Dodaj swoje kody weryfikacji Google Search Console i Bing Webmaster Tools:
         // google: "TWÓJ_KOD_GOOGLE",
@@ -161,9 +162,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
             />
-            <Script
-                id="theme-script"
-                strategy="beforeInteractive"
+            {/* Bootstrap motywu przed pierwszym renderem (bez błysku białego tła).
+                Zwykły inline <script> zamiast `next/script` z `strategy="beforeInteractive"`:
+                efekt w HTML-u jest identyczny (skrypt i tak lądował inline w <head>),
+                a nie ciągniemy na każdą podstronę runtime'u `next/script`
+                (~24 KB niekompilowanego JS-u / ~7 KB po gzipie, osobny chunk).
+                CSP w next.config.ts dopuszcza 'unsafe-inline' dla script-src. */}
+            <script
                 dangerouslySetInnerHTML={{
                     __html: `(function(){try{var s=localStorage.getItem('theme');var m=window.matchMedia('(prefers-color-scheme: dark)').matches;var t=s|| (m?'dark':'light');document.documentElement.classList.add(t);document.documentElement.style.colorScheme=t;}catch(e){document.documentElement.classList.add('dark');}})();`,
                 }}

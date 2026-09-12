@@ -5,8 +5,24 @@ import { isLocalProductImage, supabaseProductImage } from '@/app/lib/supabase-as
 
 const API_URL = getServerApiUrl();
 
-/** Katalog zmienia się rzadko — ISR zamiast force-dynamic obcina TTFB o setki ms. */
-export const CATALOG_REVALIDATE_SECONDS = 0;
+/**
+ * Katalog zmienia się rzadko — cache danych zamiast `0` obcina TTFB o setki ms.
+ *
+ * `0` oznaczało „odpytuj Spring Boota przy KAŻDYM żądaniu” (`/`, `/kategoria/**`,
+ * `/products/[id]`), a TTFB jest pierwszą składową LCP. Teraz wynik fetcha żyje
+ * w Data Cache Nexta 60 s (na Cloud Run w `/tmp` — patrz symlink `.next/cache`
+ * w Dockerfile), więc backend jest odpytywany raz na minutę na instancję,
+ * a nie raz na żądanie.
+ *
+ * Świeżość po edycji w panelu admina zapewnia `/api/revalidate`
+ * (`revalidateTag("products", "max")`) — patrz `adminService.ts`. Tagi są
+ * ustawione przy obu fetchach poniżej, więc zapis produktu czyści cache
+ * natychmiast, bez czekania na TTL.
+ *
+ * Strony zostają przy `export const revalidate = 0` (render dynamiczny): HTML
+ * jest liczony na żądanie, ale dane katalogu bierzemy z cache.
+ */
+export const CATALOG_REVALIDATE_SECONDS = 60;
 
 function normalizeProduct(raw: Partial<Product> & { id: number; name: string; price: number }): Product {
     // Okładka zawsze ze storage Supabase (`product_images/products/{id}.jpg`).
