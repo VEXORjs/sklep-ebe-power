@@ -37,7 +37,7 @@ import {
     stockInfo,
 } from "@/app/lib/product";
 
-export const revalidate = 60;
+export const revalidate = 0;
 
 const loadProduct = cache(getProduct);
 const loadProducts = cache(getProducts);

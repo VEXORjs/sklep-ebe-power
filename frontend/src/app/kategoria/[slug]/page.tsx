@@ -15,7 +15,7 @@ import { formatPLN, grossPrice, ratingOf } from "@/app/lib/product";
 import CategoryCatalog from "./CategoryCatalog";
 import CategorySubcategoryGrid from "@/app/components/CategorySubcategoryGrid";
 
-export const revalidate = 60;
+export const revalidate = 0;
 
 /** Jedno pobranie produktów na żądanie — współdzielone przez metadane i stronę. */
 const loadProducts = cache(getProducts);

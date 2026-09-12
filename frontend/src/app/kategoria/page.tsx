@@ -8,7 +8,7 @@ import { allCategories, productsInCategory } from "@/app/data/categories";
 import { pluralPL } from "@/app/lib/product";
 import { formatPLN, grossPrice, productsLabel } from "@/app/lib/product";
 
-export const revalidate = 60;
+export const revalidate = 0;
 
 export const metadata: Metadata = {
     title: "Kategorie produktów — agregaty prądotwórcze PRAMAC",

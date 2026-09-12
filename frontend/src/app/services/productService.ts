@@ -6,7 +6,7 @@ import { isLocalProductImage, supabaseProductImage } from '@/app/lib/supabase-as
 const API_URL = getServerApiUrl();
 
 /** Katalog zmienia się rzadko — ISR zamiast force-dynamic obcina TTFB o setki ms. */
-export const CATALOG_REVALIDATE_SECONDS = 60;
+export const CATALOG_REVALIDATE_SECONDS = 0;
 
 function normalizeProduct(raw: Partial<Product> & { id: number; name: string; price: number }): Product {
     // Okładka zawsze ze storage Supabase (`product_images/products/{id}.jpg`).
