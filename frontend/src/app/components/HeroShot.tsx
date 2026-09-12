@@ -184,7 +184,7 @@ export default function HeroShot({ srcs, alt, eager = true }: HeroShotProps) {
                 `pointer-events-none`, żeby warstwa nie przechwytywała kliknięć
                 (patrz komentarz przy `relative z-0` w Hero.tsx). */}
             <div
-                className="pointer-events-none absolute"
+                className="pointer-events-none absolute mix-blend-multiply"
                 style={PHOTO_BOX_STYLE}
             >
                 <FallbackImage
