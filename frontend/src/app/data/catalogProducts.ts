@@ -1,19 +1,11 @@
 import { Product } from "@/app/types/product";
 import { supabaseProductImage } from "@/app/lib/supabase-assets";
 
-/**
- * Aktualny katalog agregatów PRAMAC.
- *
- * Dane techniczne zostały przepisane z kart katalogowych dostarczonych dla
- * produktów. Jedynym zdjęciem jest okładka ze storage Supabase
- * (`product_images/products/{id}.jpg`). Ceny są cenami netto w PLN
- * i mogą zostać zmienione z poziomu panelu admina.
- */
 const RAW_CATALOG: Product[] = [
     {
         id: 1,
         name: "Pramac GA10000 — agregat gazowy 10 kVA, 230 V",
-        price: 34500,
+        price: 21031.71,
         stock: 2,
         description:
             "Stacjonarny, automatyczny agregat gazowy do awaryjnego zasilania domu lub małego obiektu. Obudowa aluminiowa RhinoCoat tłumi hałas i chroni urządzenie przed warunkami atmosferycznymi. Model współpracuje z przełącznikiem zasilania awaryjnego LTS.",
@@ -41,10 +33,10 @@ const RAW_CATALOG: Product[] = [
     {
         id: 2,
         name: "Pramac GA13000 — agregat gazowy 13 kVA, 230 V",
-        price: 38900,
+        price: 21828.46,
         stock: 2,
         description:
-            "Jednofazowy agregat gazowy do automatycznego zasilania awaryjnego. Wyposażony w silnik Generac G-Force, elektroniczny regulator obrotów, sterownik Digital Evolution i łączność Wi‑Fi Mobile Link.",
+            "Jednofazowy agregat gazowy do automatycznego zasilania awaryjnego. Wyposażony w silnik Generac G-Force, elektroniczny regulator obrotów, sterownik Digital Evolution i łączność Wi-Fi Mobile Link.",
         images: [],
         videos: [],
         parameters: {
@@ -69,7 +61,7 @@ const RAW_CATALOG: Product[] = [
     {
         id: 3,
         name: "Pramac DX8500 PRO+ — agregat diesla 8,5 kW, 400/230 V",
-        price: 12900,
+        price: 7169.92,
         stock: 4,
         description:
             "Wytrzymały agregat wysokoprężny serii DX do pracy na budowie, w warsztacie i jako zasilanie rezerwowe. Wersja PRO+ oferuje napięcie trójfazowe i jednofazowe, elektryczny rozruch oraz stabilizację AVR.",
@@ -86,6 +78,7 @@ const RAW_CATALOG: Product[] = [
             rozruch: "Elektryczny",
             regulacja_napiecia: "AVR",
             zastosowanie: "Praca ciężka / budowa",
+            wyposazenie: "Gniazda: 1x SCHUKO 230V 16A, 1x CEE 230V 16A, 1x CEE 400V 16A. Ochrona: RCD, magnetyczno-termiczna. Sterowanie: złącze ATS, 2-przewodowe podłączanie, pilot, przełącznik mono/trójfazowy (FULL POWER). Inne: podgrzewacz wstępny, multimetr cyfrowy.",
         },
         category: "Agregaty",
         subcategory: "diesla",
@@ -95,7 +88,7 @@ const RAW_CATALOG: Product[] = [
     {
         id: 4,
         name: "Pramac P3500i — agregat inwerterowy 3,3 kW, 230 V",
-        price: 3200,
+        price: 2763.41,
         stock: 6,
         description:
             "Cichy agregat inwerterowy do zasilania elektroniki, kamperów i urządzeń podczas prac w terenie. Technologia inverter zapewnia stabilne napięcie, a tryb Economy ogranicza zużycie paliwa i hałas.",
@@ -123,7 +116,7 @@ const RAW_CATALOG: Product[] = [
     {
         id: 5,
         name: "Pramac P3000i — agregat inwerterowy 2,5 kW, 230 V",
-        price: 2400,
+        price: 2381.30,
         stock: 7,
         description:
             "Kompaktowy i lekki agregat inwerterowy do zasilania wrażliwej elektroniki. Posiada tryb Economy, zabezpieczenie niskiego poziomu oleju, gniazdo do pracy równoległej oraz dwa porty USB.",
@@ -152,7 +145,7 @@ const RAW_CATALOG: Product[] = [
     {
         id: 6,
         name: "Pramac E4000 — agregat benzynowy 3,1 kW, 230 V",
-        price: 2200,
+        price: 2511.38,
         stock: 8,
         description:
             "Prosty, solidny agregat jednofazowy z ramą rurową do prac remontowych, oświetlenia i zastosowań profesjonalnych. Konstrukcja jest łatwa w obsłudze, transporcie i serwisowaniu.",
@@ -181,7 +174,7 @@ const RAW_CATALOG: Product[] = [
     {
         id: 7,
         name: "Pramac MES8000 — agregat benzynowy 7,2 kVA, 230 V",
-        price: 6200,
+        price: 5446.34,
         stock: 4,
         description:
             "Profesjonalny agregat z silnikiem Honda, elektrycznym rozruchem i zestawem transportowym. Automatyczny regulator napięcia AVR, zabezpieczenie różnicowe oraz przygotowanie do zdalnego sterowania ułatwiają pracę w wymagających zastosowaniach.",
@@ -207,7 +200,7 @@ const RAW_CATALOG: Product[] = [
     {
         id: 8,
         name: "Pramac WX6250 ES — agregat AVR 5,5 kW, 400/230 V",
-        price: 6200,
+        price: 2600.81,
         stock: 5,
         description:
             "Trójfazowy agregat benzynowy z AVR, elektrycznym i ręcznym rozruchem oraz zintegrowanym zestawem jezdnym. Duży zbiornik i cyfrowy multimetr sprawdzają się podczas długiej pracy na budowie.",
@@ -236,7 +229,7 @@ const RAW_CATALOG: Product[] = [
     {
         id: 9,
         name: "Pramac WX7000 — agregat AVR 6,1 kW, 230 V",
-        price: 5900,
+        price: 2706.50,
         stock: 5,
         description:
             "Jednofazowy agregat benzynowy do prac terenowych i awaryjnego zasilania. Wyposażony w AVR, elektryczny i ręczny rozruch, składane uchwyty, koła transportowe oraz wielofunkcyjny wyświetlacz.",
@@ -265,7 +258,7 @@ const RAW_CATALOG: Product[] = [
     {
         id: 10,
         name: "Pramac PMi 4500 — agregat inwerterowy 4,2 kW, 230 V",
-        price: 4100,
+        price: 2722.76,
         stock: 5,
         description:
             "Wyciszony agregat inwerterowy do elektroniki, domu i zastosowań terenowych. Automatyczny tryb Economy dopasowuje obroty do obciążenia, a stabilne napięcie z falownika chroni czułe odbiorniki.",
@@ -294,7 +287,7 @@ const RAW_CATALOG: Product[] = [
     {
         id: 11,
         name: "Pramac S12000 — agregat AVR 13,9 kVA, 400/230 V",
-        price: 12500,
+        price: 15340.65,
         stock: 3,
         description:
             "Profesjonalny agregat serii S do intensywnej pracy. Wersja 400/230 V z AVR, złączem CONN i zabezpieczeniem różnicowym DPP oferuje moc trójfazową oraz możliwość zasilania odbiorników jednofazowych.",
@@ -321,10 +314,10 @@ const RAW_CATALOG: Product[] = [
     {
         id: 12,
         name: "Pramac GA20000 — agregat gazowy 20/17 kVA, 400 V",
-        price: 49900,
+        price: 24389.43,
         stock: 1,
         description:
-            "Trójfazowy agregat gazowy do automatycznego zasilania awaryjnego większych obiektów. Cicha obudowa aluminiowa, sterownik Digital Evolution, AVR, Wi‑Fi Mobile Link oraz kompatybilność z przełącznikiem LTS tworzą kompletny system rezerwowy.",
+            "Trójfazowy agregat gazowy do automatycznego zasilania awaryjnego większych obiektów. Cicha obudowa aluminiowa, sterownik Digital Evolution, AVR, Wi-Fi Mobile Link oraz kompatybilność z przełącznikiem LTS tworzą kompletny system rezerwowy.",
         images: [],
         videos: [],
         parameters: {
@@ -497,6 +490,37 @@ const RAW_CATALOG: Product[] = [
         category: "Agregaty",
         subcategory: "benzynowe",
         sku: "CGM-C13000HTE",
+        badge: "Nowość",
+    },
+    {
+        id: 18,
+        name: "Pramac PMi 6500 — agregat inwerterowy 6,0 kW, 230 V",
+        price: 3982.93,
+        stock: 5,
+        description:
+            "Wyciszony agregat inwerterowy o mocy 6,0 kW do zasilania wrażliwej elektroniki i urządzeń domowych. Posiada rozruch elektryczny, złącze ATS, możliwość sterowania pilotem oraz inteligentny tryb Economy, który dostosowuje obroty do obciążenia, oszczędzając paliwo.",
+        images: [],
+        videos: [],
+        parameters: {
+            moc_maksymalna: "6500 W",
+            moc_znamionowa: "6000 W",
+            napiecie: "230 V",
+            liczba_faz: "1",
+            czestotliwosc: "50 Hz",
+            rodzaj_paliwa: "Benzyna",
+            silnik: "Pramac OHV, Stage V",
+            rozruch: "Elektryczny + ręczny (złącze ATS, pilot)",
+            regulacja_napiecia: "Inverter",
+            zbiornik_paliwa: "14 l",
+            czas_pracy: "6,6 h przy 50% obciążenia w trybie Eco",
+            poziom_halasu: "68 dB(A) w odległości 7 m",
+            wymiary: "625 × 448 × 560 mm",
+            waga: "50,5 kg",
+            wyposazenie: "Gniazda: 1x SCHUKO 230V 16A, 1x CEE 230V 32A, wyjście DC 12V 6A. Ochrona: termiczna, przeciążeniowa, czujnik oleju. Sterowanie: ATS, 2-przewodowe podłączanie, pilot, wskaźnik poziomu paliwa i multimetr cyfrowy.",
+        },
+        category: "Agregaty",
+        subcategory: "inwerterowe",
+        sku: "PRM-PMI6500",
         badge: "Nowość",
     },
 ];
