@@ -13,7 +13,8 @@ import {
 import CategoryCatalog from "../CategoryCatalog";
 import ProducerParamLink from "@/app/components/ProducerParamLink";
 
-export const revalidate = 0;
+// ISR: gotowy HTML z cache; zapis w panelu wywołuje /api/revalidate.
+export const revalidate = 300;
 
 interface PageProps {
     params: Promise<{ slug: string; subcategory: string }>;

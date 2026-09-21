@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
  * On-demand revalidation po zmianach w katalogu produktów.
  *
  * Problem, który to rozwiązuje: strony produktowe (`/`, `/products/[id]`,
- * `/kategoria/**`) korzystają z ISR (revalidate co 60s), żeby nie odpytywać
+ * `/kategoria/**`) korzystają z ISR (revalidate co 5 min), żeby nie odpytywać
  * backendu przy każdym żądaniu. Next.js realizuje ISR jako
  * "stale-while-revalidate": po wygaśnięciu TTL PIERWSZE żądanie nadal dostaje
  * STARĄ wersję strony, a nowa jest przeliczana dopiero W TLE — widoczna jest
@@ -20,7 +20,7 @@ export const dynamic = "force-dynamic";
  * dodaniu/edycji/usunięciu produktu wywołuje ten endpoint, który natychmiast
  * czyści tag "products" (i opcjonalnie konkretną stronę produktu) w Next.js
  * Data/Full Route Cache. Kolejne żądanie od klienta dostaje już świeże dane
- * — bez czekania na 60s TTL i bez podwójnego odświeżania przeglądarki.
+ * — bez czekania na 5 min TTL i bez podwójnego odświeżania przeglądarki.
  */
 async function handleRevalidate(req: NextRequest): Promise<Response> {
     // Tylko zalogowany administrator (ta sama sesja NextAuth, co reszta

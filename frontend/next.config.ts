@@ -53,7 +53,13 @@ const nextConfig: NextConfig = {
         // który skaluje je do faktycznego rozmiaru wyświetlania i konwertuje
         // na AVIF/WebP — Lighthouse liczył tu ~964 KiB oszczędności na samej
         // stronie głównej.
-        formats: ["image/avif", "image/webp"],
+        // WebP jest celowo pierwszym i jedynym formatem negocjowanym. AVIF bywa
+        // o kilka procent mniejszy, ale jego kodowanie przy pierwszym trafieniu
+        // w cache na Cloud Run trwa wielokrotnie dłużej. Raport wskazał 2,37 s
+        // samego ładowania LCP; WebP usuwa kosztowne kodowanie AVIF z cold path,
+        // zachowując bardzo dobrą kompresję i wsparcie wszystkich przeglądarek
+        // z naszego browserslist.
+        formats: ["image/webp"],
         // Lista szerokości jest jednocześnie listą kandydatów w `srcset` dla
         // zdjęć z `fill`/`sizes` — każdy dodatkowy wpis to ~190 znaków URL-a
         // w HTML-u przy KAŻDYM obrazku (i dodatkowy wariant do wygenerowania
@@ -129,20 +135,14 @@ const nextConfig: NextConfig = {
                     },
                 ],
             },
-            {
-                // Cache static assets aggressively
-                source: "/_next/static/(.*)",
-                headers: [
-                    {
-                        key: "Cache-Control",
-                        value: "public, max-age=31536000, immutable",
-                    },
-                ],
-            },
-            // UWAGA: celowo BRAK własnego `Cache-Control` dla `/_next/image`.
-            // Optimizer ustawia ten nagłówek sam (`public, max-age=<minimumCacheTTL>,
-            // must-revalidate`) i wpis z `headers()` go nie nadpisuje — wcześniej
-            // była tu martwa reguła z `max-age=86400`.
+            // Next sam ustawia `public, max-age=31536000, immutable` dla
+            // fingerprintowanych plików `/_next/static/*`. Nie duplikujemy tej
+            // reguły — własny nagłówek powodował ostrzeżenie podczas buildu i
+            // mógł psuć zachowanie `next dev`.
+            //
+            // Celowo brak również własnego `Cache-Control` dla `/_next/image`.
+            // Optimizer ustawia go sam (`public, max-age=<minimumCacheTTL>,
+            // must-revalidate`).
         ];
     },
     async redirects() {

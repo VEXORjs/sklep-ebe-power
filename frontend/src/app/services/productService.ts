@@ -10,19 +10,20 @@ const API_URL = getServerApiUrl();
  *
  * `0` oznaczało „odpytuj Spring Boota przy KAŻDYM żądaniu” (`/`, `/kategoria/**`,
  * `/products/[id]`), a TTFB jest pierwszą składową LCP. Teraz wynik fetcha żyje
- * w Data Cache Nexta 60 s (na Cloud Run w `/tmp` — patrz symlink `.next/cache`
- * w Dockerfile), więc backend jest odpytywany raz na minutę na instancję,
- * a nie raz na żądanie.
+ * w Data Cache Nexta 5 minut (na Cloud Run w `/tmp` — patrz symlink `.next/cache`
+ * w Dockerfile), więc backend jest odpytywany najwyżej raz na okno cache na
+ * instancję, a nie raz na żądanie.
  *
  * Świeżość po edycji w panelu admina zapewnia `/api/revalidate`
  * (`revalidateTag("products", "max")`) — patrz `adminService.ts`. Tagi są
  * ustawione przy obu fetchach poniżej, więc zapis produktu czyści cache
  * natychmiast, bez czekania na TTL.
  *
- * Strony zostają przy `export const revalidate = 0` (render dynamiczny): HTML
- * jest liczony na żądanie, ale dane katalogu bierzemy z cache.
+ * Publiczne strony katalogu używają tego samego okresu ISR, więc przy typowym
+ * wejściu odpowiedź jest gotowym HTML-em z Full Route Cache. Endpoint
+ * `/api/revalidate` unieważnia oba cache natychmiast po zmianie w panelu.
  */
-export const CATALOG_REVALIDATE_SECONDS = 0;
+export const CATALOG_REVALIDATE_SECONDS = 300;
 
 function normalizeProduct(raw: Partial<Product> & { id: number; name: string; price: number }): Product {
     // Okładka zawsze ze storage Supabase (`product_images/products/{id}.jpg`).

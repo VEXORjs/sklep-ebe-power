@@ -28,7 +28,8 @@ export const metadata: Metadata = {
     },
 };
 
-export const revalidate = 0;
+// ISR: gotowy HTML z cache; zapis w panelu wywołuje /api/revalidate.
+export const revalidate = 300;
 
 export default async function HomePage() {
     const products = await getProducts();

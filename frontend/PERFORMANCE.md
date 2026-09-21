@@ -1,3 +1,47 @@
+# Aktualizacja po audycie Lighthouse z 21.09.2026
+
+Najnowszy pomiar (Moto G Power, Lighthouse 13.4.1, 4G) wykazał: FCP **1,1 s**,
+LCP **2,3 s**, TBT **100 ms**, CLS **0**, Speed Index **6,3 s**. Największym problemem
+nie był już rozmiar layoutu, lecz ścieżka serwer → HTML → obraz LCP:
+
+* dokument czekał **1215 ms** na serwer (potencjalna oszczędność 1120 ms),
+* obraz LCP miał **2180 ms opóźnienia rozpoczęcia** i **2370 ms ładowania**,
+* Next dołączał 13,5 KiB polyfilli dla starych przeglądarek, mimo nowoczesnego `browserslist`,
+* jedyny arkusz CSS (16,5 KiB) blokował renderowanie przez 160 ms.
+
+Zastosowane poprawki:
+
+1. **ISR i Data Cache po 300 s.** Wartość `0` w `productService.ts` oraz na pięciu
+   stronach katalogu wyłączała cache i wymuszała SSR oraz zapytanie do Spring Boota przy
+   każdym wejściu. Teraz Next serwuje gotowy HTML z Full Route Cache, a dane katalogu z
+   Data Cache. Zapis w panelu nadal natychmiast wywołuje `/api/revalidate`, więc 5 minut
+   nie oznacza 5 minut oczekiwania na zmianę ceny lub produktu.
+2. **Brak cold startu w produkcji.** Deploy Cloud Run ustawia `--min-instances=1` oraz
+   `--cpu-boost`. ISR nie pomoże, gdy cała instancja jest wyłączona, dlatego ta zmiana
+   stabilizuje TTFB pierwszego użytkownika (uwaga: minimalna instancja generuje koszt;
+   `_MIN_INSTANCES=0` przywraca wariant oszczędny).
+3. **WebP zamiast AVIF na żądanie.** AVIF daje nieco mniejszy plik, ale jego pierwsze
+   kodowanie przez `sharp` na zimnym cache jest znacznie wolniejsze. Dla LCP ważniejszy
+   jest czas odpowiedzi optimizera; `formats: ["image/webp"]` usuwa kosztowny encoder
+   AVIF, nadal zachowując responsywny `srcset`, właściwy rozmiar i kompresję.
+4. **Wczesne odkrycie LCP pozostaje wymuszone.** Obraz hero jest renderowany jako
+   `<img loading="eager" fetchpriority="high">`; React dodaje jego preload do `<head>`.
+   Nie jest to obraz CSS ani późno dodawany przez efekt klienta.
+5. **Polyfille ograniczone zgodnie z targetem przeglądarek.** Next 16 ignoruje aplikacyjny
+   `browserslist` dla własnego `polyfill-module` i zawsze dodaje m.in. `Array.flat`,
+   `Array.at`, `Object.fromEntries` i `Object.hasOwn`. `prebuild` uruchamia kontrolowany
+   skrypt `scripts/prepare-modern-next.mjs`, który usuwa funkcje natywne w naszych
+   targetach i zostawia tylko krótki fallback `URL.canParse` dla Safari 16.4. Skrypt
+   sprawdza sygnatury wejścia i przerwie build po niezgodnej aktualizacji Nexta.
+6. **CSS pozostaje zewnętrzny celowo.** 16,5 KiB zawiera style potrzebne do pierwszego
+   renderu. Inline zwiększyłby każdy HTML i odebrał cache współdzielony między stronami,
+   a rozbicie wywołałoby kolejne żądania. Potencjalne 120 ms jest mniejsze niż koszt i
+   ryzyko takiej zmiany; kompresja tekstu jest już aktywna.
+
+Poniżej pozostaje opis wcześniejszej rundy optymalizacji obrazów i komponentów.
+
+---
+
 # Wydajność frontendu — co zostało zoptymalizowane i dlaczego
 
 Punkt wyjścia: raport Lighthouse 13.4.1 (Moto G Power, throttling 4G, `https://sklep.ebe-power.pl`)
@@ -25,25 +69,17 @@ prosto z Supabase w oryginale:
 * `Cache-Control: max-age=3600` z `supabase.co` (third-party, nie do zmiany z naszej strony).
 
 Po zmianie wszystkie obrazy serwuje `/_next/image` (sharp): skalowanie do realnego rozmiaru,
-AVIF/WebP wg `Accept`, `srcset` + `sizes`, `Cache-Control: public, max-age=2592000`
-(30 dni, z `images.minimumCacheTTL`), odpowiedź tego samego pochodzenia (znika audit
-„kod spoza witryny” i „krótki czas cache”).
+WebP, `srcset` + `sizes`, `Cache-Control: public, max-age=2592000` (30 dni, z
+`images.minimumCacheTTL`) i odpowiedź tego samego pochodzenia. WebP jest trochę większy
+od AVIF, ale znacznie szybciej kodowany przy pierwszym żądaniu — to kluczowe dla obecnego LCP.
 
-Pomiar lokalny na pliku testowym 2400×1800 (JPEG 687 KiB):
-
-| wariant | rozmiar |
-| --- | --- |
-| oryginał JPEG | 686 909 B |
-| `w=1200` AVIF | 36 199 B |
-| `w=828` AVIF | 21 978 B |
-| `w=320` AVIF | 5 835 B |
-
-Czyli **−97 %** dla wariantu 828 px. Dokładnie ten mechanizm obsługuje teraz logo
+Wcześniejszy pomiar lokalny na pliku testowym 2400×1800 pokazał do 97% oszczędności przy
+skalowaniu do rozmiaru widoku i nowoczesnej kompresji. Dokładnie ten mechanizm obsługuje teraz logo
 (156 px → warianty `160w`/`320w`, ~6–15 KiB zamiast 791 KiB) i zdjęcia produktów.
 
 Konfiguracja:
 
-* `formats: ["image/avif", "image/webp"]`,
+* `formats: ["image/webp"]`,
 * `imageSizes`/`deviceSizes` ograniczone do szerokości, których realnie używamy — ta lista jest
   jednocześnie listą kandydatów w `srcset`, więc każdy zbędny wpis to ~190 znaków URL-a
   w HTML-u **przy każdym obrazku** (i dodatkowy wariant do wyliczenia przez sharp),
@@ -87,15 +123,15 @@ serwuje konwencja plikowa App Routera (`src/app/favicon.ico`, 16/32/48 px).
 Adres `BRAND_LOGO_URL` został tylko w Open Graph / Twitter / JSON-LD (pobierają go crawlery,
 nie przeglądarka przy każdym wejściu) i jest teraz w jednym miejscu: `src/app/lib/brand.ts`.
 
-## 4. TTFB: katalog produktów z Data Cache (60 s zamiast 0)
+## 4. TTFB: Data Cache i Full Route Cache (300 s zamiast 0)
 
 `CATALOG_REVALIDATE_SECONDS = 0` oznaczało odpytanie Spring Boota przy **każdym** żądaniu
 `/`, `/kategoria/**`, `/products/[id]` — a TTFB to pierwsza składowa LCP. Teraz wynik fetcha
-żyje 60 s w Data Cache Nexta. Strony zostają przy `export const revalidate = 0`
-(render dynamiczny, świeży HTML), buforowane są wyłącznie dane katalogu.
+żyje 300 s w Data Cache, a publiczne strony katalogu mają `revalidate = 300`, dzięki czemu
+Next może podać gotowy HTML z Full Route Cache zamiast wykonywać SSR dla każdej wizyty.
 
 Świeżość po edycji w panelu admina zapewnia istniejący `/api/revalidate`
-(`revalidateTag("products", "max")`) — tagi są ustawione przy obu fetchach.
+(`revalidateTag("products", "max")` oraz `revalidatePath`) — zapis unieważnia dane i HTML.
 
 Zweryfikowane lokalnie: przy wyłączonym backendzie strona kategorii w oknie TTL nadal
 renderowała produkt istniejący tylko w backendzie (`Pramac PMi 6500`), czyli dane poszły
@@ -158,7 +194,6 @@ potrzebne.
 | Pozycja z raportu | Dlaczego bez zmian |
 | --- | --- |
 | „Prośby o zablokowanie renderowania” — 16,4 KiB CSS / 150 ms | To jeden arkusz (Tailwind + `globals.css`), potrzebny do pierwszego painta; inline'owanie całości dodałoby ~15 KiB gzip do **każdego** HTML-a i zabiło cache między podstronami. Sekcja light-mode to tylko ~12 % arkusza, więc jej wydzielanie nic nie daje. `optimizeCss` i tak nie działa w App Routerze. |
-| „Starszy kod JavaScript” — 14 KiB | To polyfile core-js dokładane przez Nexta (`polyfill-module`), niezależne od naszego `browserslist`. Wyłączanie ich aliasowaniem wewnętrznych modułów Nexta przy Turbopacku to ryzyko włamania się w runtime. |
 | „Ogranicz nieużywany JavaScript” — 24 KiB | Wskazany chunk to `react-dom` — nie da się go dociąć. |
 | „Unikaj nieskomponowanych animacji” — 55 elementów | To `transition-colors`/`transition-all` na hover (kolor, border, box-shadow nie są kompozytowalne z definicji). Animacje nie uruchamiają się przy ładowaniu strony (audit nie wpływa na wynik), a ich usunięcie oznaczałoby rezygnację z efektów hover. |
 | „Optymalizuj rozmiar DOM” — 1351 elementów | Poniżej progu Lighthouse (1500). Najwięcej dają karty produktów (9 × ~70 elementów) — ich docięcie to decyzja produktowa, nie optymalizacja. |
@@ -181,7 +216,7 @@ zostawiamy to jako świadomy, osobny krok.
    ~1200 px wystarczy; duży plik warto zostawić tylko jako obraz OG. Szczegóły:
    `src/app/lib/brand.ts`.
 2. Po deployu rzucić okiem w DevTools → Network: `/_next/image?...` powinien zwracać
-   `content-type: image/avif`, `cache-control: public, max-age=2592000, must-revalidate`,
+   `content-type: image/webp`, `cache-control: public, max-age=2592000, must-revalidate`,
    a przy drugim żądaniu `x-nextjs-cache: HIT`.
 3. Odpalić Lighthouse ponownie na produkcji (ten plik opisuje zmiany, nie wyniki pomiaru —
    w sandboxie nie ma dostępu do `supabase.co`, więc pomiary obrazów były robione na
