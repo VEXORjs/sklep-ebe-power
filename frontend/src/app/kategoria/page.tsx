@@ -8,7 +8,8 @@ import { allCategories, productsInCategory } from "@/app/data/categories";
 import { pluralPL } from "@/app/lib/product";
 import { formatPLN, grossPrice, productsLabel } from "@/app/lib/product";
 
-export const revalidate = 0;
+// ISR: gotowy HTML z cache; zapis w panelu wywołuje /api/revalidate.
+export const revalidate = 300;
 
 export const metadata: Metadata = {
     title: "Kategorie produktów — agregaty prądotwórcze PRAMAC",

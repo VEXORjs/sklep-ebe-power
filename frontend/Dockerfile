@@ -63,7 +63,7 @@ COPY --from=builder /app/.next/static ./.next/static
 #     Rozmiar jest ograniczony `images.maximumDiskCacheSize` (32 MB) w
 #     next.config.ts, żeby tmpfs nie wyparł pamięci potrzebnej aplikacji.
 #   • `.next/cache/fetch-cache` — Data Cache, z którego `productService` czyta
-#     katalog produktów (TTL 60 s, czyszczony przez `/api/revalidate`).
+#     katalog produktów (TTL 5 min, czyszczony przez `/api/revalidate`).
 #
 # Zapis do cache i tak jest w Next.js owinięty w try/catch, więc nawet gdyby
 # /tmp był niedostępny, sklep działa dalej — tylko wolniej.

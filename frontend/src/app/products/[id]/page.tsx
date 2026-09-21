@@ -37,7 +37,8 @@ import {
     stockInfo,
 } from "@/app/lib/product";
 
-export const revalidate = 0;
+// ISR: gotowy HTML z cache; zapis w panelu wywołuje /api/revalidate.
+export const revalidate = 300;
 
 const loadProduct = cache(getProduct);
 const loadProducts = cache(getProducts);

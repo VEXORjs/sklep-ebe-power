@@ -53,10 +53,10 @@ function getApiBase(): string {
 
 /**
  * Prosi Next.js o natychmiastowe unieważnienie cache'a stron produktowych
- * (ISR/`revalidate: 60`) zaraz po zmianie w panelu admina — patrz
+ * (ISR/`revalidate: 300`) zaraz po zmianie w panelu admina — patrz
  * `src/app/api/revalidate/route.ts`. Dzięki temu klient widzi nowe
  * ceny/stany magazynowe od razu, a nie dopiero po odświeżeniu strony po
- * wygaśnięciu 60-sekundowego okna cache.
+ * wygaśnięciu 5-minutowego okna cache.
  *
  * Celowo "fire and forget" (błąd rewalidacji nie może zepsuć zapisu
  * produktu, który już się powiódł po stronie backendu).

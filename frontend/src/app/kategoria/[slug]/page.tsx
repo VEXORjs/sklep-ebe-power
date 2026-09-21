@@ -15,7 +15,8 @@ import { formatPLN, grossPrice, ratingOf } from "@/app/lib/product";
 import CategoryCatalog from "./CategoryCatalog";
 import CategorySubcategoryGrid from "@/app/components/CategorySubcategoryGrid";
 
-export const revalidate = 0;
+// ISR: gotowy HTML z cache; zapis w panelu wywołuje /api/revalidate.
+export const revalidate = 300;
 
 /** Jedno pobranie produktów na żądanie — współdzielone przez metadane i stronę. */
 const loadProducts = cache(getProducts);
