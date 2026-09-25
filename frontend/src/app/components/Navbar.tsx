@@ -8,7 +8,7 @@ import { useCart } from '@/app/context/CartContext';
 import Image from "next/image";
 import { currentPathCallbackUrl } from '@/app/lib/auth-redirect';
 import ThemeToggle from '@/app/components/ThemeToggle';
-import { AKCESORIA, CATEGORIES, AGGREGATE_GROUP, type CategoryDef } from '@/app/data/categories';
+import { AKCESORIA, MASZTY, CATEGORIES, AGGREGATE_GROUP, type CategoryDef } from '@/app/data/categories';
 import { BRAND_LOGO_URL } from '@/app/lib/brand';
 import { ChevronDown, ChevronRight, Menu, X } from 'lucide-react';
 
@@ -31,6 +31,7 @@ const CATEGORY_GROUPS: { label: string; categories: CategoryDef[] }[] = CATEGORI
 
 /** Kategoria Akcesoria — wyeksportowana dla wygody (link główny + kompatybilność). */
 const AKCESORIA_LINK = AKCESORIA[0];
+const MASZTY_LINK = MASZTY[0];
 
 export default function Navbar() {
     const { data: session } = useSession();
@@ -180,6 +181,15 @@ export default function Navbar() {
                             </div>
                         )}
                     </div>
+
+                    {MASZTY_LINK && (
+                          <Link
+                            href={`/kategoria/${MASZTY_LINK.slug}`}
+                            className="text-sm font-medium text-neutral-300 transition-colors hover:text-emerald-400"
+                        >
+                            {MASZTY_LINK.name}
+                        </Link>
+                    )}
 
                     {/* AKCESORIA — osobny link między kategoriami agregatów a Ofertą */}
                     {AKCESORIA_LINK && (
