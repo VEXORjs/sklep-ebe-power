@@ -39,6 +39,7 @@ export const metadata: Metadata = {
         "ebe power",
         "agregaty prądotwórcze",
         "stacje ładowania EV",
+        "maszty oświetleniowe",
     ],
     robots: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
     alternates: {
