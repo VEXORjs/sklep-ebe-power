@@ -197,7 +197,7 @@ export default function Navbar() {
                                 className="flex items-center gap-1.5 text-sm font-medium text-neutral-300 transition-colors hover:text-emerald-400 focus:outline-none py-2"
                                 aria-expanded={isMasztyDropdownOpen}
                             >
-                                <span>{MASZTY_LINK.name || "Maszty Oświetleniowe"}</span>
+                                <span>{"Maszty Oświetleniowe"}</span>
                                 <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isMasztyDropdownOpen ? 'rotate-180 text-emerald-400' : ''}`} />
                             </button>
 
