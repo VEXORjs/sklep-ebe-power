@@ -242,7 +242,7 @@ export default function ProductCard({
         </div>
     );
 
-    const specLimit = variant === "list" ? 6 : 4;
+    const specLimit = variant === "list" ? 6 : 2;
     const specList = specs.length > 0 && (
         <div className="relative mb-4 overflow-hidden rounded-md border border-neutral-800/80 bg-[#111315]">
             <dl
@@ -294,14 +294,6 @@ export default function ProductCard({
                 ) : (
                     <span>Wysyłka w 24 h · kurier od 16,99 zł</span>
                 )}
-            </li>
-            <li className="flex items-center gap-2">
-                <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
-                24 miesiące gwarancji · faktura VAT
-            </li>
-            <li className="flex items-center gap-2">
-                <Package className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
-                30 dni na zwrot · sprzedano {sold} szt.
             </li>
         </ul>
     );
