@@ -109,8 +109,6 @@ export default function Navbar() {
                         {isDropdownOpen && (
                             <div className="absolute left-0 top-full pt-1 w-[26rem] z-50 animate-in fade-in slide-in-from-top-1 duration-150">
                                 <div className="rounded-xl border border-neutral-800 bg-[#101214] p-2 shadow-2xl">
-
-                                    {/* UWAGA: Z tego miejsca usunięto overflow-y-auto, aby boczne menu nie zostało ucięte */}
                                     <div className="relative">
                                         {CATEGORY_GROUPS.map((group, groupIndex) => (
                                             <div
