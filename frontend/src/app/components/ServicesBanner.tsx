@@ -55,7 +55,7 @@ export default function ServicesBanner() {
                     {/* 🏷️ Wstążka w prawym górnym rogu */}
                     <div className="absolute top-0 right-0 w-28 h-28 overflow-hidden pointer-events-none">
                         <div className="absolute transform rotate-45 bg-emerald-400 text-slate-950 text-[9px] font-extrabold py-1 right-[-35px] top-[24px] w-[140px] text-center shadow-md flex items-center justify-center gap-1">
-                            <span>🎧 KONTAKT</span>
+                            <span>KONTAKT</span>
                         </div>
                     </div>
 
