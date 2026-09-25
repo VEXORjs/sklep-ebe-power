@@ -47,10 +47,11 @@ export default function ZwrotyPage() {
                 </p>
             </LegalSection>
 
-            <LegalSection title="3. Gwarancja 24 miesiące">
+            <LegalSection title="3. Gwarancja">
                 <p>
-                    Wszystkie urządzenia objęte są 24-miesięczną gwarancją
-                    producenta. Gwarancja obejmuje wady fabryczne i nie wyłącza
+                    Wszystkie urządzenia objęte są gwarancją
+                    producenta. Dokładny okres trwania gwarancji podany jest w karcie produktu.
+                    Gwarancja obejmuje wady fabryczne i nie wyłącza
                     uprawnień wynikających z rękojmi. Posiadamy własny serwis, co
                     pozwala skrócić czas napraw do minimum.
                 </p>
