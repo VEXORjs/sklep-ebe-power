@@ -389,7 +389,9 @@ export default async function ProductPage({ params }: PageProps) {
                                         className="flex items-baseline justify-between gap-3 rounded-md border border-neutral-800 bg-[#111315] px-3 py-2"
                                     >
                                         <dt className="truncate text-[11px] text-neutral-500">{spec.label}</dt>
-                                        <dd className="shrink-0 text-[11px] font-semibold text-neutral-200">
+                                        <dd className="truncate text-right text-[11px] font-semibold text-neutral-200"
+                                            title={spec.value}
+                                            >
                                             {spec.value}
                                         </dd>
                                     </div>
