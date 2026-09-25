@@ -328,7 +328,7 @@ export default function Navbar() {
                         )}
 
                         <Link
-                            href="/#produkty"
+                            href="https://ebe-power.pl/"
                             className="py-2 text-base font-semibold text-neutral-200 hover:text-emerald-400 transition-colors"
                         >
                             Oferta
