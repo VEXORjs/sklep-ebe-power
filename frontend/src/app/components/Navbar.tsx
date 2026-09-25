@@ -191,7 +191,7 @@ export default function Navbar() {
                         </Link>
                     )}
 
-                    <Link href="/#produkty" className="text-sm font-medium text-neutral-300 transition-colors hover:text-emerald-400">
+                    <Link href="https://ebe-power.pl/" className="text-sm font-medium text-neutral-300 transition-colors hover:text-emerald-400">
                         Oferta
                     </Link>
 
