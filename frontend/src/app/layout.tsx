@@ -186,7 +186,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         Przejdź do treści
                     </a>
                     <TopBar/>
-                    <ProductionAlert/>
+                    {/*<ProductionAlert/>*/}
                     <Navbar/>
                     <div id="main-content">
                         {children}
