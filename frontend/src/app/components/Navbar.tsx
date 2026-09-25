@@ -39,10 +39,14 @@ export default function Navbar() {
     const pathname = usePathname();
 
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isMasztyDropdownOpen, setIsMasztyDropdownOpen] = useState(false);
+    
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isMobileCategoriesOpen, setIsMobileCategoriesOpen] = useState(false);
+    const [isMobileMasztyOpen, setIsMobileMasztyOpen] = useState(false);
 
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const masztyDropdownRef = useRef<HTMLDivElement>(null);
 
     const itemsCount = cart?.items.reduce((acc, item) => acc + item.quantity, 0) || 0;
 
@@ -51,16 +55,22 @@ export default function Navbar() {
         const setters = async ()=> {
             setIsMobileMenuOpen(false);
             setIsDropdownOpen(false);
+            setIsMasztyDropdownOpen(false);
             setIsMobileCategoriesOpen(false);
+            setIsMobileMasztyOpen(false);
         }
-    void setters();
+        void setters();
     }, [pathname]);
 
-    // Zamykanie dropdown po kliknięciu poza obszarem
+    // Zamykanie dropdownów po kliknięciu poza ich obszarem
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+            const target = event.target as Node;
+            if (dropdownRef.current && !dropdownRef.current.contains(target)) {
                 setIsDropdownOpen(false);
+            }
+            if (masztyDropdownRef.current && !masztyDropdownRef.current.contains(target)) {
+                setIsMasztyDropdownOpen(false);
             }
         }
         document.addEventListener('mousedown', handleClickOutside);
@@ -72,12 +82,6 @@ export default function Navbar() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 {/* LOGO */}
                 <Link href="/" className="flex items-center h-10 w-auto">
-                    {/* Źródło w storage ma 8000×3572 px (791 KiB) — optimizer Nexta
-                        i tak serwuje tu wariant ~320 px w AVIF/WebP (kilkanaście KiB),
-                        bo `width`/`height` definiują rozmiar wyświetlania.
-                        `loading="eager"` (zamiast przestarzałego w Next 16 `priority`):
-                        logo jest nad zgięciem, ale NIE jest elementem LCP — tym jest
-                        zdjęcie w hero, więc to ono dostaje `fetchPriority="high"`. */}
                     <Image
                         src={BRAND_LOGO_URL}
                         alt="EBE POWER"
@@ -91,7 +95,7 @@ export default function Navbar() {
 
                 {/* NAWIGACJA (Desktop) */}
                 <div className="hidden lg:flex items-center gap-6">
-                    {/* DROPDOWN KATEGORIE */}
+                    {/* DROPDOWN KATEGORIE - AGREGATY */}
                     <div
                         className="relative"
                         ref={dropdownRef}
@@ -131,21 +135,19 @@ export default function Navbar() {
                                                             className="flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors hover:bg-neutral-800/70"
                                                         >
                                                             <div className="flex flex-col">
-                                        <span className="font-semibold text-neutral-200 group-hover/item:text-emerald-400 transition-colors">
-                                            {category.name}
-                                        </span>
+                                                                <span className="font-semibold text-neutral-200 group-hover/item:text-emerald-400 transition-colors">
+                                                                    {category.name}
+                                                                </span>
                                                                 <span className="text-xs text-neutral-500 line-clamp-1">
-                                            {category.tagline}
-                                        </span>
+                                                                    {category.tagline}
+                                                                </span>
                                                             </div>
 
-                                                            {/* Strzałka w prawo widoczna, jeśli są subkategorie */}
                                                             {category.subcategories && category.subcategories.length > 0 && (
                                                                 <ChevronRight className="h-4 w-4 text-neutral-500 transition-transform group-hover/item:translate-x-0.5 group-hover/item:text-emerald-400" />
                                                             )}
                                                         </Link>
 
-                                                        {/* ROZWIJANE SUBKATEGORIE W PRAWO */}
                                                         {category.subcategories && category.subcategories.length > 0 && (
                                                             <div className="absolute left-full top-0 ml-1 hidden w-56 group-hover/item:block z-50 animate-in fade-in slide-in-from-left-2 duration-200">
                                                                 <div className="rounded-xl border border-neutral-800 bg-[#101214] p-2 shadow-2xl">
@@ -182,16 +184,56 @@ export default function Navbar() {
                         )}
                     </div>
 
+                    {/* DROPDOWN KATEGORIE - MASZTY */}
                     {MASZTY_LINK && (
-                          <Link
-                            href={`/kategoria/${MASZTY_LINK.slug}`}
-                            className="text-sm font-medium text-neutral-300 transition-colors hover:text-emerald-400"
+                        <div
+                            className="relative"
+                            ref={masztyDropdownRef}
+                            onMouseEnter={() => setIsMasztyDropdownOpen(true)}
+                            onMouseLeave={() => setIsMasztyDropdownOpen(false)}
                         >
-                            {MASZTY_LINK.name}
-                        </Link>
+                            <button
+                                onClick={() => setIsMasztyDropdownOpen((prev) => !prev)}
+                                className="flex items-center gap-1.5 text-sm font-medium text-neutral-300 transition-colors hover:text-emerald-400 focus:outline-none py-2"
+                                aria-expanded={isMasztyDropdownOpen}
+                            >
+                                <span>{MASZTY_LINK.name || "Maszty Oświetleniowe"}</span>
+                                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isMasztyDropdownOpen ? 'rotate-180 text-emerald-400' : ''}`} />
+                            </button>
+
+                            {isMasztyDropdownOpen && (
+                                <div className="absolute left-0 top-full pt-1 w-48 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+                                    <div className="rounded-xl border border-neutral-800 bg-[#101214] p-2 shadow-2xl flex flex-col">
+                                        <Link
+                                            href={`/kategoria/${MASZTY_LINK.slug}/mobilne`}
+                                            onClick={() => setIsMasztyDropdownOpen(false)}
+                                            className="block px-3 py-2 rounded-lg text-sm font-semibold text-neutral-300 transition-colors hover:bg-neutral-800/70 hover:text-emerald-400"
+                                        >
+                                            Mobilne
+                                        </Link>
+                                        <Link
+                                            href={`/kategoria/${MASZTY_LINK.slug}/stacjonarne`}
+                                            onClick={() => setIsMasztyDropdownOpen(false)}
+                                            className="block px-3 py-2 rounded-lg text-sm font-semibold text-neutral-300 transition-colors hover:bg-neutral-800/70 hover:text-emerald-400"
+                                        >
+                                            Stacjonarne
+                                        </Link>
+                                        <div className="mt-1 pt-1 border-t border-neutral-800/60">
+                                            <Link
+                                                href={`/kategoria/${MASZTY_LINK.slug}`}
+                                                onClick={() => setIsMasztyDropdownOpen(false)}
+                                                className="block px-3 py-1.5 text-center text-xs font-bold text-emerald-400 hover:text-emerald-300 transition-colors"
+                                            >
+                                                Wszystkie maszty →
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     )}
 
-                    {/* AKCESORIA — osobny link między kategoriami agregatów a Ofertą */}
+                    {/* AKCESORIA */}
                     {AKCESORIA_LINK && (
                         <Link
                             href={`/kategoria/${AKCESORIA_LINK.slug}`}
@@ -204,20 +246,12 @@ export default function Navbar() {
                     <Link href="https://ebe-power.pl/" className="text-sm font-medium text-neutral-300 transition-colors hover:text-emerald-400">
                         Oferta
                     </Link>
-
-                    {/* <Link href="/wynajem" className="text-sm font-medium text-neutral-300 transition-colors hover:text-emerald-400">
-                        Wynajem
-                    </Link>
-                    <Link href="/serwis" className="text-sm font-medium text-neutral-300 transition-colors hover:text-emerald-400">
-                        Serwis
-                    </Link> */}
                 </div>
 
-                {/* PRAWA STRONA (Motyw, Koszyk, Logowanie, Hamburger) */}
+                {/* PRAWA STRONA */}
                 <div className="flex items-center gap-3 sm:gap-4">
                     <ThemeToggle />
 
-                    {/* KOSZYK */}
                     <button
                         onClick={() => openCart()}
                         className="relative p-2 text-neutral-300 hover:text-emerald-400 transition-colors flex items-center gap-2"
@@ -234,7 +268,6 @@ export default function Navbar() {
 
                     <div className="h-5 w-px bg-neutral-800 hidden sm:block"></div>
 
-                    {/* PROFIL / LOGOWANIE (Desktop) */}
                     <div className="hidden sm:flex items-center gap-3">
                         {session ? (
                             <div className="flex items-center gap-3">
@@ -266,7 +299,6 @@ export default function Navbar() {
                         )}
                     </div>
 
-                    {/* PRZYCISK MENU MOBILNEGO (Hamburger) */}
                     <button
                         onClick={() => setIsMobileMenuOpen((prev) => !prev)}
                         className="lg:hidden p-2 text-neutral-400 hover:text-white focus:outline-none transition-colors"
@@ -282,7 +314,8 @@ export default function Navbar() {
             {isMobileMenuOpen && (
                 <div className="lg:hidden border-t border-neutral-850 bg-neutral-950/95 backdrop-blur-xl px-4 py-6 animate-in slide-in-from-top-2 duration-200">
                     <div className="flex flex-col space-y-3">
-                        {/* Akordeon kategorii na mobile */}
+                        
+                        {/* Akordeon: Agregaty */}
                         <div>
                             <button
                                 onClick={() => setIsMobileCategoriesOpen((prev) => !prev)}
@@ -294,18 +327,12 @@ export default function Navbar() {
 
                             {isMobileCategoriesOpen && (
                                 <div className="ml-2 mt-1 space-y-1 border-l-2 border-neutral-800 pl-3">
-                                    <Link
-                                        href="/kategoria"
-                                        className="block py-1.5 text-xs font-bold text-emerald-400"
-                                    >
+                                    <Link href="/kategoria" className="block py-1.5 text-xs font-bold text-emerald-400">
                                         Wszystkie kategorie →
                                     </Link>
                                     {CATEGORIES.filter((c) => c.group === AGGREGATE_GROUP).map((c) => (
                                         <div key={c.slug}>
-                                            <Link
-                                                href={`/kategoria/${c.slug}`}
-                                                className="block py-1.5 text-sm text-neutral-400 hover:text-white transition-colors"
-                                            >
+                                            <Link href={`/kategoria/${c.slug}`} className="block py-1.5 text-sm text-neutral-400 hover:text-white transition-colors">
                                                 {c.name}
                                             </Link>
                                             {c.subcategories && c.subcategories.length > 0 && (
@@ -327,7 +354,33 @@ export default function Navbar() {
                             )}
                         </div>
 
-                        {/* Akcesoria — osobny link między kategoriami a Ofertą */}
+                        {/* Akordeon: Maszty */}
+                        {MASZTY_LINK && (
+                            <div>
+                                <button
+                                    onClick={() => setIsMobileMasztyOpen((prev) => !prev)}
+                                    className="flex w-full items-center justify-between py-2 text-base font-semibold text-neutral-200 hover:text-emerald-400 transition-colors"
+                                >
+                                    <span>{MASZTY_LINK.name || "Maszty Oświetleniowe"}</span>
+                                    <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isMobileMasztyOpen ? 'rotate-180 text-emerald-400' : ''}`} />
+                                </button>
+                                {isMobileMasztyOpen && (
+                                    <div className="ml-2 mt-1 space-y-1 border-l-2 border-neutral-800 pl-3">
+                                        <Link href={`/kategoria/${MASZTY_LINK.slug}`} className="block py-1.5 text-xs font-bold text-emerald-400">
+                                            Wszystkie maszty →
+                                        </Link>
+                                        <Link href={`/kategoria/${MASZTY_LINK.slug}/mobilne`} className="block py-1.5 text-sm text-neutral-400 hover:text-white transition-colors">
+                                            Mobilne
+                                        </Link>
+                                        <Link href={`/kategoria/${MASZTY_LINK.slug}/stacjonarne`} className="block py-1.5 text-sm text-neutral-400 hover:text-white transition-colors">
+                                            Stacjonarne
+                                        </Link>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Link: Akcesoria */}
                         {AKCESORIA_LINK && (
                             <Link
                                 href={`/kategoria/${AKCESORIA_LINK.slug}`}
@@ -337,25 +390,10 @@ export default function Navbar() {
                             </Link>
                         )}
 
-                        <Link
-                            href="https://ebe-power.pl/"
-                            className="py-2 text-base font-semibold text-neutral-200 hover:text-emerald-400 transition-colors"
-                        >
+                        <Link href="https://ebe-power.pl/" className="py-2 text-base font-semibold text-neutral-200 hover:text-emerald-400 transition-colors">
                             Oferta
                         </Link>
-                        <Link
-                            href="/wynajem"
-                            className="py-2 text-base font-semibold text-neutral-200 hover:text-emerald-400 transition-colors"
-                        >
-                            Wynajem
-                        </Link>
-                        <Link
-                            href="/serwis"
-                            className="py-2 text-base font-semibold text-neutral-200 hover:text-emerald-400 transition-colors"
-                        >
-                            Serwis
-                        </Link>
-
+                        
                         {/* Strefa autoryzacji w menu mobilnym */}
                         <div className="pt-4 mt-2 border-t border-neutral-850">
                             {session ? (
