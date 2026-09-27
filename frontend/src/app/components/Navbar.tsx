@@ -309,7 +309,7 @@ export default function Navbar() {
 
             {/* ROZWIJANE MENU MOBILNE */}
             {isMobileMenuOpen && (
-                    <div className="lg:hidden max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-neutral-850 bg-neutral-950/95 backdrop-blur-xl px-4 py-6 animate-in slide-in-from-top-2 duration-200">
+                    <div className="lg:hidden border-t border-neutral-850 bg-neutral-950/95 backdrop-blur-xl px-4 py-6 animate-in slide-in-from-top-2 duration-200">
                         <div className="flex flex-col space-y-3">                    
                         {/* Akordeon: Agregaty */}
                         <div>
