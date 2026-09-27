@@ -149,7 +149,7 @@ export default function Navbar() {
                                                         </Link>
 
                                                         {category.subcategories && category.subcategories.length > 0 && (
-                                                            <div className="absolute left-full top-0 ml-1 hidden w-56 group-hover/item:block z-50 animate-in fade-in slide-in-from-left-2 duration-200">
+                                                            <div className="absolute left-full top-0 pl-2 hidden w-56 group-hover/item:block z-50 animate-in fade-in slide-in-from-left-2 duration-200">
                                                                 <div className="rounded-xl border border-neutral-800 bg-[#101214] p-2 shadow-2xl">
                                                                     {category.subcategories.map((subcategory) => (
                                                                         <Link
@@ -202,7 +202,7 @@ export default function Navbar() {
                             </button>
 
                             {isMasztyDropdownOpen && (
-                                <div className="absolute left-0 top-full pt-1 w-48 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+                                <div className="absolute left-0 top-full pl-1.5 w-48 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
                                     <div className="rounded-xl border border-neutral-800 bg-[#101214] p-2 shadow-2xl flex flex-col">
 
                                         {MASZTY_LINK.subcategories?.map((subcategory) => (
