@@ -214,16 +214,6 @@ export default function Navbar() {
                                         >
                                             {subcategory.shortName ?? subcategory.name}
                                         </Link>
-                                    )}
-                                        {MASZTY_LINK.subcategories?.map((subcategory) => (
-                                        <Link
-                                            key={subcategory.slug}
-                                            href={`/kategoria/${MASZTY_LINK.slug}/${subcategory.slug}`}
-                                            onClick={() => setIsMasztyDropdownOpen(false)}
-                                            className="block px-3 py-2 rounded-lg text-sm font-semibold text-neutral-300 transition-colors hover:bg-neutral-800/70 hover:text-emerald-400"
-                                        >
-                                            {subcategory.shortName ?? subcategory.name}
-                                        </Link>
                                     ))}
                                         <div className="mt-1 pt-1 border-t border-neutral-800/60">
                                             <Link
