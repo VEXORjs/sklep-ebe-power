@@ -642,17 +642,25 @@ export function phaseOfProduct(product: Product): SubcategoryPhase | null {
     // 1) Jawna liczba faz, np. „1", „3", „3 / 1", „trójfazowy"
     const phases = normalizeText(parameterValue(product, ["liczba faz", "fazy", "liczba_faz"]))
         .replace(/\s+/g, "");
+    
+    const allText = normalizeText(
+        `${product.name} ${product.description ?? ""} ${JSON.stringify(product.parameters)}`
+        );
+
+    const isDual = 
+        allText.includes("dual") ||
+        allText.includes("fullpower") ||
+        allText.includes("pelnamoc") ||
+        phases.includes("3/1") ||
+        phases.includes("1/3");
+
+    if(isDual) return "dual";
+    
     if (phases) {
         const hasSingle = /(^|[^0-9])1([^0-9]|$)/.test(phases) || phases.includes("jednofaz");
         const hasThree = phases.includes("3") || phases.includes("trojfaz");
-        if (hasSingle && hasThree) return "dual";
         if (hasSingle) return "single";
-        if (hasThree) {
-            // Samo „3" — sprawdź, czy to wersja dwunapięciowa 400/230 V (dual)
-            const voltage = voltageValue();
-            if (voltage.includes("400") && voltage.includes("230")) return "dual";
-            return "three";
-        }
+        if (hasThree) return "three";
     }
 
     // 2) Napięcie — jednocześnie 400 V i 230 V oznacza wersję dual
@@ -660,7 +668,6 @@ export function phaseOfProduct(product: Product): SubcategoryPhase | null {
     if (voltage) {
         const has400 = voltage.includes("400");
         const has230 = voltage.includes("230");
-        if (has400 && has230) return "dual";
         if (has400) return "three";
         if (has230) return "single";
     }
@@ -669,11 +676,9 @@ export function phaseOfProduct(product: Product): SubcategoryPhase | null {
     const text = normalizeText(`${product.name} ${product.description ?? ""}`);
     const saysSingle = text.includes("jednofazow") || text.includes("monofazow") || text.includes("1-fazow");
     const saysThree = text.includes("trojfazow") || text.includes("3-fazow");
-    if (saysSingle && saysThree) return "dual";
     if (saysThree) return "three";
     if (saysSingle) return "single";
-    if (text.includes("400/230") || text.includes("230/400")) return "dual";
-
+    
     return null;
 }
 
