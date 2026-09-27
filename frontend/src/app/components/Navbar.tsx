@@ -204,20 +204,27 @@ export default function Navbar() {
                             {isMasztyDropdownOpen && (
                                 <div className="absolute left-0 top-full pt-1 w-48 z-50 animate-in fade-in slide-in-from-top-1 duration-150">
                                     <div className="rounded-xl border border-neutral-800 bg-[#101214] p-2 shadow-2xl flex flex-col">
+
+                                        {MASZTY_LINK.subcategories?.map((subcategory) => (
                                         <Link
-                                            href={`/kategoria/${MASZTY_LINK.slug}/mobilne`}
+                                            key={subcategory.slug}
+                                            href={`/kategoria/${MASZTY_LINK.slug}/${subcategory.slug}`}
                                             onClick={() => setIsMasztyDropdownOpen(false)}
                                             className="block px-3 py-2 rounded-lg text-sm font-semibold text-neutral-300 transition-colors hover:bg-neutral-800/70 hover:text-emerald-400"
                                         >
-                                            Mobilne
+                                            {subcategory.shortName ?? subcategory.name}
                                         </Link>
+                                    )}
+                                        {MASZTY_LINK.subcategories?.map((subcategory) => (
                                         <Link
-                                            href={`/kategoria/${MASZTY_LINK.slug}/stacjonarne`}
+                                            key={subcategory.slug}
+                                            href={`/kategoria/${MASZTY_LINK.slug}/${subcategory.slug}`}
                                             onClick={() => setIsMasztyDropdownOpen(false)}
                                             className="block px-3 py-2 rounded-lg text-sm font-semibold text-neutral-300 transition-colors hover:bg-neutral-800/70 hover:text-emerald-400"
                                         >
-                                            Stacjonarne
+                                            {subcategory.shortName ?? subcategory.name}
                                         </Link>
+                                    ))}
                                         <div className="mt-1 pt-1 border-t border-neutral-800/60">
                                             <Link
                                                 href={`/kategoria/${MASZTY_LINK.slug}`}
@@ -312,9 +319,8 @@ export default function Navbar() {
 
             {/* ROZWIJANE MENU MOBILNE */}
             {isMobileMenuOpen && (
-                <div className="lg:hidden border-t border-neutral-850 bg-neutral-950/95 backdrop-blur-xl px-4 py-6 animate-in slide-in-from-top-2 duration-200">
-                    <div className="flex flex-col space-y-3">
-                        
+                    <div className="lg:hidden max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-neutral-850 bg-neutral-950/95 backdrop-blur-xl px-4 py-6 animate-in slide-in-from-top-2 duration-200">
+                        <div className="flex flex-col space-y-3">                    
                         {/* Akordeon: Agregaty */}
                         <div>
                             <button
