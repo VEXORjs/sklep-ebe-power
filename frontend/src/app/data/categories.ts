@@ -219,8 +219,24 @@ const MASZTY_CATEGORY: CategoryDef = {
     image: "https://images.unsplash.com/photo-1541888081270-36224ec084df?auto=format&fit=crop&q=70&w=800", // Zmienione na zdjęcie nocnej budowy/oświetlenia
     keywords: ["maszty oświetleniowe", "wieże oświetleniowe", "oświetlenie budowy", "maszty z agregatem", "maszty LED", "mobilne maszty"],
     subcategories: [
-        { name: "Mobilne", slug: "mobilne", shortName: "Mobilne" },
-        { name: "Stacjonarne", slug: "stacjonarne", shortName: "Stacjonarne" },
+        { 
+            name: "Mobilne maszty oświetleniowe", 
+            slug: "mobilne", 
+            shortName: "Mobilne",
+            tagline: "Szybki transport i rozstawienie w terenie",
+            description: "Mobilne wieże oświetleniowe na podwoziach z homologacją drogową, gotowe do natychmiastowego holowania i pracy w dowolnym miejscu. Często zintegrowane z własnym agregatem prądotwórczym.",
+            match: ["Mobilne", "Maszty mobilne", "Na podwoziu"],
+            icon: "single"
+        },
+        { 
+            name: "Stacjonarne maszty oświetleniowe", 
+            slug: "stacjonarne", 
+            shortName: "Stacjonarne",
+            tagline: "Stałe doświetlenie placu budowy",
+            description: "Stacjonarne maszty oświetleniowe na stabilnych płozach lub paletach transportowych. Idealne na długoterminowe budowy, gdzie maszt jest zasilany z zewnętrznego generatora lub sieci elektrycznej.",
+            match: ["Stacjonarne", "Maszty stacjonarne", "Plug-in"],
+            icon: "single" 
+        },
     ],
     highlights: [
         {
