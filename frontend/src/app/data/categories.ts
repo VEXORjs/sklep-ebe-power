@@ -583,11 +583,11 @@ export function buildFallbackCategory(name: string): CategoryDef {
  * szybkie linki obok „Oferta" w pasku nawigacji.
  */
 export const AKCESORIA: CategoryDef[] = CATEGORIES.filter(
-    (category) => category.group !== AGGREGATE_GROUP
+    (category) => category.slug === "akcersoria"
 );
 
 export const MASZTY: CategoryDef[] = CATEGORIES.filter(
-    (category) => category.group !== AGGREGATE_GROUP
+    (category) => category.slug === "maszty"
 );
 
 export function getCategoryBySlug(slug: string): CategoryDef | undefined {
