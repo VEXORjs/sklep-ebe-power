@@ -210,56 +210,60 @@ const AKCESORIA_CATEGORY: CategoryDef = {
 
 const MASZTY_CATEGORY: CategoryDef = {
     slug: "maszty",
-    name: "Maszty",
+    name: "Maszty oświetleniowe",
     group: "Inne kategorie",
-    tagline: "Maszty oświetleniowe",
+    tagline: "Jasne i bezpieczne miejsce pracy po zmroku",
     description:
-        "Wszystko, czego brakuje w koszyku tuż przed wyjazdem na budowę: złączki szybkozłączne, listwy zaciskowe, koryta i peszle, opaski, końcówki tulejkowe, oznaczniki oraz drobne narzędzia instalatorskie.",
-    match: ["Maszty", "Maszty oświetleniowe"],
-    image: "https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&q=70&w=800",
-    keywords: ["maszty"],
+        "Profesjonalne maszty i wieże oświetleniowe zapewniające niezawodne źródło światła w najtrudniejszych warunkach. Idealne na place budowy, przy robotach drogowych, imprezach plenerowych oraz w akcjach ratowniczych. Wyposażone w energooszczędne naświetlacze LED i systemy szybkiego podnoszenia.",
+    match: ["Maszty", "Maszty oświetleniowe", "Wieże oświetleniowe", "Oświetlenie placu budowy"],
+    image: "https://images.unsplash.com/photo-1541888081270-36224ec084df?auto=format&fit=crop&q=70&w=800", // Zmienione na zdjęcie nocnej budowy/oświetlenia
+    keywords: ["maszty oświetleniowe", "wieże oświetleniowe", "oświetlenie budowy", "maszty z agregatem", "maszty LED", "mobilne maszty"],
+    subcategories: [
+        { name: "Mobilne", slug: "mobilne", shortName: "Mobilne" },
+        { name: "Stacjonarne", slug: "stacjonarne", shortName: "Stacjonarne" },
+    ],
     highlights: [
         {
-            title: "Sprawdzone marki",
-            text: "Osprzęt renomowanych producentów z pełną dokumentacją i atestami.",
+            title: "Wysoka wydajność LED",
+            text: "Nowoczesne naświetlacze wielosoczewkowe gwarantują ogromną powierzchnię oświetlenia przy minimalnym zużyciu energii i braku konieczności wymiany żarników.",
         },
         {
-            title: "Opakowania zbiorcze",
-            text: "Zestawy warsztatowe i opakowania hurtowe w wyraźnie niższej cenie jednostkowej.",
+            title: "Łatwy transport i rozstawienie",
+            text: "Modele na podwoziach z homologacją drogową lub zintegrowanymi kieszeniami na wózki widłowe pozwalają na błyskawiczny transport i montaż przez jedną osobę.",
         },
         {
-            title: "Kompletacja zamówień",
-            text: "Zbierz drobnicę w jednej przesyłce razem z transformatorem lub rozdzielnicą.",
+            title: "Odporność na warunki ekstremalne",
+            text: "Certyfikowana stabilność przy wietrze (nawet do 80-110 km/h) oraz klasa szczelności IP67 naświetlaczy pozwalają na bezpieczną pracę w każdej pogodzie.",
         },
     ],
     buyingGuide: [
-        "Do połączeń w puszkach używaj złączek szybkozłącznych — są szybsze i pewniejsze niż skręcanie żył.",
-        "Linki zawsze zarabiaj końcówką tulejkową, inaczej zacisk poluzuje się po kilku cyklach termicznych.",
-        "Peszel karbowany dobierz o średnicy zapewniającej 40 % wolnej przestrzeni na przyszłe przewody.",
-        "Opisane oznaczniki żył skracają czas późniejszego serwisu nawet o połowę.",
-        "Trzymaj w aucie zestaw najpopularniejszych rozmiarów — brak jednej złączki potrafi zatrzymać całą robotę.",
+        "Wybierz maszty LED zamiast tradycyjnych metalohalogenowych — zużywają do 70% mniej paliwa w przypadku zasilania z agregatu i są bezobsługowe.",
+        "Dostosuj wysokość masztu (zwykle od 5 do 8,5 metra) do specyfiki terenu. Wyższy maszt oznacza szerszy kąt padania światła i mniejszy efekt olśnienia dla pracowników.",
+        "Jeśli często zmieniasz lokalizację, zdecyduj się na maszt mobilny na podwoziu jezdnym z homologacją drogową. Do pracy w jednym miejscu wystarczy wersja stacjonarna (na płozach).",
+        "Maszty ze zintegrowanym agregatem prądotwórczym (spalinowym lub hybrydowym) zapewniają pełną niezależność. Modele 'plug-in' wymagają podłączenia do zewnętrznego źródła zasilania.",
+        "Przed rozstawieniem zawsze sprawdzaj wbudowane poziomice i prawidłowo wysuwaj wszystkie podpory stabilizujące, by zapobiec przewróceniu masztu przy silnych podmuchach wiatru.",
     ],
     applications: [
-        "Prace instalacyjne",
-        "Montaż rozdzielnic",
-        "Serwis awaryjny",
-        "Wyposażenie warsztatu",
+        "Place budowy i roboty drogowe po zmroku",
+        "Imprezy masowe, koncerty i eventy plenerowe",
+        "Zarządzanie kryzysowe i akcje służb ratowniczych",
+        "Oświetlenie terenów przemysłowych, kopalni i parkingów",
     ],
     faq: [
         {
-            question: "Czy wysyłacie drobnicę razem z dużym zamówieniem?",
+            question: "Czy maszty oświetleniowe posiadają własne zasilanie?",
             answer:
-                "Tak, kompletujemy całe zamówienie w jednej przesyłce. Jeśli część produktów ma dłuższy termin, możemy podzielić wysyłkę bez dodatkowych kosztów.",
+                "W naszej ofercie znajdują się zarówno wieże ze zintegrowanym agregatem prądotwórczym (z silnikami diesla, benzynowymi lub hybrydowe bateryjno-spalinowe), jak i maszty typu plug-in, które należy podłączyć do sieci lub zewnętrznego generatora.",
         },
         {
-            question: "Czy złączki są dopuszczone do instalacji stałych?",
+            question: "Jak dużą powierzchnię jest w stanie oświetlić jedna wieża?",
             answer:
-                "Oferowane przez nas złączki spełniają normę PN-EN 60998 i są dopuszczone do połączeń w puszkach instalacyjnych oraz rozdzielnicach.",
+                "Wydajne wieże oświetleniowe LED (np. z naświetlaczami 4x320W) potrafią skutecznie i równomiernie oświetlić obszar roboczy o powierzchni rzędu 4000 do 5000 metrów kwadratowych.",
         },
         {
-            question: "Czy dostępne są opakowania zbiorcze?",
+            question: "Jak długo zajmuje przygotowanie masztu do pracy?",
             answer:
-                "Większość drobnicy oferujemy zarówno w opakowaniach detalicznych, jak i w kartonach zbiorczych z rabatem ilościowym.",
+                "Dzięki zastosowaniu ręcznych wyciągarek z hamulcem lub systemów hydraulicznego podnoszenia oraz regulowanych podpór, jedna osoba jest w stanie ustawić i uruchomić maszt w zaledwie 1-2 minuty.",
         },
     ],
 };
