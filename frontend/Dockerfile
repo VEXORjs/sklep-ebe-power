@@ -50,7 +50,7 @@ ENV NEXTAUTH_URL=$NEXTAUTH_URL
 # Kopiujemy tylko niezbędne pliki statyczne i wygenerowany serwer standalone
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
-# COPY --from=builder /app/public ./public
+COPY --from=builder /app/public ./public
 
 # Cache Next.js MUSI być zapisywalny, a Cloud Run montuje system plików
 # kontenera jako read-only — jedynym zapisywalnym miejscem jest /tmp (tmpfs,
